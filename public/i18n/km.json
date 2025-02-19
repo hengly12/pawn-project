@@ -1,0 +1,115 @@
+{
+    "Translate": {
+        "SelectLanguage": "ជ្រើសរើសភាសារ",
+        "ChooseLanguage": "ជ្រើសរើសភាសារ"
+    },
+    "Auth": {
+        "SignInWithGoogle": "ចូលដោយប្រើប្រាស់ Gmail",
+        "loginViaQr": "ចូលទៅកាន់ប្រព័ន្ធដោយប្រើប្រាស់​ QR Code",
+        "loginViaQr1": "១.បេីកប្រព័ន្ធព្រឹត្តិបត្រថ្កោលទោសឌីជីថលនៅលើទូរស័ព្ទរបស់អ្នក",
+        "loginViaQr2": "២.ចូលគណនី > ស្កេន QR Code ដើម្បីប្រើប្រាស់",
+        "loginViaQr3": "៣.តម្រង់ទូរស័ព្ទរបស់អ្នកមកកាន់ QR Code"
+    },
+    "Button": {
+        "CreateResidence": "បង្កើតលំនៅដ្ឋានថ្មី"
+    },
+    "Residence": {
+        "Name": "Residence",
+        "Closed": "បិទលំនៅឋាន"
+    },
+    "ForeignerGuest": {
+        "Title": "បញ្ជីការស្នាក់នៅ",
+        "Search": "ស្វែងរកភ្ញៀវបរទេស..."
+    },
+    "Sidebar": {
+        "CheckIn": "កត់ត្រាការស្នាក់នៅ",
+        "ChooseResidence": "ជ្រើសរើសលំនៅដ្ឋាន",
+        "ForeignerGuest": "បញ្ជីការស្នាក់នៅ",
+        "Tutorial": "របៀបប្រើប្រាស់",
+        "HelpSupport": "ជំនួយនិងគាំទ្រ",
+        "Report": "របាយការណ៍"
+    },
+    "Tab": {
+        "Pawn": "កំពុងបញ្ចាំ",
+        "inPawn": "បញ្ចប់ការបញ្ចាំ"
+    },
+    "FormDetail":{
+        "CheckIn": "កត់ត្រាវត្តមានអ្នកស្នាក់នៅ",
+        "Check-In": "ថ្ងៃចូល",
+        "Check-Out": "ថ្ងៃចេញ",
+        "Extend": "បន្ថែម",
+        "RoomNo": "លេខបន្ទប់",
+        "AccommodationInfo": "ព័ត៌មានស្នាក់នៅ",
+        "PassportPhoto": "រូបថតលិខិតឆ្លងដែន",
+        "Nationality": "សញ្ជាតិ",
+        "PlaceOfBirth": "ទីកន្លែងកំណើត",
+        "DateOfBirth": "ថ្ងៃខែឆ្នាំំកំណើត",
+        "Gender": "ភេទ",
+        "GivenName": "នាមខ្លួន",
+        "Surname": "នាមត្រកូល",
+        "PassportExpireDate": "កាលបរិច្ឆេទផុតកំណត់លិខិតឆ្លងដែន",
+        "PassportNo": "លេខលិខិតឆ្លងដែន",
+        "Title-1": "សូមពិនិត្យលេខលិខិតឆ្លងដែនឲ្យបានត្រឹមត្រូវ",
+        "Title-2": "សូមពិនិត្យការបញ្ចប់នៃលិខិតឆ្លងដែនរបស់អ្នក ហើយត្រូវប្រាកដថាវានៅតែស្ថិតក្នុងកាលបរិច្ឆេទផុតកំណត់",
+        "PersonalInformation": "ព័ត៌មានផ្ទាល់ខ្លួន"
+    },
+    "Form": {
+        "GuestInfo": "ព័ត៌មានអ្នកស្នាក់នៅ",
+        "PassportNumber": "លេខលិខិតឆ្លងដែន",
+        "PassportExpireDate": "កាលបរិច្ឆេទផុតកំណត់លិខិតឆ្លងដែន",
+        "Surname": "នាមត្រកូល",
+        "GivenName": "នាមខ្លួន",
+        "Gender": "ភេទ",
+        "DateOfBirth": "ថ្ងៃខែឆ្នាំំកំណើត",
+        "PlaceOfBirth": "ទីកន្លែងកំណើត",
+        "Nationality": "សញ្ជាតិ",
+        "PassportPhoto": "រូបថតលិខិតឆ្លងដែន",
+        "AccommodationInfo": "ព័ត៌មានស្នាក់នៅ",
+        "CheckIn": "ថ្ងៃចូល",
+        "CheckOut": "ថ្ងៃចេញ",
+        "RoomNo": "លេខបន្ទប់",
+        "Validate": {
+            "Required": "ព័ត៌មាននេះតម្រូវអោយបំពេញ"
+        },
+        "Message": {
+            "SaveSuccess": "បានរក្សាទុកដោយជោគជ័យ",
+            "SaveFailed": "រក្សាទុកបានបរាជ័យ សូមព្យាយាមម្តងទៀត",
+            "CloseResidence": "បិទលំនៅដ្ឋានបានជោគជ័យ",
+            "CheckOutSuccess": "បញ្ចប់ការស្នាក់នៅបានជោគជ័យ",
+            "Ok": "យល់ព្រម"
+        }
+    },
+    "Dialog": {
+        "ChooseResidence": "ជ្រើសរើសលំនៅដ្ឋាន",
+        "CheckIn": "ថ្ងៃចូល",
+        "Close": "បោះបង់",
+        "Save": "រក្សាទុក",
+        "Extend": "ពន្យាការស្នាក់នៅ",
+        "CheckOut": "បញ្ចប់ការស្នាក់នៅ",
+        "ExtendThePeriodOfStay": "ពន្យាពេលការស្នាក់នៅ",
+        "Remove": "លុប",
+        "RemoveTheGuest": "តើអ្នកចង់លុបទិន្នន័យភ្ញៀវនេះទេ?",
+        "Cancel": "បោះបង់",
+        "Ok": "យល់ព្រម"
+    },
+    "Message": {
+        "NoData": "ពុំមានទិន្នន័យ"
+    },
+    "Menu": {
+        "Edit": "កែប្រែ",
+        "Remove": "លុប",
+        "ExtensionOfStay": "ពន្យាការស្នាក់នៅ",
+        "CheckOut": "បញ្ចប់ការស្នាក់នៅ",
+        "Edit-Description": "អ្នកអាចកែប្រែបានក្នុងរយះពេល ២៤ ម៉ោង",
+        "Remove-Description": "អ្នកអាចលុបបានក្នុងរយះពេល ២៤ ម៉ោង"
+    },
+    "Now": "មុនពេលនេះ",
+    "Year": { "singular": "ឆ្នាំ", "plural": "ឆ្នាំ" },
+    "Month": { "singular": "ខែ", "plural": "ខែ" },
+    "Week": { "singular": "សប្ដាហ៍", "plural": "សប្ដាហ៍" },
+    "Day": { "singular": "ថ្ងៃ", "plural": "ថ្ងៃ" },
+    "Hour": { "singular": "ម៉ោង", "plural": "ម៉ោង" },
+    "Minute": { "singular": "នាទី", "plural": "នាទី" },
+    "Second": { "singular": "វិនាទី", "plural": "វិនាទី" },
+    "signOut": "ចេញពីប្រព័ន្ធ"
+}

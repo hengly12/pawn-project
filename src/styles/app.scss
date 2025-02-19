@@ -1,0 +1,13 @@
+@import './fonts.scss';
+@import './variable.scss';
+
+* {
+    box-sizing: border-box;
+}
+
+input,
+select,
+textarea,
+button {
+    font-family: $appFont;
+}

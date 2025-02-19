@@ -1,0 +1,121 @@
+{
+    "Translate": {
+        "SelectLanguage": "Select Language",
+        "ChooseLanguage": "Choose Language"
+    },
+    "Auth": {
+        "SignInWithGoogle": "Sign in with Google",
+        "loginViaQr": "Login via QR Code",
+        "loginViaQr1": "1. Open the QR Code scanner on your phone",
+        "loginViaQr2": "2. Go to Account > Scan QR Code to use",
+        "loginViaQr3": "3. Point your phone's camera to the QR Code"
+    },
+    "Button": {
+        "CheckIn": "Check In"
+    },
+    "Residence": {
+        "Name": "Residence",
+        "Closed": "Closed Residence"
+    },
+    "Sidebar": {
+        "CheckIn": "Check In",
+        "ChooseResidence": "Choose Residence",
+        "ForeignerGuest": "Foreigner Guest",
+        "Tutorial": "Tutorial",
+        "HelpSupport": "Help & Support",
+        "Report": "Report"
+    },
+    "Tab": {
+        "Pawn": "Pawn",
+        "inPawn": "End of mortgage"
+    },
+    "Dialog": {
+        "ChooseResidence": "Choose Residence",
+        "CheckIn": "Check In",
+        "Close": "Close",
+        "Save": "Save",
+        "Extend": "Extend",
+        "CheckOut": "Check Out",
+        "ExtendThePeriodOfStay": "Extend The Period Of Stay",
+        "Remove": "Remove",
+        "RemoveTheGuest": "Do you want to delete this guest data?",
+        "Cancel": "Cancel",
+        "Ok": "Ok"
+    },
+    "ForeignerGuest": {
+        "Title": "Foreigner Guest",
+        "Search": "Search foreigner guest..."
+    },
+    "Message": {
+        "NoData": "No data available"
+    },
+    "Form": {
+        "GuestInfo": "Guest Information",
+        "PassportNumber": "Passport Number",
+        "PassportExpireDate": "Date Of Passport Expiry",
+        "Surname": "Surname",
+        "GivenName": "Given Name",
+        "Gender": "Gender",
+        "DateOfBirth": "Date of Birth",
+        "PlaceOfBirth": "Place of Birth",
+        "Nationality": "Nationality",
+        "PassportPhoto": "Passport Photo",
+        "AccommodationInfo": "Accommodation Information",
+        "CheckIn": "Check-In",
+        "CheckOut": "Check-Out",
+        "RoomNo": "Room No",
+        "Validate": {
+            "Required": "This field is required"
+        },
+        "Message": {
+            "SaveSuccess": "Save successfully",
+            "SaveFailed": "Save failed, please try again",
+            "CloseResidence": "Close Residence successfully",
+            "CheckOutSuccess": "Check Out successfully",
+            "Ok": "Ok"
+        }
+    },
+    "FormDetail":{
+        "CheckIn": "Check In",
+        "Check-In": "Check-In",
+        "Check-Out": "Check-Out",
+        "Extend": "Extend",
+        "RoomNo": "Room No",
+        "AccommodationInfo": "Accommodation Information",
+        "PassportPhoto": "Passport Photo",
+        "Nationality": "Nationality",
+        "PlaceOfBirth": "Place of Birth",
+        "DateOfBirth": "Date of Birth",
+        "Gender": "Gender",
+        "GivenName": "Given Name",
+        "Surname": "Surname",
+        "PassportExpireDate": "Date Of Passport Expiry",
+        "PassportNo": "Passport No",
+        "Title-1": "Please check the passport number correctly",
+        "Title-2": "Please enter your passport number and make sure it is still wiothin the expiration date.",
+        "PersonalInformation": "Personal Information"
+    },
+    "Menu": {
+        "Edit": "Edit",
+        "Remove": "Remove",
+        "ExtensionOfStay": "Extension of stay",
+        "CheckOut": "Check Out",
+        "Edit-Description": "You can edit in 24 hours",
+        "Remove-Description": "You can delete in 24 hours"
+    },
+    "timeUnits": {
+        "year": "year",
+        "month": "month",
+        "day": "day",
+        "notAvailable": "N/A"
+    },
+    "Now": "Just now",
+    "Year": { "singular": "year", "plural": "years" },
+    "Month": { "singular": "month", "plural": "months" },
+    "Week": { "singular": "week", "plural": "weeks" },
+    "Day": { "singular": "day", "plural": "days" },
+    "Hour": { "singular": "hour", "plural": "hours" },
+    "Minute": { "singular": "minute", "plural": "minutes" },
+    "Second": { "singular": "second", "plural": "seconds" },
+    "signOut": "Sign Out"
+}

@@ -1,0 +1,288 @@
+@import "_fonts.css";
+@media print and (color) {
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    color-adjust: exact;
+  }
+}
+
+@media print {
+  html,
+  body {
+    -webkit-print-color-adjust: exact !important;
+    /* background-color: red !important; */
+    margin: 0;
+    padding: 0;
+    width: 100%;
+  }
+  a,
+  .link {
+    color: #000;
+  }
+  .enbutton {
+    display: none;
+  }
+  .hideOnPrint {
+    display: none !important;
+  }
+  .print-wrapper {
+    width: 100%;
+    margin: 0;
+    float: none;
+    display: block;
+    font-family: "Roboto", sans-serif;
+    max-width: unset;
+  }
+  .print-wrapper.card-printer {
+    max-width: unset !important;
+  }
+  .sheet {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    page-break-after: always;
+  }
+  .sheet.bg:after {
+    content: "";
+    background: url("../../../assets//images/logo.png") !important;
+    background-repeat: no-repeat !important;
+    background-position: center 130px !important;
+    background-size: 50% !important;
+    top: 0;
+    position: absolute;
+    bottom: 0;
+    z-index: 0;
+    width: 100%;
+    opacity: 0.1 !important;
+  }
+  .sheet-content {
+    width: 100%;
+    padding: 29px 32px;
+    page-break-after: always;
+    position: relative;
+    display: block;
+    z-index: 1;
+  }
+  .m-header {
+    /* display: flex; */
+    justify-content: center;
+  }
+  .page-break {
+    height: 20px;
+    page-break-before: always;
+    margin: 0;
+    border-top: none;
+  }
+  @page {
+    size: A4;
+    margin: 0;
+    /* margin-bottom: 1.5cm;
+    margin-top: 1.5cm; */
+  }
+  .print-wrapper {
+    position: relative;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 0;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.14);
+  }
+  .print-wrapper .flex-row {
+    display: flex;
+    margin-bottom: 18px;
+  }
+  .left-block {
+    position: relative;
+    -webkit-box-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    padding: 30px;
+  }
+  .right-block {
+    position: relative;
+    width: 450px;
+    padding: 30px 0;
+    margin-right: 30px;
+  }
+  .print-wrapper .info {
+    text-align: center;
+    margin-left: 32px;
+  }
+  .print-wrapper .info h1 {
+    margin: 0;
+    font-size: 18pt;
+  }
+  .print-wrapper .info .t-kh {
+    font-family: "Moul", cursive;
+    line-height: normal;
+    font-weight: normal;
+  }
+  .print-wrapper .info .t-en {
+    font-family: "Roboto", sans-serif;
+    font-weight: 600;
+  }
+  .print-wrapper .info p {
+    margin: 0;
+  }
+  .print-wrapper .ar {
+    text-align: right;
+  }
+  .print-wrapper .al {
+    text-align: left;
+  }
+  .print-logo {
+    width: 126px;
+    height: 126px;
+    overflow: hidden;
+  }
+  .print-logo img {
+    height: 100%;
+  }
+  .print-wrapper .logo-block {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto;
+  }
+  .print-wrapper .logo-block img {
+    width: 100%;
+  }
+  .print-wrapper .recept-title {
+    width: 100%;
+    text-align: center;
+    text-align: center;
+    margin: 0;
+    font-size: 14pt;
+    display: block;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 8px;
+    text-transform: capitalize;
+    font-weight: bold;
+    font-family: initial;
+  }
+  .print-wrapper .border-bottom {
+    border-bottom: 2px solid #000;
+  }
+  .print-wrapper .listing-table {
+    width: 100%;
+    border: 1px solid #000;
+    font-family: initial;
+  }
+  .print-wrapper .listing-table th {
+    color: #000;
+    padding: 16px;
+    border-bottom: 1px solid #000;
+    font-size: 14px;
+    text-transform: uppercase;
+  }
+
+  .print-wrapper .listing-table .ar-n {
+    display: none;
+  }
+
+  .print-wrapper .listing-table .ar-rr {
+    text-align: right !important;
+  }
+
+  .print-wrapper .listing-table th.al-r,
+  .print-wrapper .listing-table td.al-r {
+    text-align: right;
+  }
+
+  .print-wrapper .listing-table.small th {
+    background-color: #f2f2f2;
+    color: #000;
+    padding: 8px;
+    border-bottom: 1px solid #000;
+    font-size: 14px;
+    text-transform: capitalize;
+  }
+
+  .print-wrapper .listing-table.small td {
+    padding: 5px 8px;
+    border-bottom: 1px solid #000;
+    font-size: 12px;
+  }
+
+  .print-wrapper .listing-table.small td.al-r {
+    text-align: right;
+  }
+  .print-wrapper .listing-table.small th.al-r {
+    text-align: right;
+  }
+  .recept-date {
+    display: block;
+    text-align: center;
+    font-family: initial;
+  }
+  .report-wrapper .user-info-report {
+    display: block;
+    width: 100%;
+    font-family: initial;
+  }
+  .report-wrapper .user-info-report h3 {
+    font-size: 17px;
+    font-weight: 600;
+    float: left;
+    width: 200px;
+    font-family: initial;
+  }
+  .report-wrapper .user-info-report h3::after {
+    content: "";
+    clear: both;
+    display: table;
+  }
+
+  .print-wrapper .user-info-report h4 {
+    color: #000;
+    font-size: 17px;
+    font-weight: 600;
+    margin: 12px 0;
+    font-family: initial;
+  }
+  .print-wrapper .listing-table td {
+    padding: 10px 16px;
+    border-bottom: 1px solid #000;
+    font-size: 12px;
+  }
+  .print-wrapper .daily-table-rp td,
+  .print-wrapper .daily-table-rp th {
+    padding: 4px 8px;
+  }
+  .print-wrapper .listing-table .fee-status {
+    background-color: #f1c40f !important;
+    padding: 4px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .print-wrapper .listing-table .fee-status.paid {
+    background-color: #b4e123 !important;
+  }
+  .print-wrapper .com-info {
+    /* text-align: right; */
+    margin: 10px 0;
+  }
+  .print-wrapper .com-info .t1 {
+    font-family: initial;
+  }
+
+  .card-list .card table.print-table-footer .date-row p {
+    border-bottom: 1px dotted #333;
+    width: 64px;
+    height: 10px !important;
+  }
+
+  .card-list .card {
+    margin: 0 auto;
+  }
+
+  .card-list .card .report-header {
+    margin: 0 auto;
+
+  }
+
+}

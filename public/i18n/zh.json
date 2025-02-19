@@ -1,0 +1,121 @@
+{
+    "Translate": {
+        "SelectLanguage": "选择语言",
+        "ChooseLanguage": "选择语言"
+    },
+    "Auth": {
+        "SignInWithGoogle": "使用谷歌账号登录",
+        "loginViaQr": "通过二维码登录",
+        "loginViaQr1": "1. 打开手机上的二维码扫描器",
+        "loginViaQr2": "2. 前往账户 > 扫描二维码以使用",
+        "loginViaQr3": "3. 将手机摄像头对准二维码"
+    },
+    "Button": {
+        "CheckIn": "登记入住"
+    },
+    "Residence": {
+        "Name": "住所",
+        "Closed": "关闭的住所"
+    },
+    "Sidebar": {
+        "CheckIn": "登记入住",
+        "ChooseResidence": "选择住所",
+        "ForeignerGuest": "外国客人",
+        "Tutorial": "教程",
+        "HelpSupport": "帮助与支持",
+        "Report": "报告"
+    },
+    "Tab": {
+        "Staying": "正在入住",
+        "CheckOut": "退房"
+    },
+    "Dialog": {
+        "ChooseResidence": "选择住所",
+        "CheckIn": "登记入住",
+        "Close": "关闭",
+        "Save": "保存",
+        "Extend": "延长",
+        "CheckOut": "退房",
+        "ExtendThePeriodOfStay": "延长停留期",
+        "Remove": "删除",
+        "RemoveTheGuest": "您想删除这位客人的数据吗？",
+        "Cancel": "取消",
+        "Ok": "确定"
+    },
+    "ForeignerGuest": {
+        "Title": "外国客人",
+        "Search": "搜索外国客人..."
+    },
+    "Message": {
+        "NoData": "没有可用数据"
+    },
+    "Form": {
+        "GuestInfo": "客人信息",
+        "PassportNumber": "护照号码",
+        "PassportExpireDate": "护照有效期",
+        "Surname": "姓",
+        "GivenName": "名",
+        "Gender": "性别",
+        "DateOfBirth": "出生日期",
+        "PlaceOfBirth": "出生地",
+        "Nationality": "国籍",
+        "PassportPhoto": "护照照片",
+        "AccommodationInfo": "住宿信息",
+        "CheckIn": "入住",
+        "CheckOut": "退房",
+        "RoomNo": "房间号",
+        "Validate": {
+            "Required": "此字段为必填项"
+        },
+        "Message": {
+            "SaveSuccess": "保存成功",
+            "SaveFailed": "保存失败，请重试",
+            "CloseResidence": "成功关闭住所",
+            "CheckOutSuccess": "结账成功",
+            "Ok": "好的"
+        }
+    },
+    "FormDetail":{
+        "CheckIn": "入住",
+        "Check-In": "入住",
+        "Check-Out": "退房",
+        "Extend": "延长",
+        "RoomNo": "房间号",
+        "AccommodationInfo": "住宿信息",
+        "PassportPhoto": "护照照片",
+        "Nationality": "国籍",
+        "PlaceOfBirth": "出生地",
+        "DateOfBirth": "出生日期",
+        "Gender": "性别",
+        "GivenName": "名",
+        "Surname": "姓",
+        "PassportExpireDate": "护照有效期",
+        "PassportNo": "护照号码",
+        "Title-1": "请正确检查护照号码",
+        "Title-2": "请输入您的护照号码并确保它仍在有效期内",
+        "PersonalInformation": "个人信息"
+    },
+    "Menu": {
+        "Edit": "编辑",
+        "Remove": "删除",
+        "ExtensionOfStay": "延长停留",
+        "CheckOut": "退房",
+        "Edit-Description": "您可以在24小时内编辑",
+        "Remove-Description": "您可以在24小时内删除"
+    },
+    "timeUnits": {
+        "year": "年",
+        "month": "月",
+        "day": "天",
+        "notAvailable": "不可用"
+    },
+    "Now": "刚刚",
+    "Year": { "singular": "年", "plural": "年" },
+    "Month": { "singular": "月", "plural": "月" },
+    "Week": { "singular": "周", "plural": "周" },
+    "Day": { "singular": "天", "plural": "天" },
+    "Hour": { "singular": "小时", "plural": "小时" },
+    "Minute": { "singular": "分钟", "plural": "分钟" },
+    "Second": { "singular": "秒", "plural": "秒" },
+    "signOut": "登出"
+}
