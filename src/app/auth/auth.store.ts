@@ -15,7 +15,6 @@ import { DataService } from '../shared/services/data.service';
 import { doc, getDoc, serverTimestamp, setDoc, updateDoc } from '@angular/fire/firestore';
 import { docsToObject, mapUser, UserMap } from '../shared/services/mapping.service';
 import { IProfile } from '../shared/interfaces/profile.interface';
-import { IResident } from '../shared/interfaces/residence.interface';
 import { ROLE_OBJ } from '../shared/dummy/config';
 import { ResidenceChangeService } from '../shared/services/resident.service';
 
@@ -25,7 +24,7 @@ export class AuthStore {
   user: User | null = null;
   profile: IProfile | null = null;
   ownerHomeAccount: any | null = null;
-  readonly residence = signal<IResident | null>(null);
+  readonly residence = signal<any | null>(null);
   loading: boolean = false;
 
   constructor(public lang: TranslateStore, private readonly ds: DataService,     private residenceChangeService: ResidenceChangeService,) {
@@ -34,12 +33,8 @@ export class AuthStore {
       this.user = user;
       if (user) {
         this.profile = await this.fetchUser(user);
-        this.ownerHomeAccount = await this.fetchUserOwnerHomeAccount(user);
-        if (this.profile?.selectedHomeKey){
-          this.residence.set(await this.fetchResidence(this.profile));
-          // console.log('residence', this.residence());
-        }
-      }else this.residence.set(null);
+ 
+      }
       this.loading = false;
     });
   }
@@ -125,23 +120,12 @@ export class AuthStore {
     return docsToObject(await getDoc(doc(this.ds.userRef(), key)));
   }
 
-  async fetchUserOwnerHomeAccount(user: any) {
-    return docsToObject(await getDoc(doc(this.ds.owner_homes_accountsRef(), user.uid)));
-  }
   
 
   async fetchResidence(user: any) {
     return docsToObject(await getDoc(doc(this.ds.residenceRef(), user.selectedHomeKey)));
   }
 
-  setResidence(residence: IResident) {
-    if (!this.user || !residence) return;
-    return updateDoc(doc(this.ds.userRef(), this.user?.uid), {
-      selectedHomeKey: residence.key,
-    }).then(() => {
-      this.residence.set(residence);
-    });
-  }
 
   signOut() {
     return this.auth.signOut();

@@ -9,7 +9,6 @@ import {
 import { IProfile } from '../interfaces/profile.interface';
 import { AbstractControl, FormGroup, ValidatorFn } from '@angular/forms';
 import { map, startWith } from 'rxjs';
-import { IGeo } from '../interfaces/geo.interface';
 import moment from 'moment';
 
 export function assets(...path: string[]): string {
@@ -203,16 +202,6 @@ export function convertToDate(value: any): Date | null {
   }
   
   return null;
-}
-
-export function toGeoData(item: IGeo) {
-  if (!item) return null;
-  return {
-    key: item?.key,
-    name: item?.name || null,
-    en_name: item?.en_name || null,
-    id: item?.id || null,
-  };
 }
 
 export function filterStates(

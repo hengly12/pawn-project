@@ -1,3 +1,31 @@
-<div class="header">
-    header
+<header class="header">
+    <div class="header-title">
+        <div> <img class="logo-header" src="assets/images/pawn-logo.jpg" alt="Profile Image"></div>
+        <h3>
+            Pawn Project Title
+        </h3>
+    
 </div>
+<div> 
+    <button class="profile-icon" mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+        
+        <img src="assets/images/one-punch.jpg" alt="Profile Icon">
+      </button>
+      <mat-menu #menu="matMenu">
+    <div class="profile-container">
+        <div class="profile-header">
+          <span class="profile-title">Profile</span>
+        </div>
+  
+        <div class="profile-content">
+          <div class="profile-image">
+            <img src="assets/images/one-punch.jpg" alt="Profile Image"> </div>
+          <div class="profile-details">
+            <div class="profile-name">VisBear</div>
+            <button mat-raised-button (click)="signOut()">Sign Out</button>
+          </div>
+        </div>
+      </div>
+    </mat-menu>
+    </div>
+</header>
