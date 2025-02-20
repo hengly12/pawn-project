@@ -8,15 +8,19 @@ import { MatDialog } from '@angular/material/dialog'
 import { AlertComponent } from '../../shared/pages/alert/alert.component';
 import { result } from 'lodash';
 import { AuthStore } from '../../auth/auth.store';
+import {MatTabsModule} from '@angular/material/tabs';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-main-header',
   standalone: true,
   imports: [
+    RouterLink,
     MatButtonModule, 
     MatMenuModule, 
     MatIconModule,
     MatBadgeModule,
+    MatTabsModule,
  
   ],
   templateUrl: './main-header.component.html',

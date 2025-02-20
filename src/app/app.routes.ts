@@ -7,6 +7,9 @@ import {
 import { LoginComponent } from './auth/login/login.component';
 import { AppLayoutComponent } from './layout/app-layout/app-layout.component';
 import { AuthComponent } from './auth/auth.component';
+import { LayoutWrapperComponent } from './layout/layout-wrapper/layout-wrapper.component';
+import { MainHeaderComponent } from './components/main-header/main-header.component';
+import { ReportComponent } from './components/report/report.component';
 
 
 export const routes: Routes = [
@@ -31,6 +34,12 @@ export const routes: Routes = [
     // data: { authGuardPipe: () => redirectUnauthorizedTo(['/auth']) },
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path:'home',component:MainHeaderComponent },
+      { path:'report',component:ReportComponent },
+      
     ],
+    
   },
+  
 ];
+

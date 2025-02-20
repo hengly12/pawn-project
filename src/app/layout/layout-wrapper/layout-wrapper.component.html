@@ -1,7 +1,13 @@
 <div class="dashboard">
     <nav class="nav-search">
-        <span>🔍 Search <input type="text" placeholder="form data"></span>
+        <input class="search-box" type="text" placeholder="Search Form Data" name="q">
+        <button class="search-icon" type="submit"> <i class="fa-solid fa-magnifying-glass" ></i></button>
       </nav>
+      <button class="menu-bar" mat-button [matMenuTriggerFor]="menu"> <i class="fa-solid fa-bars"></i></button>
+<mat-menu #menu="matMenu">
+  <button mat-menu-item>Item 1</button>
+  <button mat-menu-item>Item 2</button>
+</mat-menu>
 </div>
 
 <div class="content">
