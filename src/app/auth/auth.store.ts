@@ -4,6 +4,7 @@ import {
   EmailAuthProvider,
   OAuthProvider,
   User,
+  createUserWithEmailAndPassword,
   getAuth,
   reauthenticateWithCredential,
   signInWithEmailAndPassword,
@@ -41,6 +42,14 @@ export class AuthStore {
 
   async signIn(email: string, password: string) {
     return signInWithEmailAndPassword(this.auth, email, password);
+  }
+  async register(email: string, password: string ): Promise<void> {
+  
+    try {
+      await createUserWithEmailAndPassword(this.auth, email, password);
+    } catch (error) {
+      throw error;
+    }
   }
 
   async fetchEnvironment(user: User) {
