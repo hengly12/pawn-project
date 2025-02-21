@@ -33,8 +33,8 @@ export const routes: Routes = [
     component: AppLayoutComponent,
     // data: { authGuardPipe: () => redirectUnauthorizedTo(['/auth']) },
     children: [
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      { path:'home',component:MainHeaderComponent },
+      { path: '', redirectTo: 'home', pathMatch: 'full' },
+      { path:'home',component:LayoutWrapperComponent },
       { path:'report',component:ReportComponent },
       
     ],

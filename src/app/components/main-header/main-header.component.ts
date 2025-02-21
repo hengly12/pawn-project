@@ -9,7 +9,7 @@ import { AlertComponent } from '../../shared/pages/alert/alert.component';
 import { result } from 'lodash';
 import { AuthStore } from '../../auth/auth.store';
 import {MatTabsModule} from '@angular/material/tabs';
-import { RouterLink } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
   selector: 'app-main-header',
@@ -21,7 +21,7 @@ import { RouterLink } from '@angular/router';
     MatIconModule,
     MatBadgeModule,
     MatTabsModule,
- 
+    RouterLinkActive
   ],
   templateUrl: './main-header.component.html',
 
@@ -34,14 +34,14 @@ export class MainHeaderComponent {
   // profileIcon = signal<any>(assets('images/one-punch.jpg'))
   constructor(
     private dialog: MatDialog,
-    private auth: AuthStore
+    private auth: AuthStore,
   ){}
   
   signOut(){
     const dialogRef = this.dialog.open(AlertComponent, {
       data: {
-        title: 'Test',
-        description: 'OK Ok'
+        title: 'Sign Out!',
+        description: 'Do You Want To Sign Out?'
       },
       width: '350px',
       role: 'dialog',

@@ -1,37 +1,71 @@
 .header{
     display: flex;
-        height: 60px;
+    height: 80px;
         width: 100%;
         box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
         background-color: #fff;
         align-items: center;
         justify-content: space-between;
         padding-inline: 30px;
-        text-decoration: none;
-        list-style: none;
+        font-family: sans-serif;
 }
 
 
 .header-title{
     display: flex;
     align-items: center;
+    font-size: 20px
     
 }
 
 .link-header{
-display: flex;
-gap: 10px;
+  display: flex;
+  gap: 35px;
+  li{
+    list-style: none;
+    a{
+      display: flex;
+      font-size: 15px;
+      text-decoration: none;
+      color: #000;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      transition: all 0.3s;
+      &.active{
+        color: #1A73E8;
+        .line{
+          width: 100%;
+          position: absolute;
+          bottom: -18px;
+          border-radius: 5px;
+          border: 2px solid #1A73E8;
+        }
+      }
+    }
+  }
+}
 
-
+.profile-img{
+  height: 50px;
+  width: 50px;
+  cursor: pointer;
+  img{
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
 }
 
 .logo-header{
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 60px;
   position: relative;
   top: 5px;
   border-radius: 12px;
-
+  border-radius: 50%;
+  border: 1px solid #e3e3e3;
 }
 
 .profile-container {
@@ -85,15 +119,33 @@ gap: 10px;
 
   .profile-details {
     text-align: center;
+
+  }
+
+  .button-signout{
+    border-radius: 5px;
+    font-size: 15px;
+    padding: 5px;
+    color: #1a73e8;
+    background-color: white;
+    border: solid 0px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+  }
+  
+  .button-signout:hover{
+    color: crimson;
+    transition: 0.3s;
   }
 
   .mat-mdc-icon-button img{
-    width: 35px;
-    height: 35px;
+    width: 40px;
+    height: 40px;
     border-radius: 25px;
     position: relative;
     top: -6px;
-    left: -6px;
+    left: -8px;
+    
   }
   .profile-name {
     font-weight: bold;
@@ -102,7 +154,7 @@ gap: 10px;
   }
 
   .profile-location {
-    color: #666;
+    color: #ffffff;
     font-size: 14px;
     margin-bottom: 5px;
   }
@@ -125,4 +177,6 @@ gap: 10px;
     border-radius: inherit;
 }
 
- 
+::ng-deep .mat-mdc-menu-panel {
+  background: #fff !important;
+}

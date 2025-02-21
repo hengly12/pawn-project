@@ -1,5 +1,4 @@
 <header class="header">
-
   <div class="header-title">
     <div>
       <img
@@ -8,21 +7,33 @@
         alt="Profile Image"
       />
     </div>
-    <h3>Pawn Project Title</h3>
+    <h3></h3>
   </div>
   <div class="link-header">
-    <li><a routerLink="/home" routerLinkActive="active">Home</a></li>
-    <li><a routerLink="/report" routerLinkActive="active">Report</a></li>
+    <li>
+      <a routerLink="/home" routerLinkActive="active">
+        <mat-icon> import_contacts</mat-icon>
+        បញ្ជីបញ្ចាំ
+        <div class="line"></div>
+      </a>
+    </li>
+    <li>
+      <a routerLink="/report" routerLinkActive="active">
+        <mat-icon>receipt</mat-icon>របាយការណ៍
+        <div class="line"></div>
+        
+        </a
+      >
+    </li>
   </div>
   <div>
-    <button
-      class="profile-icon"
-      mat-icon-button
+    <div
+      class="profile-img"
       [matMenuTriggerFor]="menu"
       aria-label="Example icon-button with a menu"
     >
       <img src="assets/images/one-punch.jpg" alt="Profile Icon" />
-    </button>
+    </div>
     <mat-menu #menu="matMenu">
       <div class="profile-container">
         <div class="profile-content">
@@ -31,7 +42,7 @@
           </div>
           <div class="profile-details">
             <div class="profile-name">VisBear</div>
-            <button mat-raised-button (click)="signOut()">Sign Out</button>
+            <button class="button-signout" (click)="signOut()">Sign Out</button>
           </div>
         </div>
       </div>
