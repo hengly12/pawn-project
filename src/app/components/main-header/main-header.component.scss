@@ -125,11 +125,11 @@
   .button-signout{
     border-radius: 5px;
     font-size: 15px;
-    padding: 5px;
-    color: #1a73e8;
+    width: 90px;
+    padding: 6px;
+    color: #e81a1a;
     background-color: white;
-    border: solid 0px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    border: solid 1px grey;
     cursor: pointer;
   }
   
@@ -179,4 +179,11 @@
 
 ::ng-deep .mat-mdc-menu-panel {
   background: #fff !important;
+}
+::ng-deep .cdk-overlay-container{
+  pointer-events: none;
+    top: 15px !important;
+    left: 30px !important;
+    height: 100%;
+    width: 100% 
 }

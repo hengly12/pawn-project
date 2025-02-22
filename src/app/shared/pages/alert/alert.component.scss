@@ -1,6 +1,7 @@
 ::ng-deep .custom-dialog .mdc-dialog--open .mat-mdc-dialog-surface, .mdc-dialog--closing .mat-mdc-dialog-surface{
-    padding: 50px;
-    border-radius: 5px;
+    padding: 20px;
+    gap: 10px;
+    border-radius: 8px;
     font-size: 20px;
     color: #1a73e8;
     border: solid 0px;
@@ -8,29 +9,31 @@
 }
 
 .alert-signout{
-    padding-top: 10px;
-    gap: 10px;
+    padding-top: 15px;
+    gap: 15px;
     display: flex;
     justify-content: flex-end;
     border-top: solid 1px;
 }
 
 .cancel-btn{
-    border-radius: 5px;
+    border-radius: 50px;
+    width: 80px;
     font-size: 15px;
-    padding: 5px;
-    color: #1a73e8;
-    background-color: white;
+    padding: 10px;
+    color: #000000;
+    background-color: #ededed;
     border: solid 0px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     cursor: pointer;
 }
 .yes-btn{
-    border-radius: 5px;
+    border-radius: 50px;
+    width: 80px;
     font-size: 15px;
-    padding: 5px;
-    color: crimson;
-    background-color: white;
+    padding: 10px;
+    color: #ffffff;
+    background-color: #ed5858;
     border: solid 0px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     cursor: pointer;
