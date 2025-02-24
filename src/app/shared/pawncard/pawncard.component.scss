@@ -1,0 +1,19 @@
+.pawncard-sidebar{
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+    padding: 10px;
+    background-color: #74bdf970;
+}
+
+.image-card{
+    width: 65px;
+    height: 65px
+}
+
+.card-info-sidebar{
+    display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 130px
+}

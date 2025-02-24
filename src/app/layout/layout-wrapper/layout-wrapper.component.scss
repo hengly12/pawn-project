@@ -1,4 +1,16 @@
 
+@use '@angular/material' as mat;
+
+// Customize the entire app. Change :root to your selector if you want to scope the styles.
+:root {
+  @include mat.tabs-overrides((
+    active-indicator-color: orange,
+    divider-color: red,
+  ));
+}
+.main-wrapper{
+display: flex;
+}
 
 .dashboard{
     height: calc(100vh - 90px);
@@ -74,4 +86,14 @@
 
 .example-sidenav {
   padding: 20px;
+}
+
+.content{
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
+
+}
+.create-form{
+  margin: 0 auto;
 }

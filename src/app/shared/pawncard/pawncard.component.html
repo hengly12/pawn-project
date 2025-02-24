@@ -1,0 +1,44 @@
+@if(childInput?.length){
+<div class="pawncard-sidebar">
+  <img
+    class="image-card"
+    src="assets/images/card-image.jpg"
+    alt="Profile Image"
+  />
+
+ <div class="card-info-sidebar">
+  លេខសម្គាល់: {{childInput?.[0]?.id}}
+  <br>
+  <br>
+  ឈ្មោះ: {{childInput?.[0]?.name}}
+  <br>
+  <br>
+  លេខទូរសព្ទ: {{childInput?.[0]?.phone}}
+  <br>
+  <br>
+  វត្ថុបញ្ចាំ: {{childInput?.[0]?.item}}
+
+
+  <button
+    mat-icon-button
+    [matMenuTriggerFor]="menu"
+    aria-label="Example icon-button with a menu"
+  >
+    <mat-icon>more_vert</mat-icon>
+  </button>
+
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item>
+      <mat-icon>edit</mat-icon>
+      <span>Edit</span>
+    </button>
+    <button mat-menu-item (click)="deleteCard()">
+      <mat-icon>delete_forever</mat-icon>
+      <span>Delete</span>
+    </button>
+  </mat-menu>
+</div>
+</div>
+}@else {
+<p>No data display</p>
+}

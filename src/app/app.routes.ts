@@ -10,6 +10,7 @@ import { AuthComponent } from './auth/auth.component';
 import { LayoutWrapperComponent } from './layout/layout-wrapper/layout-wrapper.component';
 import { MainHeaderComponent } from './components/main-header/main-header.component';
 import { ReportComponent } from './components/report/report.component';
+import { PawnFormComponent } from './components/pawn-form/pawn-form.component';
 
 
 export const routes: Routes = [
@@ -34,7 +35,10 @@ export const routes: Routes = [
     // data: { authGuardPipe: () => redirectUnauthorizedTo(['/auth']) },
     children: [
       { path: '', redirectTo: 'home', pathMatch: 'full' },
-      { path:'home',component:LayoutWrapperComponent },
+      { path:'home',component:LayoutWrapperComponent,children:[
+        { path: 'create-form', component:PawnFormComponent},
+      ] },
+      // {path:'home',redirectTo:'home/create-form'}
       { path:'report',component:ReportComponent },
       
     ],

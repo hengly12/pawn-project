@@ -129,12 +129,15 @@
     padding: 6px;
     color: #e81a1a;
     background-color: white;
-    border: solid 1px grey;
+    border: solid 1px #65656545;
     cursor: pointer;
   }
+
+ 
   
   .button-signout:hover{
-    color: crimson;
+    color: white;
+    background-color:#ed5858;
     transition: 0.3s;
   }
 
@@ -182,7 +185,7 @@
 }
 ::ng-deep .cdk-overlay-container{
   pointer-events: none;
-    top: 15px !important;
+    top: 16px !important;
     left: 30px !important;
     height: 100%;
     width: 100% 
