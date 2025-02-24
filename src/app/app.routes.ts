@@ -11,23 +11,29 @@ import { LayoutWrapperComponent } from './layout/layout-wrapper/layout-wrapper.c
 import { MainHeaderComponent } from './components/main-header/main-header.component';
 import { ReportComponent } from './components/report/report.component';
 import { PawnFormComponent } from './components/pawn-form/pawn-form.component';
+import { register } from 'module';
+import { RegisterFormComponent } from './auth/register-form/register-form.component';
 
 
 export const routes: Routes = [
-  // {
-  //   path: 'auth',
-  //   component: AuthComponent,
-  //   data: { authGuardPipe: () => redirectLoggedInTo(['/']) },
-  //   canActivate: [AuthGuard],
-  //   children: [
-  //     { path: '', redirectTo: 'login', pathMatch: 'full' },
-  //     {
-  //       path: 'login',
-  //       component: LoginComponent,
-  //     },
+  {
+    path: 'auth',
+    component: AuthComponent,
+    data: { authGuardPipe: () => redirectLoggedInTo(['/']) },
+    canActivate: [AuthGuard],
+    children: [
+      { path: '', redirectTo: 'login', pathMatch: 'full' },
+      {
+        path: 'login',
+        component: LoginComponent,
+      },
+      {
+        path: 'register',
+        component: RegisterFormComponent,
+      }
       
-  //   ],
-  // },
+    ],
+  },
   {
     path: '',
     // canActivate: [AuthGuard],

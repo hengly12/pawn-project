@@ -1,1 +1,25 @@
-Login
+<div class="login-container">
+  <mat-card>
+    <img src="assets/logo.png" alt="Logo" class="logo">
+    <mat-card-header>
+      <!-- <mat-card-title>Login</mat-card-title> -->
+    </mat-card-header>
+    <form [formGroup]="loginForm" (ngSubmit)="login()">
+      <mat-form-field appearance="fill">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" formControlName="email">
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Password</mat-label>
+        <input matInput [type]="hide ? 'password' : 'text'" formControlName="password">
+        <button mat-icon-button matSuffix (click)="togglePasswordVisibility()" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+          <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+        </button>
+      </mat-form-field>
+      <div class="button">
+        <button mat-raised-button color="primary" type="submit">Login</button>
+        <button mat-raised-button color="accent"  type="register" (click)="register()" >register</button>
+      </div>
+    </form>
+  </mat-card>
+</div>

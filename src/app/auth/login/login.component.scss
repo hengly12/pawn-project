@@ -1,0 +1,48 @@
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #ffff;
+  
+    mat-card {
+      max-width: 450px;
+      height: 600px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    
+      .logo {
+        display: block;
+        margin: 0 auto 16px;
+        width: 100px;
+        height: 100px;
+      }
+  
+      mat-form-field {
+        width: 100%;
+      }
+  
+      button[mat-icon-button] {
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+  
+      .button{
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        gap: 10px;
+      }
+      button[type="submit"], button[type="register"]{
+        width: 80%;
+      }
+    }
+    
+  }
+  
