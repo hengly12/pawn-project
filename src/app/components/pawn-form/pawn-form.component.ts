@@ -1,12 +1,17 @@
 import { NgIf } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-pawn-form',
   standalone: true,
   imports: [ReactiveFormsModule,
             NgIf,
+            FormsModule, 
+            MatFormFieldModule, 
+            MatInputModule,
   ],
   templateUrl: './pawn-form.component.html',
   styleUrl: './pawn-form.component.scss'

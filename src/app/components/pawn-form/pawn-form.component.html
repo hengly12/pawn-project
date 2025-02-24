@@ -3,8 +3,12 @@
     <form [formGroup]="pawnForm" (ngSubmit)="onSubmit()">
       <div class="form-grid">
         <div>
-          <label>Full Name</label>
-          <input type="text" formControlName="fullName">
+          <mat-form-field appearance="outline" class="example-full-width">
+            <mat-label>Full Name</mat-label>
+            <input matInput placeholder="Enter Full Name" value="">
+          </mat-form-field>
+          <!-- <label>Full Name</label>
+          <input type="text" formControlName="fullName"> -->
         </div>
         <div>
           <label>Gender</label>
