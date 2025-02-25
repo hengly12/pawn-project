@@ -1,3 +1,4 @@
+import { routes } from './../../app.routes';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
 import { assets } from '../../shared/services/mapping.service';
 import {MatIconModule} from '@angular/material/icon';
@@ -9,7 +10,7 @@ import { AlertComponent } from '../../shared/pages/alert/alert.component';
 import { result } from 'lodash';
 import { AuthStore } from '../../auth/auth.store';
 import {MatTabsModule} from '@angular/material/tabs';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
   selector: 'app-main-header',
@@ -34,7 +35,8 @@ export class MainHeaderComponent {
   // profileIcon = signal<any>(assets('images/one-punch.jpg'))
   constructor(
     private dialog: MatDialog,
-    private auth: AuthStore,
+    public auth: AuthStore,
+    private router: Router
   ){}
   
   signOut(){

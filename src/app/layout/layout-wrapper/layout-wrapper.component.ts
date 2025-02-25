@@ -26,7 +26,7 @@ import { PawnFormComponent } from '../../components/pawn-form/pawn-form.componen
 })
 export class LayoutWrapperComponent {
   testItems = signal<any[]>([
-    {picture:"",id:"",name:"",phone:"",item:"",}
+    {picture:"",id:"",name:"",phone:"",item:"",gender:""}
   ])
   showFiller = false;
   

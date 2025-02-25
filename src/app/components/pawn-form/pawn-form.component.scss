@@ -11,12 +11,14 @@
   
   h2 {
     text-align: center;
+    padding-bottom: 25px;
   }
   
   .form-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 15px;
+    gap: 40px;
+    align-items: flex-start;
   }
   
   label {
@@ -40,9 +42,9 @@
   }
   
   .image-upload {
-    margin-top: 15px;
+    margin-top: 65px;
     text-align: center;
-    width: 370px;
+    width: 350px;
   }
   
   .image-preview img {
@@ -56,7 +58,7 @@
     display: block;
     width: 15%;
     padding: 10px;
-    background-color: #007bff;
+    background-color: #1a73e8;
     color: white;
     border: none;
     border-radius: 50px;
@@ -82,3 +84,65 @@
       height: 20px;
     }
   }
+  
+  .date-picker input{
+    width: 100% !important;
+    height: 24px !important;
+    font-size: 13px !important;
+  }
+
+  ::ng-deep .mat-mdc-form-field-infix {
+  flex: auto;
+  min-width: 0;
+  max-height: 200px;
+  width: 308px !important;
+  position: relative;
+  box-sizing: border-box; 
+}
+
+.upload-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 20px;
+
+  .upload-label {
+    display: inline-block;
+    cursor: pointer;
+
+    .upload-box {
+      background: #007bff;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-weight: bold;
+      text-align: center;
+      transition: 0.3s;
+    }
+
+    .upload-box:hover {
+      background: #0056b3;
+    }
+  }
+
+  .preview-container {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px dashed #007bff;
+    padding: 10px;
+    width: 200px;
+    height: 200px;
+    border-radius: 10px;
+    overflow: hidden;
+
+    .preview-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+  }
+}

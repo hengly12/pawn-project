@@ -13,12 +13,19 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        background-color: aliceblue;
+        padding: 50px;
+        border-radius: 20px;
+        box-shadow: 0px 0px 0px 5px black, 0px 0px 0 10px rgba(0, 0, 0, 0.5);
   
       .logo {
         display: block;
-        margin: 0 auto 16px;
+        margin: -15px auto 50px;
         width: 100px;
         height: 100px;
+        border-radius: 12px;
+        border-radius: 50%;
+        border: 1px solid #e3e3e3
       }
   
       mat-card-title {

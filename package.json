@@ -24,6 +24,8 @@
     "@angular/platform-server": "^19.1.0",
     "@angular/router": "^19.1.0",
     "@angular/ssr": "^19.1.7",
+    "@ngx-dropzone/cdk": "^19.1.0",
+    "@ngx-dropzone/material": "^19.1.0",
     "@ngx-translate/core": "^16.0.4",
     "@ngx-translate/http-loader": "^16.0.1",
     "express": "^4.18.2",

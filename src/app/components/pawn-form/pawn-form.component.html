@@ -5,50 +5,86 @@
         <div>
           <mat-form-field appearance="outline" class="example-full-width">
             <mat-label>Full Name</mat-label>
-            <input matInput placeholder="Enter Full Name" value="">
+            <input matInput placeholder="Enter Full Name" formControlName="fullName">
           </mat-form-field>
           <!-- <label>Full Name</label>
           <input type="text" formControlName="fullName"> -->
         </div>
+  
         <div>
-          <label>Gender</label>
-          <select formControlName="gender">
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-          </select>
+          
+          <mat-form-field appearance="outline" class="example-full-width">
+          <mat-label>Gender</mat-label>
+          <mat-select formControlName="gender">
+            <mat-option value="Male">Male</mat-option>
+              <mat-option value="Female">Female</mat-option>
+          </mat-select>
+        </mat-form-field>
         </div>
         <div>
-          <label>Phone</label>
-          <input type="text" formControlName="phone">
+          <mat-form-field appearance="outline" class="example-full-width">
+            <mat-label>Phone</mat-label>
+            <input matInput placeholder="Enter Your Phone Number" formControlName="phone">
+        </mat-form-field>
         </div>
         <div>
-          <label>ID Card</label>
-          <input type="text" formControlName="idCard">
+          <mat-form-field appearance="outline" class="example-full-width">
+            <mat-label>ID Card Number</mat-label>
+            <input matInput placeholder="Enter Your ID Card Number" formControlName="idCard">
+        </mat-form-field>
         </div>
         <div>
-          <label>Address</label>
-          <input type="text" formControlName="address">
+          <mat-form-field appearance="outline" class="example-full-width">
+            <mat-label>Address</mat-label>
+            <input matInput placeholder="Enter Your Address" formControlName="address">
+        </mat-form-field>
         </div>
         <div>
-          <label>Pawn Item</label>
-          <input type="text" formControlName="pawnItem">
+          <mat-form-field appearance="outline" class="example-full-width">
+            <mat-label>Pawn Item</mat-label>
+            <input matInput placeholder="Enter Your Pawn Item" formControlName="pawnItem">
+        </mat-form-field>
         </div>
-        <div>
-          <label>Date Created</label>
-          <input type="datetime-local" formControlName="dateCreated">
-        </div>
-        <div>
-          <label>Expire Date</label>
-          <input type="date" formControlName="expireDate">
-        </div>
-        <div>
-            <label>Description</label>
-            <textarea style="height: 60px;" formControlName="description"></textarea>
+
+        <div class="date-picker">
+        <mat-form-field appearance="outline" class="example-full-width">
+          <mat-date-range-input [formGroup]="range" [rangePicker]="picker">
+           
+            <input matStartDate formControlName="start" placeholder="Start date">
+            <input matEndDate formControlName="end" placeholder="End date">
+          
+          </mat-date-range-input>
+          <mat-hint>  MM / DD / YYYY - MM / DD / YYYY </mat-hint>
+          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-date-range-picker #picker></mat-date-range-picker>
+        
+          @if (range.controls.start.hasError('matStartDateInvalid')) {
+            <mat-error>Invalid start date</mat-error>
+          }
+          @if (range.controls.end.hasError('matEndDateInvalid')) {
+            <mat-error>Invalid end date</mat-error>
+          }
+        </mat-form-field>
+      </div>
+        <!-- <mat-form-field>
+          <mat-label>Choose a date</mat-label>
+          <input matInput [matDatepicker]="picker" formControlName="dateCreated">
+          <mat-hint>MM/DD/YYYY</mat-hint>
+          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field> -->
+
+
+        <div class="description-form">
+          <mat-form-field appearance="outline">
+            <mat-label>Description</mat-label>
+            <textarea matInput placeholder="Write More Info About Item" formControlName="description"></textarea>
+          </mat-form-field>
           </div>
       </div>
       <div class="image-upload">
         <label>Upload Image</label>
-        <input type="file" (change)="onImageUpload($event)">
+        <input type="file" (change)="onImageUpload($event)" accept="image/*">
         <div class="image-preview" *ngIf="imagePreview">
           <img [src]="imagePreview" alt="Preview">
         </div>

@@ -28,7 +28,7 @@ export class AuthStore {
   readonly residence = signal<any | null>(null);
   loading: boolean = false;
 
-  constructor(public lang: TranslateStore, private readonly ds: DataService,     private residenceChangeService: ResidenceChangeService,) {
+  constructor(public lang: TranslateStore, private readonly ds: DataService,     private residenceChangeService: ResidenceChangeService,private router: Router) {
     this.auth.onAuthStateChanged(async (user) => {
       this.loading = true;
       this.user = user;
@@ -137,7 +137,9 @@ export class AuthStore {
 
 
   signOut() {
-    return this.auth.signOut();
+    return this.auth.signOut().then(() =>{
+      this.router.navigate(['/auth/login'])
+    })
   }
 
   changePassword(

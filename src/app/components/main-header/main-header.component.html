@@ -34,21 +34,19 @@
     </li>
   </div>
   <div>
-    <div
-      class="profile-img"
+    <div class="profile-img"
       [matMenuTriggerFor]="menu"
-      aria-label="Example icon-button with a menu"
-    >
-      <img src="assets/images/one-punch.jpg" alt="Profile Icon" />
+      aria-label="Example icon-button with a menu">
+      <img src="assets/images/profile-image.jpg" alt="Profile Icon" />
     </div>
     <mat-menu #menu="matMenu">
       <div class="profile-container">
         <div class="profile-content">
           <div class="profile-image">
-            <img src="assets/images/one-punch.jpg" alt="Profile Image" />
+            <img src="assets/images/profile-image.jpg" alt="Profile Image" />
           </div>
           <div class="profile-details">
-            <div class="profile-name">VisBear</div>
+            <div class="profile-name">{{auth.profile?.displayName}}</div>
             <button class="button-signout" (click)="signOut()">Sign Out</button>
           </div>
         </div>

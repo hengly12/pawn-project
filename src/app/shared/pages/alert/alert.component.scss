@@ -4,8 +4,10 @@
     border-radius: 8px;
     font-size: 20px;
     color: #1a73e8;
-    border: solid 0px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    background-color: aliceblue;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0px 0px 0px 5px black, 0px 0px 0 10px rgba(0, 0, 0, 0.5);
 }
 
 .alert-signout{

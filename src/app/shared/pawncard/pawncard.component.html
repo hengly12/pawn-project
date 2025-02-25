@@ -2,7 +2,7 @@
 <div class="pawncard-sidebar">
   <img
     class="image-card"
-    src="assets/images/card-image.jpg"
+    src="assets/images/customer-image.jpg"
     alt="Profile Image"
   />
 
@@ -13,19 +13,15 @@
   ឈ្មោះ: {{childInput?.[0]?.name}}
   <br>
   <br>
+  ភេទ: {{childInput?.[0]?.gender}}
+  <br>
+  <br>
   លេខទូរសព្ទ: {{childInput?.[0]?.phone}}
   <br>
   <br>
   វត្ថុបញ្ចាំ: {{childInput?.[0]?.item}}
-
-
-  <button
-    mat-icon-button
-    [matMenuTriggerFor]="menu"
-    aria-label="Example icon-button with a menu"
-  >
-    <mat-icon>more_vert</mat-icon>
-  </button>
+  <br>
+  <br>
 
   <mat-menu #menu="matMenu">
     <button mat-menu-item>
