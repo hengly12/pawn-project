@@ -1,5 +1,4 @@
 import moment from 'moment';
-import { ICheckIn } from '../interfaces/checkin.interface';
 import _ from 'lodash';
 import { map, startWith } from 'rxjs';
 import { AbstractControl } from '@angular/forms';

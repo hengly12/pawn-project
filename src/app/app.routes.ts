@@ -13,6 +13,7 @@ import { ReportComponent } from './components/report/report.component';
 import { PawnFormComponent } from './components/pawn-form/pawn-form.component';
 import { register } from 'module';
 import { RegisterFormComponent } from './auth/register-form/register-form.component';
+import { ListingComponent } from './layout/listing/listing.component';
 
 
 export const routes: Routes = [
@@ -41,11 +42,20 @@ export const routes: Routes = [
     // data: { authGuardPipe: () => redirectUnauthorizedTo(['/auth']) },
     children: [
       { path: '', redirectTo: 'home', pathMatch: 'full' },
-      { path:'home',component:LayoutWrapperComponent,children:[
+      { path:'home',component:LayoutWrapperComponent,
+        children:[
+        { path: '', redirectTo: 'active/listing', pathMatch: 'full' },
+          {
+            path: ':statusKey/listing',
+            component: ListingComponent,
+           
+          },
         { path: 'create-form', component:PawnFormComponent},
-      ] },
+        ] 
+      },
       // {path:'home',redirectTo:'home/create-form'}
       { path:'report',component:ReportComponent },
+      { path:'pawn-form',component:PawnFormComponent}
       
     ],
     

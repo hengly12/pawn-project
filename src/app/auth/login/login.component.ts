@@ -45,7 +45,7 @@ export class LoginComponent {
       this.authStore.signIn(email, password)
         .then(() => {
           console.log('Login successful');
-          this.router.navigate(['']);
+          this.router.navigate(['home']);
         })
         .catch((error) => {
           console.error('Login failed', error);

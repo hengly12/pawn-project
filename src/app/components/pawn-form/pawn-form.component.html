@@ -1,6 +1,13 @@
+<div class="pawn-content-flex">
+  <div class="btn-create-form">
+    <button type="submit" (click)="onSubmit()">Save Form <mat-icon>save_alt</mat-icon></button>
+</div>
+
+
 <div class="form-container">
-    <h2>Pawn Form</h2>
-    <form [formGroup]="pawnForm" (ngSubmit)="onSubmit()">
+  
+    <h2>ទម្រង់បញ្ចាំទ្រព្យ</h2>
+    <form [formGroup]="pawnForm" >
       <div class="form-grid">
         <div>
           <mat-form-field appearance="outline" class="example-full-width">
@@ -13,13 +20,32 @@
   
         <div>
           
-          <mat-form-field appearance="outline" class="example-full-width">
-          <mat-label>Gender</mat-label>
-          <mat-select formControlName="gender">
-            <mat-option value="Male">Male</mat-option>
-              <mat-option value="Female">Female</mat-option>
-          </mat-select>
+          <mat-form-field appearance="outline">
+            <mat-label>
+                ភេទ
+            </mat-label>
+            <input type="text" aria-label="Text" matInput formControlName="gender"
+                [matAutocomplete]="AutoGender" />
+            <mat-autocomplete #AutoGender="matAutocomplete" [displayWith]="displayGender">
+                @for(item of genders(); track item){
+                <mat-option [value]="item">
+                    {{ item.text }}
+                </mat-option>
+                }
+            </mat-autocomplete>
+            <mat-error *ngIf="
+              pawnForm.controls['gender'].hasError('required')
+            ">
+              This field is required
+
+            </mat-error>
+            <mat-error *ngIf="
+              pawnForm.controls['gender'].hasError('validKey')
+            ">
+                Please select from list
+            </mat-error>
         </mat-form-field>
+
         </div>
         <div>
           <mat-form-field appearance="outline" class="example-full-width">
@@ -89,7 +115,6 @@
           <img [src]="imagePreview" alt="Preview">
         </div>
       </div>
-      
-      <button type="submit">Submit Form</button>
     </form>
   </div>
+</div>

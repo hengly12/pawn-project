@@ -34,7 +34,6 @@ export class AuthStore {
       this.user = user;
       if (user) {
         this.profile = await this.fetchUser(user);
- 
       }
       this.loading = false;
     });

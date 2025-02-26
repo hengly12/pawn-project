@@ -1,0 +1,59 @@
+
+
+<div class="main-wrapper">
+    <div class="dashboard">
+      <nav class="nav-search">
+          <input class="search-box" type="text" placeholder="Search Form Data" name="q" >
+          <button class="search-icon" type="submit"><mat-icon>search</mat-icon></button>
+        </nav>
+        <button class="btn-create-form" mat-flat-button> Create <mat-icon color="primary">add_box</mat-icon></button>
+        <!-- <i class="fa-regular fa-square-plus fa-sm" style="color: #74C0FC;width: 50%;"></i> -->
+  
+        <!-- <div class="link-header">
+        <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+  
+          
+            <a routerLink="/home" routerLinkActive="active">
+          <mat-tab  label="កំពុងបញ្ចាំ">
+              <app-pawncard [childInput]="testItems()"></app-pawncard>
+          </mat-tab>
+          <div class="line"></div>
+        </a>
+    
+        <a routerLink="/report" routerLinkActive="active">
+          <mat-tab label="បញ្ចប់ការបញ្ចាំ">
+            <app-pawncard [childInput]="testItems()"></app-pawncard>
+          </mat-tab>
+          <div class="line"></div>
+      </a>
+        </mat-tab-group> -->
+  
+  
+        <nav mat-tab-nav-bar class="list-tabs" [tabPanel]="tabPanel">
+          @for (tab of tabs(); track tab?.key) {
+            <a
+              mat-tab-link
+              [routerLink]="['/home/' + tab?.key + '/listing']"
+              [active]="rla.isActive"
+              #rla="routerLinkActive"
+              routerLinkActive="active">
+              {{ tab?.label }}
+            </a>
+          }
+        </nav>
+        <mat-tab-nav-panel #tabPanel>
+          <div class="listing">
+  
+          </div>
+        </mat-tab-nav-panel>
+      
+  </div>
+  
+  <div class="create-form"> 
+    <app-pawn-form></app-pawn-form>
+  </div>
+  
+  <div class="content">
+      <router-outlet></router-outlet>
+  </div>
+  </div>

@@ -11,6 +11,7 @@ import { result } from 'lodash';
 import { AuthStore } from '../../auth/auth.store';
 import {MatTabsModule} from '@angular/material/tabs';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @Component({
   selector: 'app-main-header',
@@ -22,7 +23,8 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
     MatIconModule,
     MatBadgeModule,
     MatTabsModule,
-    RouterLinkActive
+    RouterLinkActive,
+    MatProgressBarModule
   ],
   templateUrl: './main-header.component.html',
 

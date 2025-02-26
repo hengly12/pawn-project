@@ -1,3 +1,7 @@
+@if (auth.loading) {
+  <mat-progress-bar mode="indeterminate" class="progress-bar"></mat-progress-bar>
+}
+  
 <header class="header">
   <div class="header-title">
     <div>
@@ -28,7 +32,6 @@
       <a routerLink="/report" routerLinkActive="active">
         <mat-icon>receipt</mat-icon>របាយការណ៍
         <div class="line"></div>
-        
         </a
       >
     </li>
