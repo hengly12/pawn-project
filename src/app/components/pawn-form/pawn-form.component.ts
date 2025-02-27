@@ -1,7 +1,7 @@
 import { serverTimestamp } from '@angular/fire/firestore';
 import { NgIf } from '@angular/common';
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, OnInit, signal } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { provideNativeDateAdapter} from '@angular/material/core';
@@ -9,9 +9,9 @@ import { MatDatepickerModule} from '@angular/material/datepicker';
 import {MatSelectModule} from '@angular/material/select';
 import { MatIcon } from '@angular/material/icon';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
-import { GENDER_DATA } from '../../shared/dummy/config';
+import { GENDER_DATA, ITEM_DATA } from '../../shared/dummy/config';
 import { DataService } from '../../shared/services/data.service';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { sign } from 'crypto';
 
 @Component({
   selector: 'app-pawn-form',
@@ -36,9 +36,14 @@ export class PawnFormComponent {
 
   genders = signal<any>(GENDER_DATA);
 
+  pawnItem = signal<any>(ITEM_DATA);
+  seletedCar = signal<boolean>(false);
+  seleted = signal<any>(null);
+  text = signal<string>('')
   constructor(
-    private ds: DataService
+    private ds: DataService, private fb: FormBuilder
   ){}
+ 
 
   readonly range = new FormGroup({
     start: new FormControl<Date | null>(null),
@@ -54,11 +59,23 @@ export class PawnFormComponent {
     pawnItem: new FormControl(''),
     description: new FormControl(''),
     dateCreated: new FormControl(''),
-    expireDate: new FormControl(''),
-    image: new FormControl('')
+    dateExpired: new FormControl(''),
+    image: new FormControl(''),
+    car: new FormControl('')
   });
 
+  ngOnInit(){
+  }
+
+  selectItem(item: any){
+    this.seleted.set(item)
+  }
+
   displayGender = (item: any) => {
+    return item?.text;
+  };
+
+  displayItem = (item: any) => {
     return item?.text;
   };
 
@@ -77,4 +94,10 @@ export class PawnFormComponent {
     console.log(this.pawnForm.value);
   }
   
+  // ngOnInit(): void {
+  //   this.pawnForm = this.fb.group({
+  //     phone: ['', [Validators.pattern('^[0-9]*$')]] // Allows only numbers
+  //   });
+  // }
+
 }

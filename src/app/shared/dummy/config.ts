@@ -62,6 +62,14 @@ export const GENDER_DATA = [
   { key: 2, text: 'ផ្សេងៗ', en_name: 'Other' },
 ];
 
+export const ITEM_DATA = [
+  { key: 0, text: 'Car', },
+  { key: 1, text: 'Phone', },
+  { key: 2, text: 'Motor', },
+  { key: 3, text: 'Jewelry', },
+  { key: 4, text: 'Others', },
+];
+
 export const STAY_STATUS = {
   staying: { key: 'staying', text: 'Staying' },
   checkout: { key: 'checkout', text: 'Check Out' },

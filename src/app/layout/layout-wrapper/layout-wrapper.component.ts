@@ -19,10 +19,6 @@ import { MatIcon, MatIconModule } from '@angular/material/icon';
     MatButtonModule,
     RouterOutlet,
     MatTabsModule,
-    PawnFormComponent,
-    RouterLink,
-    RouterLinkActive,
-    
   ],
   templateUrl: './layout-wrapper.component.html',
   styleUrl: './layout-wrapper.component.scss',

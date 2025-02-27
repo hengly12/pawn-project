@@ -16,7 +16,7 @@
 }
 .form-container {
     margin: auto;
-    width: 785px;
+    width: 800px;
     height: auto;
     padding: 20px;
     border: 1px solid #ccc;
@@ -47,7 +47,6 @@
   
   input, select, textarea {
     width: 100%;
-    padding: 8px;
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 14px;
@@ -103,17 +102,18 @@
     }
   }
   
-  .date-picker input{
-    width: 100% !important;
-    height: 24px !important;
-    font-size: 13px !important;
+  .date-picker{
+    display: flex;
+      flex-direction: row;
+       width: 360px;
+       gap: 10px;
   }
 
   ::ng-deep .mat-mdc-form-field-infix {
   flex: auto;
   min-width: 0;
   max-height: 200px;
-  width: 308px !important;
+  width: 327px !important;
   position: relative;
   box-sizing: border-box; 
 }
