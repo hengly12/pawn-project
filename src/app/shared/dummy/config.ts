@@ -63,7 +63,7 @@ export const GENDER_DATA = [
 ];
 
 export const ITEM_DATA = [
-  { key: 0, text: 'Car', },
+  { key: 0, text: 'Car',},
   { key: 1, text: 'Phone', },
   { key: 2, text: 'Motor', },
   { key: 3, text: 'Jewelry', },

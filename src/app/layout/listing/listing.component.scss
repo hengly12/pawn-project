@@ -14,8 +14,8 @@ display: flex;
 }
 
 .dashboard{
-    
-    height: calc(100vh - 90px);
+  font-family: "Koh Santepheap", serif;
+    height: auto;
     width: 100%;
     max-width: 350px;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
@@ -23,6 +23,7 @@ display: flex;
     margin-top: 5px;
     border-radius: 8px; 
     .nav-search {
+      font-family: "Koh Santepheap", serif;
       display: flex;
         justify-content: flex-start;
         padding: 10px;
@@ -36,6 +37,7 @@ display: flex;
 }
 
 .search-box{
+  font-family: "Koh Santepheap", serif;
   width: 330px;
   height: 35px;
   border-radius: 15px;
@@ -66,6 +68,7 @@ display: flex;
 }
 
 .menu-bar{
+  font-family: "Koh Santepheap", serif;
   width: 35px;
   display: flex;
   justify-self: end;
@@ -79,6 +82,10 @@ display: flex;
   i{
     color: #000;
   }
+}
+
+.list-tabs{
+  font-family: "Koh Santepheap", serif;
 }
 
 .example-container {
@@ -153,4 +160,5 @@ display: flex;
   display: flex;
   flex: 1 0 auto;
   justify-content: space-evenly;
+  
 }

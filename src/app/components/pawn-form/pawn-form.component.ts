@@ -1,5 +1,5 @@
 import { serverTimestamp } from '@angular/fire/firestore';
-import { NgIf } from '@angular/common';
+import { NgFor, NgIf } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -18,6 +18,7 @@ import { sign } from 'crypto';
   standalone: true,
   imports: [
     ReactiveFormsModule,
+    NgFor,
     NgIf,
     FormsModule,
     MatFormFieldModule,
@@ -53,7 +54,7 @@ export class PawnFormComponent {
   pawnForm = new FormGroup({
     fullName: new FormControl(''),
     gender: new FormControl(''),
-    phone: new FormControl(''),
+    phoneNum: new FormControl(''),
     idCard: new FormControl(''),
     address: new FormControl(''),
     pawnItem: new FormControl(''),
@@ -61,7 +62,17 @@ export class PawnFormComponent {
     dateCreated: new FormControl(''),
     dateExpired: new FormControl(''),
     image: new FormControl(''),
-    car: new FormControl('')
+    phone: new FormControl(''),
+    car: new FormControl(''),
+    phoneId: new FormControl(''),
+    motor:new FormControl(''),
+    jewelry: new FormControl(''),
+    others: new FormControl(''),
+    plateNum: new FormControl(''),
+    brandName: new FormControl(''),
+    pawnPrice: new FormControl(''),
+    monthlyInterest: new FormControl(''),
+
   });
 
   ngOnInit(){
@@ -79,15 +90,23 @@ export class PawnFormComponent {
     return item?.text;
   };
 
-  imagePreview: string | ArrayBuffer | null = null;
+  imagePreview: string[] = [];
 
   onImageUpload(event: any) {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => (this.imagePreview = reader.result);
-      reader.readAsDataURL(file);
+    const files = event.target.files;
+    if (files && files.length) {
+      // Loop through selected files
+      for (let file of files) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          this.imagePreview.push(reader.result as string); // Add image preview to array
+        };
+        reader.readAsDataURL(file); // Read file as DataURL for preview
+      }
     }
+  }
+  clearPreviews() {
+    this.imagePreview = []; // Clear image previews
   }
 
   onSubmit() {
