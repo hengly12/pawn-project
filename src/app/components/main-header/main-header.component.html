@@ -40,13 +40,13 @@
     <div class="profile-img"
       [matMenuTriggerFor]="menu"
       aria-label="Example icon-button with a menu">
-      <img src="assets/images/profile-image.jpg" alt="Profile Icon" />
+      <img [src]="auth.profile?.photoFile || 'assets/images/customer-image.jpg'" alt="Profile Icon" />
     </div>
     <mat-menu #menu="matMenu">
       <div class="profile-container">
         <div class="profile-content">
           <div class="profile-image">
-            <img src="assets/images/profile-image.jpg" alt="Profile Image" />
+            <img [src]="auth.profile?.photoFile || 'assets/images/customer-image.jpg'" alt="Profile Icon" />
           </div>
           <div class="profile-details">
             <div class="profile-name">{{auth.profile?.displayName}}</div>
