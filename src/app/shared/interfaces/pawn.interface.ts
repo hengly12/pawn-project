@@ -10,16 +10,12 @@ export interface IPAWNSHOP {
     isDeleted: boolean;
     
     full_name: string;
-    first_name: string;
-    last_name: string;  
     gender: any;
     phone_number: number;
     id_card: number;
     address: string;
     dateOfBirth: any;
-    dateOfBirthKey: any; // format date to 20250226
-    dateOfExpire: any;
-    dateOfExpireKey: any;  // format date to 20250226
+    dateOfBirthKey: any;
 
     pawn_type: any;
     photo: any;
@@ -30,6 +26,16 @@ export interface IPAWNSHOP {
     plate_car?: any;
     plate_motor?: any;
 
+    type_phone?: any;
+    type_phone_name?: any;
+    type_phone_id?:any;
+
+    type_jewelry_name?: any;
+    type_jewelry_text?: any;
+    gold_weight?: any;
+
     price_interest: any;
     price_pawn: any;
+    
+
 }

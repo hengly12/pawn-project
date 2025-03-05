@@ -162,3 +162,11 @@ display: flex;
   justify-content: space-evenly;
   
 }
+
+.mat-mdc-card-title-group {
+  display: flex
+;
+  justify-content: flex-end;
+  width: 100%;
+  flex-direction: row-reverse;
+}

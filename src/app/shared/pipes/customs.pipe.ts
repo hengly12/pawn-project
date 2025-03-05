@@ -1089,8 +1089,8 @@ export class GetTimeAgoPipe implements PipeTransform {
         const intervalSeconds = this.getIntervalInSeconds(key as keyof typeof intervals);
         const counter = Math.floor(seconds / intervalSeconds);
         if (counter > 0) {
-          const singularKey = intervals[key as keyof typeof intervals] + '.singular';
-          const pluralKey = intervals[key as keyof typeof intervals] + '.plural';
+          const singularKey = intervals[key as keyof typeof intervals];
+          const pluralKey = intervals[key as keyof typeof intervals];
           const translationKey = counter === 1 ? singularKey : pluralKey;
 
           return `${counter} ${this.translate.instant(translationKey)}`;

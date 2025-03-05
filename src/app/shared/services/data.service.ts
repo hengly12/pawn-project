@@ -47,19 +47,8 @@ export class DataService {
     return collection(this.db, `users`) as CollectionReference<any>;
   }
 
-  residenceRef() {
-    return collection(this.db, `example`) as CollectionReference<any>;
-  }
-
-  ownersRef() {
-    return collection(this.db, `example`) as CollectionReference<any>;
-  }
-
-  ownerForeignerStayRef() {
-    return collection(
-      this.db,
-      `example`
-    ) as CollectionReference<any>;
+  customerRef() {
+    return collection(this.db, `customer`) as CollectionReference<any>;
   }
 
 }

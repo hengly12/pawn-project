@@ -128,11 +128,6 @@ export class AuthStore {
     return docsToObject(await getDoc(doc(this.ds.userRef(), key)));
   }
 
-  
-
-  async fetchResidence(user: any) {
-    return docsToObject(await getDoc(doc(this.ds.residenceRef(), user.selectedHomeKey)));
-  }
 
 
   signOut() {

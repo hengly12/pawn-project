@@ -43,6 +43,13 @@
         </nav>
         <mat-tab-nav-panel #tabPanel>
           <div class="listing">
+
+            @for(item of data(); track item?.key){
+              <div class="name">{{item?.full_name}}</div>
+              <div class="phone">{{item?.phone_number}}</div>
+              <div class="created_at">date: {{item?.created_at | getTimeAgo}}</div>
+              <div class="date_expired">{{item?.date_expired?.toDate() | date:'dd/MM/yyyy'}}</div>
+            }
   
           </div>
         </mat-tab-nav-panel>
