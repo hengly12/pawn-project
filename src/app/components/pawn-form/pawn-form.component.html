@@ -1,7 +1,14 @@
 <div class="pawn-content-flex">
   <div class="btn-create-form">
     <h2>ចុះបញ្ជីបញ្ចាំ</h2>
-    <button type="submit" (click)="onSubmit()" [disabled]="pawnForm.invalid">Save Form <mat-icon>save_alt</mat-icon></button>
+    <div class="btn-button-form">
+    @if(data()?.key){
+      <button class="btn-delete" (click)="deleteItem(data())">Delete <mat-icon>delete</mat-icon></button>
+      <button class="btn-edit" type="submit" (click)="onSubmit()">Edit Form <mat-icon>edit</mat-icon></button>
+    }@else {
+      <button class="btn-save" type="submit" (click)="onSubmit()">Save Form <mat-icon>save_alt</mat-icon></button>
+    }
+  </div>
   </div>
 
   <div class="layout-form">
@@ -11,30 +18,30 @@
   <h1>ទម្រង់បញ្ចាំទ្រព្យ</h1>
   <form [formGroup]="pawnForm" >
     <div class="form-grid">
-      <label>Customer Information</label>
+      <label><h3>ព័ត៌មានអតិថិជន</h3></label>
       <div class="form-customer">
       <div>
         <!-- <mat-form-field appearance="outline" class="example-full-width">
           <mat-label>Full Name</mat-label> -->
-          <label>Full Name</label>
-          <input class="custome-input" placeholder="First name, Last name" formControlName="full_name">
+          
+          <label>ឈ្មោះ :<input class="custome-input" placeholder="គោត្តនាម និងនាម។" formControlName="full_name"></label>
           <div class="input-error" *ngIf="
           pawnForm.controls['full_name'].hasError('required') && 
           pawnForm.controls['full_name'].touched">
-            Please enter your name.
+            សូមបញ្ចូលឈ្មោះ គោត្តនាម និងនាម។
         </div>
       </div>
       <div>
         
         <!-- <mat-form-field appearance="outline">
           <mat-label>ភេទ</mat-label> -->
-          <label>Gender</label>
-          <input class="custome-input" type="text" aria-label="Text" placeholder="Please select your gender." matInput formControlName="gender" 
-              [matAutocomplete]="AutoGender" />
+          
+          <label>ភេទ :<input class="custome-input" type="text" aria-label="Text" placeholder="ប្រុស , ស្រី , ដទៃទៀត" matInput formControlName="gender" 
+              [matAutocomplete]="AutoGender" /></label>
               <div class="input-error" *ngIf="
               pawnForm.controls['gender'].hasError('required') && 
               pawnForm.controls['gender'].touched">
-             Please select your gender.
+             សូមជ្រើសរើសភេទ។
               </div>
           <mat-autocomplete #AutoGender="matAutocomplete" [displayWith]="displayGender" >
             
@@ -59,12 +66,12 @@
       <div>
         <!-- <mat-form-field appearance="outline" class="example-full-width">
           <mat-label>Phone Number</mat-label> -->
-          <label>Phone Number</label>
-          <input class="custome-input" matInput placeholder="Please enter a valid phone number." formControlName="phone_number" type="number" >
+          
+          <label>លេខទូរសព្ទ :<input class="custome-input" matInput placeholder="លេខទូរសព្ទ" formControlName="phone_number" type="number" ></label>
           <div class="input-error" *ngIf="
             pawnForm.controls['phone_number'].hasError('required') && 
             pawnForm.controls['phone_number'].touched">
-            Please enter a valid phone number.
+            សូមបញ្ចូលលេខទូរសព្ទ។
           </div>
           <!-- </mat-error>
         </mat-form-field> -->
@@ -73,12 +80,12 @@
       <div>
         <!-- <mat-form-field appearance="outline" class="example-full-width">
           <mat-label>ID Card Number</mat-label> -->
-          <label>ID Card Number</label>
-          <input class="custome-input" matInput placeholder="Please enter a valid ID Card number." formControlName="id_card" type="number" >
+          
+          <label>លេខអត្តសញ្ញាណប័ណ្ណ :<input class="custome-input" matInput placeholder="លេខអត្តសញ្ញាណប័ណ្ណ" formControlName="id_card" type="number" ></label>
           <div class="input-error" *ngIf="
           pawnForm.controls['id_card'].hasError('required') && 
           pawnForm.controls['id_card'].touched">
-            Please enter a valid ID Card number.
+            សូមបញ្ចូលលេខអត្តសញ្ញាណប័ណ្ណ។
           </div>
           <!-- </mat-error>
         </mat-form-field> -->
@@ -86,21 +93,25 @@
 
       <div>
         <!-- <mat-form-field appearance="outline" class="example-full-width"> -->
-          <label>Address (Optional)</label>
-          <input class="custome-input" matInput placeholder="Enter Your Address" formControlName="address">
+          
+          <label>អាស័យដ្ថាន :<input class="custome-input" matInput placeholder="អាស័យដ្ថានបច្ចុប្បន្ន" formControlName="address"></label>
+          <div class="input-error" *ngIf="
+          pawnForm.controls['address'].hasError('required') && 
+          pawnForm.controls['address'].touched">
+            សូមបញ្ចូលអាស័យដ្ថានបច្ចុប្បន្ន។
+          </div>
         <!-- </mat-form-field> -->
       </div>
       
     </div>
 
-    <label>Pawn Item Information</label>
-    <div class="form-pawn">
-      <div>
+    <label><h3>ព័ត៌មានវត្ថុបញ្ចាំ</h3></label>
+    <div class="form-pawn"><div>
         <!-- <mat-form-field appearance="outline" class="example-full-width"> -->
-          <label>Pawn Item</label>
+          
 
-          <input class="custome-input" matInput placeholder="Please select or enter your pawn items." formControlName="pawn_type"
-          [matAutocomplete]="AutoItem" />
+          <label>វត្ថុបញ្ចាំ :<input class="custome-input" matInput placeholder="វត្ថុបញ្ចាំ" formControlName="pawn_type"
+          [matAutocomplete]="AutoItem" /></label>
       <mat-autocomplete #AutoItem="matAutocomplete" [displayWith]="displayItem" >
         
           @for(item of pawn_type(); track item){
@@ -114,7 +125,7 @@
           <div class="input-error" *ngIf="
           pawnForm.controls['pawn_type'].hasError('required') && 
           pawnForm.controls['pawn_type'].touched">
-            Please select or enter your pawn items.
+            សូមបញ្ចូលវត្ថុបញ្ចាំរបស់អ្នក។
           </div>
         <!-- </mat-error>
       </mat-form-field> -->
@@ -123,14 +134,14 @@
         <div>
           <!-- <mat-form-field appearance="outline" class="example-full-width">
             <mat-label>Plate Number</mat-label> -->
-            <label>Plate Number</label>
-            <input class="custome-input" matInput placeholder="Please enter your car plate number." formControlName="plate_number" type="text" >
+            
+            <label>ស្លាកលេខ :<input class="custome-input" matInput placeholder="ស្លាកលេខឡាន ឬក៏ម៉ូតូ" formControlName="plate_number" type="text" ></label>
             <!-- <mat-error *ngIf="
               pawnForm.controls['plateNum'].hasError('required')"> -->
               <div class="input-error" *ngIf="
           pawnForm.controls['plate_number'].hasError('required') && 
           pawnForm.controls['plate_number'].touched">
-              Please enter your car plate number.
+              សូមបញ្ចូលស្លាកលេខឡាន ឬក៏ម៉ូតូ។
               </div>
             <!-- </mat-error>
           </mat-form-field> -->
@@ -138,14 +149,14 @@
         <div>
         <!-- <mat-form-field appearance="outline" class="example-full-width">
           <mat-label>Brand Name</mat-label> -->
-          <label>Brand Name</label>
-            <input class="custome-input" matInput placeholder="Please enter car brand name." formControlName="brand_name" type="text" >
+          
+          <label>ឈ្មោះក្រុម​ហ៊ុនវត្ថុបញ្ចាំ :<input class="custome-input" matInput placeholder="ឈ្មោះក្រុម​ហ៊ុនវត្ថុបញ្ចាំ" formControlName="brand_name" type="text" ></label>
             <!-- <mat-error *ngIf="
               pawnForm.controls['brandName'].hasError('required')"> -->
               <div class="input-error" *ngIf="
           pawnForm.controls['brand_name'].hasError('required') && 
           pawnForm.controls['brand_name'].touched">
-              Please enter car brand name.
+              សូមបញ្ចូលឈ្មោះក្រុម​ហ៊ុនវត្ថុបញ្ចាំ។
               </div>
             <!-- </mat-error>
           </mat-form-field> -->
@@ -156,14 +167,14 @@
         <div>
           <!-- <mat-form-field appearance="outline" class="example-full-width">
             <mat-label>Phone ID</mat-label> -->
-            <label>Phone ID</label>
-            <input class="custome-input" matInput placeholder="Please enter phone ID number" formControlName="type_phone_id" type="text" >
+            
+            <label>លេខកូដទូរសព្ទ :<input class="custome-input" matInput placeholder="លេខកូដទូរសព្ទ" formControlName="type_phone_id" type="text" ></label>
             <!-- <mat-error *ngIf="
               pawnForm.controls['phoneId'].hasError('required')"> -->
               <div class="input-error" *ngIf="
           pawnForm.controls['type_phone_id'].hasError('required') && 
           pawnForm.controls['type_phone_id'].touched">
-              Please enter phone ID.
+              សូមបញ្ចូលលេខកូដទូរសព្ទ។
               </div>
             <!-- </mat-error>
           </mat-form-field> -->
@@ -171,14 +182,14 @@
         <div>
           <!-- <mat-form-field appearance="outline" class="example-full-width">
             <mat-label>Brand Name</mat-label> -->
-            <label>Brand Name</label>
-            <input class="custome-input" matInput placeholder="Please enter phone brand name." formControlName="brand_name" type="text" >
+            
+            <label>ឈ្មោះក្រុម​ហ៊ុនវត្ថុបញ្ចាំ :<input class="custome-input" matInput placeholder="ឈ្មោះក្រុម​ហ៊ុនវត្ថុបញ្ចាំ" formControlName="brand_name" type="text" ></label>
             <!-- <mat-error *ngIf="
               pawnForm.controls['brandName'].hasError('required')"> -->
               <div class="input-error" *ngIf="
           pawnForm.controls['brand_name'].hasError('required') && 
           pawnForm.controls['brand_name'].touched">
-              Please enter phone brand name.
+              សូមបញ្ចូលឈ្មោះក្រុម​ហ៊ុនវត្ថុបញ្ចាំរបស់អ្នក។
               </div>
             <!-- </mat-error>
           </mat-form-field> -->
@@ -188,14 +199,14 @@
         <div>
           <!-- <mat-form-field appearance="outline" class="example-full-width">
             <mat-label>Plate Number</mat-label> -->
-            <label>Plate Number</label>
-            <input class="custome-input" matInput placeholder="Please enter your motor plate number." formControlName="plate_number" type="text" >
+            
+            <label>ស្លាកលេខ :<input class="custome-input" matInput placeholder="ស្លាកលេខឡាន ឬក៏ម៉ូតូ" formControlName="plate_number" type="text" ></label>
             <!-- <mat-error *ngIf="
               pawnForm.controls['plateNum'].hasError('required')"> -->
               <div class="input-error" *ngIf="
           pawnForm.controls['plate_number'].hasError('required') && 
           pawnForm.controls['plate_number'].touched">
-              Please enter your motor plate number.
+              សូមបញ្ចូលស្លាកលេខឡាន ឬក៏ម៉ូតូ។
               </div>
             <!-- </mat-error>
           </mat-form-field> -->
@@ -203,14 +214,14 @@
         <div>
           <!-- <mat-form-field appearance="outline" class="example-full-width">
             <mat-label>Brand Name</mat-label> -->
-            <label>Brand Name</label>
-              <input class="custome-input" matInput placeholder="Please enter motor brand name." formControlName="brand_name" type="text" >
+           
+           <label>ឈ្មោះក្រុម​ហ៊ុនវត្ថុបញ្ចាំ :<input class="custome-input" matInput placeholder="ឈ្មោះក្រុម​ហ៊ុនវត្ថុបញ្ចាំ" formControlName="brand_name" type="text" ></label>
               <!-- <mat-error *ngIf="
                 pawnForm.controls['brandName'].hasError('required')"> -->
                 <div class="input-error" *ngIf="
           pawnForm.controls['brand_name'].hasError('required') && 
           pawnForm.controls['brand_name'].touched">
-                Please enter motor brand name.
+                សូមបញ្ចូលឈ្មោះក្រុម​ហ៊ុនវត្ថុបញ្ចាំ។
                 </div>
               <!-- </mat-error>
             </mat-form-field> -->
@@ -220,14 +231,14 @@
         <div>
           <!-- <mat-form-field appearance="outline" class="example-full-width">
             <mat-label>Type Of Jewelry</mat-label> -->
-            <label>Type Of Jewelry</label>
-            <input class="custome-input" matInput placeholder="Please enter type of jewelry." formControlName="type_jewelry_name" type="text" >
+            
+            <label>ប្រភេទអលង្ការ(ខ្សែក, ក្រវិល, ចិញ្ចៀន...) :<input class="custome-input" matInput placeholder="ប្រភេទអលង្ការបញ្ចាំ" formControlName="type_jewelry_name" type="text" ></label>
             <!-- <mat-error *ngIf="
               pawnForm.controls['jewelry'].hasError('required')"> -->
               <div class="input-error" *ngIf="
           pawnForm.controls['type_jewelry_name'].hasError('required') && 
           pawnForm.controls['type_jewelry_name'].touched">
-              Please enter type of jewelry.
+              សូមបញ្ចូលប្រភេទអលង្ការបញ្ចាំ។
               </div>
             <!-- </mat-error>
           </mat-form-field> -->
@@ -235,8 +246,13 @@
         <div>
           <!-- <mat-form-field appearance="outline" class="example-full-width">
             <mat-label>Brand Name (Optional)</mat-label> -->
-            <label> Weight Of Gold</label>
-            <input class="custome-input" matInput placeholder="Please enter weight of gold." formControlName="gold_weight" type="text">
+            
+            <label>ទម្ងន់អលង្ការ :<input class="custome-input" matInput placeholder="ជី , អោន , តម្លឹង , គីឡូ" formControlName="gold_weight" type="text"></label>
+            <div class="input-error" *ngIf="
+          pawnForm.controls['gold_weight'].hasError('required') && 
+          pawnForm.controls['gold_weight'].touched">
+              សូមបញ្ចូលទម្ងន់អលង្ការបញ្ចាំ។
+              </div>
           <!-- </mat-form-field> -->
         </div>
       }@else if(seleted()?.key == 4){
@@ -245,14 +261,14 @@
         <div>
           <!-- <mat-form-field appearance="outline" class="example-full-width">
             <mat-label>Pawn Item</mat-label> -->
-            <label>Type Of Item</label>
-            <input class="custome-input" matInput placeholder="Please enter type of pawn item." formControlName="others" type="text" >
+            
+            <label>ប្រភេទវត្ថុបញ្ចាំ :<input class="custome-input" matInput placeholder="ប្រភេទវត្ថុបញ្ចាំ" formControlName="others" type="text" ></label>
             <!-- <mat-error *ngIf="
               pawnForm.controls['others'].hasError('required')"> -->
               <div class="input-error" *ngIf="
           pawnForm.controls['others'].hasError('required') && 
           pawnForm.controls['others'].touched">
-              Please enter type of pawn item.
+              សូមបញ្ចូលប្រភេទវត្ថុបញ្ចាំ។
               </div>
             <!-- </mat-error>
           </mat-form-field> -->
@@ -263,14 +279,14 @@
       
         <!-- <mat-form-field appearance="outline" class="example-full-width">
           <mat-label>Pawn Price</mat-label> -->
-          <label>Pawn Price</label>
-          <input class="custome-input" matInput placeholder="Please enter pawn price." formControlName="price_pawn" type="number" >
+          
+          <label>តម្លៃវត្ថុបញ្ចាំ :<input class="custome-input" matInput placeholder="តម្លៃវត្ថុបញ្ចាំ" formControlName="price_pawn" type="number" ></label>
           <!-- <mat-error *ngIf="
             pawnForm.controls['pawnPrice'].hasError('required')"> -->
             <div class="input-error" *ngIf="
           pawnForm.controls['price_pawn'].hasError('required') && 
           pawnForm.controls['price_pawn'].touched">
-            Please enter pawn price.
+            សូមបញ្ចូលតម្លៃវត្ថុបញ្ចាំ។
             </div>
           <!-- </mat-error>
         </mat-form-field> -->
@@ -279,18 +295,22 @@
       <div>
         <!-- <mat-form-field appearance="outline" class="example-full-width">
           <mat-label>Monthly Interest</mat-label> -->
-          <label>Monthly Interest</label>
-          <input class="custome-input" matInput placeholder="Please enter monthly interest." formControlName="price_interest" type="number" >
+          
+          <label>តម្លៃការប្រាក់ប្រចាំខែ :<input class="custome-input" matInput placeholder="តម្លៃការប្រាក់ប្រចាំខែ" formControlName="price_interest" type="number" ></label>
           <!-- <mat-error *ngIf="
             pawnForm.controls['monthlyInterest'].hasError('required')"> -->
             <div class="input-error" *ngIf="
           pawnForm.controls['price_interest'].hasError('required') && 
           pawnForm.controls['price_interest'].touched">
-            Please enter monthly interest.
+           សូមបញ្ចូលតម្លៃការប្រាក់ប្រចាំខែ។
             </div>
           <!-- </mat-error>
         </mat-form-field> -->
       </div>
+
+      <div >
+          <label>ព័ត៌មានបន្ថែមអំពីវត្ថុបញ្ចាំ :<textarea class="description-form" matInput placeholder="សូមបញ្ចូលព័ត៌មានបន្ថែមអំពីវត្ថុបញ្ចាំ" formControlName="description"></textarea></label>
+        </div>
 
       <div class="date-picker">
 
@@ -305,26 +325,17 @@
           <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
           <mat-datepicker #picker1></mat-datepicker>
         </mat-form-field> -->
-
-        <div class="description-form">
-          <mat-form-field appearance="outline">
-            <mat-label>Description (Optional)</mat-label>
-            <textarea matInput placeholder="Write More Info About Item" formControlName="description"></textarea>
-          </mat-form-field>
-          </div>
     
-        <mat-form-field appearance="outline">
-          <mat-label>Date Expired</mat-label>
-          <input class="custome-input" matInput [matDatepicker]="picker2" formControlName="date_expired" date='medium' placeholder="MM/DD/YYYY" >
+        
+          
+          <label>ថ្ងៃផុតកំណត់ :<input class="custome-input-date-expire" matInput [matDatepicker]="picker2" formControlName="date_expired" date='medium' placeholder="ថ្ងៃ - ខែ - ឆ្នាំ" ></label>
           <div class="input-error" *ngIf="
           pawnForm.controls['date_expired'].hasError('required') && 
           pawnForm.controls['date_expired'].touched">
-          Please pick date expire.
+          *
           </div>
           <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
           <mat-datepicker #picker2></mat-datepicker>
-        </mat-form-field>
-
       </div>
 
     </div>

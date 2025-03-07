@@ -45,7 +45,7 @@ export class PawnStore {
 
   async getCustomer(key: string) {
     return pushToObject(
-      await getDoc(doc(this.ds.customerRef(), key))
+      await getDoc(doc(this.ds.customerRef(), key)),
     );
   }
 

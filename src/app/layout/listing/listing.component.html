@@ -6,7 +6,7 @@
           <input class="search-box" type="text" placeholder="Search Form Data" name="q" >
           <button class="search-icon" type="submit"><mat-icon>search</mat-icon></button>
         </nav>
-        <button class="btn-create-form" mat-flat-button> Create <mat-icon color="primary">add_box</mat-icon></button>
+        <button class="btn-create-form" mat-flat-button [routerLink]="['/home/' + param() + '/listing/create-form/na']"> Create <mat-icon color="primary">add_box</mat-icon></button>
         <!-- <i class="fa-regular fa-square-plus fa-sm" style="color: #74C0FC;width: 50%;"></i> -->
   
         <!-- <div class="link-header">
@@ -45,10 +45,19 @@
           <div class="listing">
 
             @for(item of data(); track item?.key){
-              <div class="name">{{item?.full_name}}</div>
-              <div class="phone">{{item?.phone_number}}</div>
-              <div class="created_at">date: {{item?.created_at | getTimeAgo}}</div>
-              <div class="date_expired">{{item?.date_expired?.toDate() | date:'dd/MM/yyyy'}}</div>
+            <div class="customer_info" [routerLink]="['/home/' + param() + '/listing/create-form/' + item?.key]" routerLinkActive="active">
+              <div class="profile-image">
+                <img [src]="auth.profile?.photoFile || 'assets/images/customer-image.jpg'" alt="Profile Icon" />
+              </div>
+           
+              <div class="listing_info">
+              <div><h4 class="name">Name: {{item?.full_name}}</h4></div>
+              <div class="phone"> <h5>Phone: {{item?.phone_number}}</h5></div>
+              <div class="pawn_type"> <h5>Pawn Item: {{item?.pawn_type?.text}}</h5></div>
+              <div class="created_at"> <h5>Date Created: {{item?.created_at | getTimeAgo}}</h5></div>
+              <div class="date_expired"> <h5>Date Expired: {{item?.date_expired?.toDate() | date:'dd/MM/yyyy'}}</h5></div>
+            </div>
+          </div>
             }
   
           </div>
@@ -56,9 +65,9 @@
       
   </div>
   
-  <div class="create-form"> 
+  <!-- <div class="create-form"> 
     <app-pawn-form></app-pawn-form>
-  </div>
+  </div> -->
   
   <div class="content">
       <router-outlet></router-outlet>

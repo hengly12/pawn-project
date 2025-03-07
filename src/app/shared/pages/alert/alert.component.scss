@@ -45,3 +45,8 @@
 .yes-btn:hover{
     background-color: #b53030d4
 }
+
+::ng-deep .cdk-overlay-backdrop-showing {
+    opacity: 1;
+    position: fixed;
+}

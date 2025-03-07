@@ -48,14 +48,16 @@ export const routes: Routes = [
           {
             path: ':statusKey/listing',
             component: ListingComponent,
-           
+            children:[
+              { path: '', redirectTo: 'create-form', pathMatch: 'full' },
+              { path: 'create-form/:id', component:PawnFormComponent},
+            ]
           },
-        { path: 'create-form', component:PawnFormComponent},
+
         ] 
       },
       // {path:'home',redirectTo:'home/create-form'}
       { path:'report',component:ReportComponent },
-      { path:'pawn-form',component:PawnFormComponent}
       
     ],
     

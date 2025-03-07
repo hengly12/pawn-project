@@ -5,7 +5,6 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTabsModule } from '@angular/material/tabs';
 import { RouterOutlet, RouterLink, RouterLinkActive, ActivatedRoute } from '@angular/router';
-import { PawnFormComponent } from '../../components/pawn-form/pawn-form.component';
 import { Subscription } from 'rxjs';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
@@ -24,7 +23,6 @@ import { DatePipe } from '@angular/common';
     MatButtonModule,
     RouterOutlet,
     MatTabsModule,
-    PawnFormComponent,
     RouterLink,
     RouterLinkActive,
     MatCardModule,
@@ -43,6 +41,7 @@ export class ListingComponent {
 
   routeUnSubscribe = signal<any>(Subscription);
   data = signal<any>(null);
+  param = signal<any>(null);
 
   constructor(
     private dialog: MatDialog,
@@ -55,6 +54,8 @@ export class ListingComponent {
     this.routeUnSubscribe.set(
       this.route.params.subscribe((param) => {
         let paramKey = param['statusKey'];
+        console.log(paramKey)
+        this.param.set(paramKey)
         let statusKey = null;
         if(paramKey == 'active'){
           statusKey = 1;

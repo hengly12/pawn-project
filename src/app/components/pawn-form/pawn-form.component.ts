@@ -1,4 +1,4 @@
-import { serverTimestamp } from '@angular/fire/firestore';
+import { docData, serverTimestamp } from '@angular/fire/firestore';
 import { NgFor, NgIf } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -17,6 +17,8 @@ import { mapUser } from '../../shared/services/mapping.service';
 import { AuthStore } from '../../auth/auth.store';
 import { PawnStore } from '../../shared/store/pawn.store';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import { Subscription } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
 
 interface GenderOption {
   key: number;
@@ -57,13 +59,16 @@ export class PawnFormComponent {
   seleted = signal<any>(null);
   text = signal<string>('');
   loading = signal<boolean>(false);
+  routeUnSubscribe = signal<any>(Subscription);
+  data = signal<any>(null);
   
   constructor(
     private ds: DataService, 
     private fb: FormBuilder,
     private auth: AuthStore,
     private store: PawnStore,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private route: ActivatedRoute
   ){}
  
 
@@ -77,7 +82,7 @@ export class PawnFormComponent {
     gender: new FormControl<GenderOption | null>(null, Validators.required),
     phone_number: new FormControl<number | null>(null,[Validators.required, Validators.pattern('^[0-9]*$')]),
     id_card: new FormControl<number | null>(null, [Validators.required, Validators.pattern('^[0-9]*$')]),
-    address: new FormControl(''),
+    address: new FormControl<any>(null, [Validators.required]),
     pawn_type: new FormControl<any>(null, [Validators.required]),
     description: new FormControl(''),
     // dateCreated: new FormControl<Date | null>(null, Validators.required),
@@ -122,6 +127,45 @@ export class PawnFormComponent {
   
 
   ngOnInit(){
+    
+    this.routeUnSubscribe.set(
+        this.route.params.subscribe(async (param) => {
+          let paramKey = param['id'];
+          const getData = await this.store.getCustomer(paramKey);
+          this.data.set(getData);
+          if(this.data()){
+            this.pawnForm.patchValue({
+              full_name: getData?.full_name,
+              phone_number: getData?.phone_number,
+              gender: getData?.gender,
+              id_card: getData?.id_card,
+              address: getData?.address,
+
+              pawn_type: getData?.pawn_type,
+
+              type_phone: getData?.type_phone,
+              type_phone_id: getData?.type_phone_id,
+              type_car: getData?.type_car,
+              type_motor: getData?.type_motor,
+              type_jewelry_name: getData?.type_jewelry_name,
+              gold_weight: getData?.gold_weight,
+              others: getData?.others,
+
+              plate_number: getData?.plate_number,
+              brand_name: getData?.brand_name,
+              price_pawn: getData?.price_pawn,
+              price_interest: getData?.price_interest,
+              description: getData?. description,
+              date_expired: getData?.date_expired,
+              photo: getData?.photo,
+          
+            })
+          }
+        }
+      )
+    )
+
+ 
   }
 
   selectItem(item: any){
@@ -155,6 +199,10 @@ export class PawnFormComponent {
     this.imagePreview = []; // Clear image previews
   }
 
+  deleteItem(data: any){
+    this.store.deleteCustomer(data?.key)
+  }
+
   onSubmit() {
     // if(this.pawnForm.invalid){
     //   alert('សូមបញ្ចូលព័ត៍មាន');
@@ -167,26 +215,33 @@ export class PawnFormComponent {
       gender,
       id_card,
       address,
+
       pawn_type,
-      description,
-      date_expired,
-      photo,
       type_phone,
       type_phone_id,
       type_car,
       type_motor,
       type_jewelry_name,
+      gold_weight,
       others,
+
       plate_number,
       brand_name,
-      gold_weight,
       price_pawn,
       price_interest,
+      description,
+      date_expired,
+      photo,
+
+      
+      
     } = this.pawnForm.getRawValue();
     const toDay = new Date();
+
+    
     
     const data: any = {
-      key: this.ds.createKey(),
+      key: this.data()?.key || this.ds.createKey(),
       
       created_at: serverTimestamp() ,
       created_by: mapUser(this.auth?.profile),
@@ -199,25 +254,90 @@ export class PawnFormComponent {
 
       full_name: full_name,
       phone_number: phone_number,
-      pawn_type: pawn_type,
       gender: gender,
       id_card: id_card,
       address: address,
-      description: description,
-      date_expired: date_expired,
-      photo: photo,
+
+      pawn_type: pawn_type,
+      
       type_phone: type_phone,
       type_phone_id:type_phone_id,
       type_car: type_car,
       type_motor: type_motor,
       type_jewelry_name:type_jewelry_name,
+      gold_weight: gold_weight,
       others: others,
+
       plate_number: plate_number,
       brand_name: brand_name,
-      gold_weight: gold_weight,
       price_pawn: price_pawn,
       price_interest: price_interest,
+      description: description,
+      date_expired: date_expired,
+      photo: photo,
     }
+
+//     let dataToSubmit: any = {
+//     };
+
+// if (pawn_type === 'Phone') {
+//       dataToSubmit = { ...dataToSubmit, 
+//         type_phone, 
+//         type_phone_id,
+//         brand_name,
+//         price_pawn,
+//         price_interest,
+//         description,
+//         date_expired,
+//         photo,};
+
+//     } else if (pawn_type === 'Car') {
+//       dataToSubmit = { ...dataToSubmit, 
+//         type_car, 
+//         plate_number, 
+//         brand_name,
+//         price_pawn,
+//         price_interest,
+//         description,
+//         date_expired,
+//         photo, };
+
+//     } else if (pawn_type === 'Motor') {
+//       dataToSubmit = { ...dataToSubmit, 
+//         type_motor, 
+//         plate_number, 
+//         brand_name,
+//         price_pawn,
+//         price_interest,
+//         description,
+//         date_expired,
+//         photo, };
+
+//     } else if (pawn_type === 'Jewelry') {
+//       dataToSubmit = { ...dataToSubmit, 
+//         type_jewelry_name, 
+//         gold_weight,
+//         price_pawn,
+//         price_interest,
+//         description,
+//         date_expired,
+//         photo, };
+
+//     } else if (pawn_type === 'Others') {
+//       dataToSubmit = { ...dataToSubmit, 
+//         others,
+//         price_pawn,
+//         price_interest,
+//         description,
+//         date_expired,
+//         photo, };
+
+//     } else {
+//       console.error('Invalid pawn_type selected.');
+//       this.loading.set(false);
+//       return;
+//     }
+
     console.log(data, 'data')
 
     this.store.createCustomer(data, (success, result) => {

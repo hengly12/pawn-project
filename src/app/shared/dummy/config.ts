@@ -57,9 +57,9 @@ export const NOTIFY_OBJ = {
 };
 
 export const GENDER_DATA = [
-  { key: 0, text: 'ស្រី', en_name: 'Female' },
-  { key: 1, text: 'ប្រុស', en_name: 'Male' },
-  { key: 2, text: 'ផ្សេងៗ', en_name: 'Other' },
+  { key: 0, text: 'ប្រុស', en_name: 'Male' },
+  { key: 1, text: 'ស្រី', en_name: 'Female' },
+  { key: 2, text: 'ដទៃទៀត', en_name: 'Other' },
 ];
 
 export const ITEM_DATA = [

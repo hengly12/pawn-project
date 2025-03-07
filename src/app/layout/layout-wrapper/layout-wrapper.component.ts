@@ -25,9 +25,6 @@ import { MatIcon, MatIconModule } from '@angular/material/icon';
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class LayoutWrapperComponent {
-  testItems = signal<any[]>([
-    {picture:"",id:"",name:"",phone:"",item:"",gender:""}
-  ])
   showFiller = false;
   tabs = signal<any>([
     { key: 'active', label: 'កំពុងបញ្ចាំ'},
