@@ -23,6 +23,8 @@ export interface IPAWNSHOP {
     type_car?: any;
     type_motor?:any;
 
+    others?:any;
+
     plate_car?: any;
     plate_motor?: any;
 

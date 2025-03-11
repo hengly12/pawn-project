@@ -339,25 +339,23 @@
       </div>
 
     </div>
-    <div class="image-upload">
-      <label>Upload Images</label>
-      
-      <!-- Upload Button to Trigger File Input -->
-      <button type="button" (click)="fileInput.click()">Select Images <mat-icon>image</mat-icon></button>
-      
-      <!-- Hidden File Input -->
-      <input type="file" #fileInput (change)="onImageUpload($event)"  accept="image/*" multiple style="display:none;" >
-      
-      <!-- Image Previews -->
-      <div class="image-preview" *ngIf="imagePreview.length > 0">
-        <div *ngFor="let image of imagePreview">
-          <img [src]="image" alt="Image Preview" class="preview-image">
-        </div>
+    <div class="upload-image" (drop)="onFileDrop($event)" (dragover)="onDragOver($event)" [ngClass]="{'drag-over':dragOver}">
+      <div class="image" *ngIf="upload">
+          <input #inputFile type="file" accept="image/png, image/gif, image/jpeg" (change)="selectFile($event)">
       </div>
-    
-      <!-- Clear Button -->
-      <button *ngIf="imagePreview.length > 0" (click)="clearPreviews()">Clear Previews</button>
-    </div>
+      <div class="icon" *ngIf="upload">
+          <!-- <ion-icon class="upla" (click)="inputFile.nativeElement.click()" name="cloud-upload-outline"></ion-icon> -->
+          <p (click)="inputFile.nativeElement.click()">ជ្រើសរើសរូបថតផ្ទៃខាងមុខ ឬទម្លាក់ឯកសារនៅទីនេះ</p>
+          <button class="btn" matRipple (click)="inputFile.nativeElement.click()">
+              <!-- <ion-icon class="icon-3" name="image-outline"></ion-icon> -->
+          </button>
+      </div>
+      <div class="image-1" *ngIf="image">
+          <img class="image-uploaded" [src]="preview" alt="" >
+          <mat-icon class="close" matRipple (click)="closeImage()">close</mat-icon>
+      </div>
+  </div>
+
   </div>
   </form>
 </div>

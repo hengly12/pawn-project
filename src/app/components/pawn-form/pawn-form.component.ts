@@ -1,7 +1,7 @@
 import { docData, serverTimestamp } from '@angular/fire/firestore';
-import { NgFor, NgIf } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, signal } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { NgClass, NgFor, NgIf } from '@angular/common';
+import { ChangeDetectionStrategy, Component, ElementRef, OnInit, signal, ViewChild } from '@angular/core';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { provideNativeDateAdapter} from '@angular/material/core';
@@ -19,6 +19,7 @@ import { PawnStore } from '../../shared/store/pawn.store';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import { Subscription } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
+import { FireStorageService } from '../../shared/services/fire-storage.service';
 
 interface GenderOption {
   key: number;
@@ -39,7 +40,8 @@ interface GenderOption {
     MatDatepickerModule,
     MatSelectModule,
     MatIcon,
-    MatAutocompleteModule
+    MatAutocompleteModule,
+    NgClass,
 ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './pawn-form.component.html',
@@ -61,6 +63,17 @@ export class PawnFormComponent {
   loading = signal<boolean>(false);
   routeUnSubscribe = signal<any>(Subscription);
   data = signal<any>(null);
+
+  message: string = '';
+  preview: string = '';
+  progress: number = 0;
+  selectedFiles: any;
+  currentFile: any;
+  upload = true;
+  image = false;
+  dragOver:boolean = false;
+
+  @ViewChild('inputFile') inputFile!: ElementRef;
   
   constructor(
     private ds: DataService, 
@@ -68,7 +81,8 @@ export class PawnFormComponent {
     private auth: AuthStore,
     private store: PawnStore,
     private snackBar: MatSnackBar,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private storage: FireStorageService
   ){}
  
 
@@ -100,7 +114,7 @@ export class PawnFormComponent {
     price_pawn: new FormControl<number | null>(null, [Validators.required, Validators.pattern('^[0-9]*$')]),
     price_interest: new FormControl<number | null>(null, [Validators.required, Validators.pattern('^[0-9]*$')]),
 
-
+    file: new FormControl<any>(null),
   // pawnForm = new FormGroup({
   //   fullName: new FormControl<any>(null, [Validators.required]),
   //   gender: new FormControl<GenderOption | null>(null, Validators.required),
@@ -143,13 +157,13 @@ export class PawnFormComponent {
 
               pawn_type: getData?.pawn_type,
 
-              type_phone: getData?.type_phone,
-              type_phone_id: getData?.type_phone_id,
-              type_car: getData?.type_car,
-              type_motor: getData?.type_motor,
-              type_jewelry_name: getData?.type_jewelry_name,
-              gold_weight: getData?.gold_weight,
-              others: getData?.others,
+              type_phone: this.seleted(),
+              type_phone_id: this.seleted(),
+              type_car: this.seleted(),
+              type_motor: this.seleted(),
+              type_jewelry_name: this.seleted(),
+              gold_weight: this.seleted(),
+              others: this.seleted(),
 
               plate_number: getData?.plate_number,
               brand_name: getData?.brand_name,
@@ -157,10 +171,24 @@ export class PawnFormComponent {
               price_interest: getData?.price_interest,
               description: getData?. description,
               date_expired: getData?.date_expired,
-              photo: getData?.photo,
-          
+
+              
             })
           }
+          if (this.data()?.photo) {
+            const currentValidators = this.pawnForm.controls.file.validator
+              ? this.pawnForm.controls.file.validator({} as AbstractControl)?.['validatorFn'] || []
+              : [];
+            const filteredValidators = currentValidators.filter(
+              (v: any) => v !== Validators.required
+            );
+            this.pawnForm.controls.file.setValidators(filteredValidators);
+            this.pawnForm.controls.file.updateValueAndValidity();
+          }
+          
+          this.preview = this.data()?.photo?.downloadUrl;
+          this.image = !!this.preview;
+          this.upload = !this.image;
         }
       )
     )
@@ -168,8 +196,80 @@ export class PawnFormComponent {
  
   }
 
+  onFileDrop(event: any): void {
+    event.preventDefSault();
+
+    this.selectedFiles = event?.dataTransfer?.files;
+    this.selectFile({ target: { files: this.selectedFiles } });
+    this.dragOver = false;
+  }
+
+  onDragOver(event: any): void {
+    event.preventDefault();
+    this.dragOver = event;
+  }
+
+  onDragLeave(event: any): void {
+    event.preventDefault();
+    this.dragOver = false; 
+  }
+
+  closeImage() {
+    this.image = false;
+    this.preview = '';
+    this.selectedFiles = null;
+    this.upload = true;
+  }
+
+  selectFile(event: any): void {
+    this.message = '';
+    this.preview = '';
+    this.progress = 0;
+    this.selectedFiles = event?.target?.files;
+
+    if (this.selectedFiles) {
+      const file: File | null = this.selectedFiles[0];
+
+      if (file) {
+        this.preview = '';
+        this.currentFile = file;
+
+        const reader = new FileReader();
+
+        reader.onload = (e: any) => {
+          this.preview = e.target.result;
+          if (this.preview != '') {
+            this.upload = false;
+            this.image = true;
+          }
+        };
+
+        reader.readAsDataURL(this.currentFile);
+        this.pawnForm.get('file')?.setValue(file);
+      }
+    }
+  }
+
+
   selectItem(item: any){
     this.seleted.set(item)
+    const weightControl = this.pawnForm.get("gold_weight");
+    const typePhoneIdControl = this.pawnForm.get("type_phone_id");
+    
+    if (item.key === 3) {
+      weightControl?.setValidators(Validators.required);
+      typePhoneIdControl?.clearValidators();
+    } else if (item.key === 1) {
+      typePhoneIdControl?.setValidators(Validators.required);
+      weightControl?.clearValidators();
+    } else {
+      weightControl?.clearValidators();
+      typePhoneIdControl?.clearValidators();
+    }
+    
+    weightControl?.updateValueAndValidity();
+    typePhoneIdControl?.updateValueAndValidity();
+    
   }
 
   displayGender = (item: any) => {
@@ -203,12 +303,24 @@ export class PawnFormComponent {
     this.store.deleteCustomer(data?.key)
   }
 
-  onSubmit() {
+  async onSubmit() {
     // if(this.pawnForm.invalid){
     //   alert('សូមបញ្ចូលព័ត៍មាន');
     //   return
     // }
+    
     this.loading.set(true);
+    let photo = null;
+    if (this.selectedFiles && this.selectedFiles.length > 0) {
+      photo = await this.storage.uploadSelectedFile(
+          this.selectedFiles[0],
+          'image-thumnail'
+      );
+    }else if(this.data()?.photo){
+      photo = this.data()?.photo;
+    }
+
+
     const {
       full_name,
       phone_number,
@@ -231,8 +343,6 @@ export class PawnFormComponent {
       price_interest,
       description,
       date_expired,
-      photo,
-
       
       
     } = this.pawnForm.getRawValue();
@@ -252,94 +362,93 @@ export class PawnFormComponent {
       keywords: generateKeywords([full_name]),
       isDeleted: false,
 
-      full_name: full_name,
-      phone_number: phone_number,
-      gender: gender,
-      id_card: id_card,
-      address: address,
+      full_name: full_name || null,
+      phone_number: phone_number || null,
+      gender: gender || null,
+      id_card: id_card || null,
+      address: address || null,
 
-      pawn_type: pawn_type,
+      pawn_type: pawn_type || null,
       
-      type_phone: type_phone,
-      type_phone_id:type_phone_id,
-      type_car: type_car,
-      type_motor: type_motor,
-      type_jewelry_name:type_jewelry_name,
-      gold_weight: gold_weight,
-      others: others,
+      type_phone: type_phone || null,
+      type_phone_id:type_phone_id || null,
+      type_motor: type_motor || null,
+      type_jewelry_name:type_jewelry_name || null,
+      gold_weight: gold_weight || null,
+      others: others || null,
 
-      plate_number: plate_number,
-      brand_name: brand_name,
-      price_pawn: price_pawn,
-      price_interest: price_interest,
-      description: description,
-      date_expired: date_expired,
+      plate_number: plate_number || null,
+      brand_name: brand_name || null,
+      price_pawn: price_pawn || null,
+      price_interest: price_interest || null,
+      description: description || null,
+      date_expired: date_expired || null,
       photo: photo,
     }
 
-//     let dataToSubmit: any = {
-//     };
+    let dataToSubmit: any = {
+    };
 
-// if (pawn_type === 'Phone') {
-//       dataToSubmit = { ...dataToSubmit, 
-//         type_phone, 
-//         type_phone_id,
-//         brand_name,
-//         price_pawn,
-//         price_interest,
-//         description,
-//         date_expired,
-//         photo,};
+if (pawn_type.text === 'Phone') {
+      dataToSubmit = { 
+        type_phone:this.seleted(),
+        type_phone_id,
+        brand_name,
+        price_pawn,
+        price_interest,
+        description,
+        date_expired,
+        photo,};
 
-//     } else if (pawn_type === 'Car') {
-//       dataToSubmit = { ...dataToSubmit, 
-//         type_car, 
-//         plate_number, 
-//         brand_name,
-//         price_pawn,
-//         price_interest,
-//         description,
-//         date_expired,
-//         photo, };
+    } else if (pawn_type.text === 'Car') {
+      dataToSubmit = {
+        type_car:this.seleted(), 
+        plate_number, 
+        brand_name,
+        price_pawn,
+        price_interest,
+        description,
+        date_expired,
+        photo, };
 
-//     } else if (pawn_type === 'Motor') {
-//       dataToSubmit = { ...dataToSubmit, 
-//         type_motor, 
-//         plate_number, 
-//         brand_name,
-//         price_pawn,
-//         price_interest,
-//         description,
-//         date_expired,
-//         photo, };
+    } else if (pawn_type.text === 'Motor') {
+      dataToSubmit = {
+        type_motor:this.seleted(), 
+        plate_number, 
+        brand_name,
+        price_pawn,
+        price_interest,
+        description,
+        date_expired,
+        photo, };
 
-//     } else if (pawn_type === 'Jewelry') {
-//       dataToSubmit = { ...dataToSubmit, 
-//         type_jewelry_name, 
-//         gold_weight,
-//         price_pawn,
-//         price_interest,
-//         description,
-//         date_expired,
-//         photo, };
+    } else if (pawn_type.text === 'Jewelry') {
+      dataToSubmit = {
+        type_jewelry_name:this.seleted(), 
+        gold_weight,
+        price_pawn,
+        price_interest,
+        description,
+        date_expired,
+        photo, };
 
-//     } else if (pawn_type === 'Others') {
-//       dataToSubmit = { ...dataToSubmit, 
-//         others,
-//         price_pawn,
-//         price_interest,
-//         description,
-//         date_expired,
-//         photo, };
+    } else if (pawn_type.text === 'Others') {
+      dataToSubmit = {
+        others:this.seleted(),
+        price_pawn,
+        price_interest,
+        description,
+        date_expired,
+        photo, };
 
-//     } else {
-//       console.error('Invalid pawn_type selected.');
-//       this.loading.set(false);
-//       return;
-//     }
+    } else {
+      console.error('Invalid pawn_type selected.');
+      this.loading.set(false);
+      return;
+    }
 
     console.log(data, 'data')
-
+    dataToSubmit.key = dataToSubmit?.key
     this.store.createCustomer(data, (success, result) => {
       if (success) {
         this.snackBar.open(`ការរក្សាទុកទិន្នន័យបានជោគជ័យ`, "ជោគជ័យ", { duration: 3000 });
