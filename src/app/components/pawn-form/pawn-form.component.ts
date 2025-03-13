@@ -32,7 +32,6 @@ interface GenderOption {
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    NgFor,
     NgIf,
     FormsModule,
     MatFormFieldModule,
@@ -139,8 +138,8 @@ export class PawnFormComponent {
 
   });
   
-
   ngOnInit(){
+  
     
     this.routeUnSubscribe.set(
         this.route.params.subscribe(async (param) => {
@@ -148,22 +147,22 @@ export class PawnFormComponent {
           const getData = await this.store.getCustomer(paramKey);
           this.data.set(getData);
           if(this.data()){
-            this.pawnForm.patchValue({
-              full_name: getData?.full_name,
-              phone_number: getData?.phone_number,
-              gender: getData?.gender,
-              id_card: getData?.id_card,
-              address: getData?.address,
+             this.pawnForm.patchValue({
+      full_name: getData?.full_name,
+      phone_number: getData?.phone_number,
+      gender: getData?.gender,
+      id_card: getData?.id_card,
+      address: getData?.address,
 
               pawn_type: getData?.pawn_type,
 
-              type_phone: this.seleted(),
-              type_phone_id: this.seleted(),
-              type_car: this.seleted(),
-              type_motor: this.seleted(),
-              type_jewelry_name: this.seleted(),
-              gold_weight: this.seleted(),
-              others: this.seleted(),
+              type_phone:getData?.type_phone,
+              type_phone_id:getData?.type_phone_id,
+              type_car:getData?.type_car,
+              type_motor:getData?.type_motor,
+              type_jewelry_name:getData?.type_jewelry_name,
+              gold_weight:getData?.gold_weight,
+              others:getData?.others,
 
               plate_number: getData?.plate_number,
               brand_name: getData?.brand_name,
@@ -308,6 +307,7 @@ export class PawnFormComponent {
     //   alert('សូមបញ្ចូលព័ត៍មាន');
     //   return
     // }
+
     
     this.loading.set(true);
     let photo = null;
@@ -348,8 +348,26 @@ export class PawnFormComponent {
     } = this.pawnForm.getRawValue();
     const toDay = new Date();
 
-    
-    
+    const info_customer: any ={
+      key: this.data()?.key || this.ds.createKey(),
+      created_at: serverTimestamp() ,
+      created_by: mapUser(this.auth?.profile),
+      updated_at: serverTimestamp(),
+      updated_by: mapUser(this.auth?.profile),
+      date_key: toDateKey(toDay),
+      status: STATUS_OBJ.ACTIVE,
+      keywords: generateKeywords([full_name]),
+      isDeleted: false,
+
+      full_name: full_name,
+      phone_number:phone_number,
+      gender:gender,
+      id_card:id_card,
+      address:address,
+
+      pawnKey: this.ds.createKey(),
+    }
+
     const data: any = {
       key: this.data()?.key || this.ds.createKey(),
       
@@ -362,102 +380,60 @@ export class PawnFormComponent {
       keywords: generateKeywords([full_name]),
       isDeleted: false,
 
-      full_name: full_name || null,
-      phone_number: phone_number || null,
-      gender: gender || null,
-      id_card: id_card || null,
-      address: address || null,
+      full_name: full_name,
+      phone_number:phone_number,
+      gender:gender,
+      id_card:id_card,
+      address:address,
 
-      pawn_type: pawn_type || null,
-      
-      type_phone: type_phone || null,
-      type_phone_id:type_phone_id || null,
-      type_motor: type_motor || null,
-      type_jewelry_name:type_jewelry_name || null,
-      gold_weight: gold_weight || null,
-      others: others || null,
-
-      plate_number: plate_number || null,
-      brand_name: brand_name || null,
-      price_pawn: price_pawn || null,
-      price_interest: price_interest || null,
-      description: description || null,
-      date_expired: date_expired || null,
+      pawn_type: pawn_type,
+      price_pawn: price_pawn,
+      price_interest: price_interest,
+      description: description,
+      date_expired: date_expired,
       photo: photo,
+      pawn_item_key: info_customer?.pawnKey, 
+
+
+      ...(this.seleted()?.key == 0 &&{  
+        plate_number: plate_number,
+        brand_name: brand_name,
+      }),
+      
+      ...(this.seleted()?.key == 1 &&{
+        type_phone_id:type_phone_id,
+        brand_name: brand_name,
+      }),
+
+      ...(this.seleted()?.key == 2 &&{
+        plate_number: plate_number,
+        brand_name: brand_name,
+      }),
+
+      ...(this.seleted()?.key == 3 &&{
+        type_jewelry_name:type_jewelry_name,
+        gold_weight: gold_weight,
+      }),
+
+      ...(this.seleted()?.key == 4 &&{
+        others: others,
+      }),
+
     }
 
-    let dataToSubmit: any = {
-    };
-
-if (pawn_type.text === 'Phone') {
-      dataToSubmit = { 
-        type_phone:this.seleted(),
-        type_phone_id,
-        brand_name,
-        price_pawn,
-        price_interest,
-        description,
-        date_expired,
-        photo,};
-
-    } else if (pawn_type.text === 'Car') {
-      dataToSubmit = {
-        type_car:this.seleted(), 
-        plate_number, 
-        brand_name,
-        price_pawn,
-        price_interest,
-        description,
-        date_expired,
-        photo, };
-
-    } else if (pawn_type.text === 'Motor') {
-      dataToSubmit = {
-        type_motor:this.seleted(), 
-        plate_number, 
-        brand_name,
-        price_pawn,
-        price_interest,
-        description,
-        date_expired,
-        photo, };
-
-    } else if (pawn_type.text === 'Jewelry') {
-      dataToSubmit = {
-        type_jewelry_name:this.seleted(), 
-        gold_weight,
-        price_pawn,
-        price_interest,
-        description,
-        date_expired,
-        photo, };
-
-    } else if (pawn_type.text === 'Others') {
-      dataToSubmit = {
-        others:this.seleted(),
-        price_pawn,
-        price_interest,
-        description,
-        date_expired,
-        photo, };
-
-    } else {
-      console.error('Invalid pawn_type selected.');
-      this.loading.set(false);
-      return;
-    }
 
     console.log(data, 'data')
-    dataToSubmit.key = dataToSubmit?.key
-    this.store.createCustomer(data, (success, result) => {
-      if (success) {
-        this.snackBar.open(`ការរក្សាទុកទិន្នន័យបានជោគជ័យ`, "ជោគជ័យ", { duration: 3000 });
+    console.log(info_customer, 'info')
+
+    try {
+      await this.store.createCustomer(data, info_customer);
+      this.snackBar.open(`ការរក្សាទុកទិន្នន័យបានជោគជ័យ`, "ជោគជ័យ", { duration: 3000 });
         this.loading.set(false);
-      } else {
-        this.snackBar.open(`ការរក្សាទុកទិន្នន័យបានបរាជ័យ`, "ជោគជ័យ", { duration: 3000 });
-        this.loading.set(false);
-      }
-    });
+    } catch (e) {
+      this.snackBar.open(`ការរក្សាទុកទិន្នន័យបានបរាជ័យ`, "ជោគជ័យ", { duration: 3000 });
+      this.loading.set(false);
+    }
 
   }
 }
+

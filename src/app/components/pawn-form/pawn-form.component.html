@@ -340,15 +340,18 @@
 
     </div>
     <div class="upload-image" (drop)="onFileDrop($event)" (dragover)="onDragOver($event)" [ngClass]="{'drag-over':dragOver}">
+      
       <div class="image" *ngIf="upload">
           <input #inputFile type="file" accept="image/png, image/gif, image/jpeg" (change)="selectFile($event)">
       </div>
       <div class="icon" *ngIf="upload">
           <!-- <ion-icon class="upla" (click)="inputFile.nativeElement.click()" name="cloud-upload-outline"></ion-icon> -->
+          <mat-icon (click)="inputFile.nativeElement.click()">file_copy</mat-icon>
           <p (click)="inputFile.nativeElement.click()">ជ្រើសរើសរូបថតផ្ទៃខាងមុខ ឬទម្លាក់ឯកសារនៅទីនេះ</p>
           <button class="btn" matRipple (click)="inputFile.nativeElement.click()">
               <!-- <ion-icon class="icon-3" name="image-outline"></ion-icon> -->
           </button>
+          
       </div>
       <div class="image-1" *ngIf="image">
           <img class="image-uploaded" [src]="preview" alt="" >
@@ -361,3 +364,4 @@
 </div>
   </div>
 </div>
+

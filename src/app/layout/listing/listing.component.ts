@@ -7,11 +7,13 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { RouterOutlet, RouterLink, RouterLinkActive, ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { MatCardModule } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AuthStore } from '../../auth/auth.store';
 import { PawnStore } from '../../shared/store/pawn.store';
 import { GetTimeAgoPipe } from "../../shared/pipes/customs.pipe";
 import { DatePipe } from '@angular/common';
+import { CustomerInfoComponent } from '../../components/customer-info/customer-info.component';
+
 
 @Component({
   selector: 'app-listing',
@@ -27,7 +29,9 @@ import { DatePipe } from '@angular/common';
     RouterLinkActive,
     MatCardModule,
     GetTimeAgoPipe,
-    DatePipe
+    DatePipe,
+    MatDialogModule, 
+    MatButtonModule,
 ],
   templateUrl: './listing.component.html',
   styleUrl: './listing.component.scss'
@@ -71,6 +75,22 @@ export class ListingComponent {
       
       })
     )
+  }
+
+  ShowDialog(){
+    const dialogRef = this.dialog.open(CustomerInfoComponent, {
+      data: {
+        title: 'List Of Customer',
+        description: 'Select To Read More Information'
+      },
+      width: '800px',
+      height:'900px',
+      role: 'dialog',
+      panelClass: 'custom-dialog'
+    })
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(`Dialog result: ${result}`);
+    });
   }
 
 }

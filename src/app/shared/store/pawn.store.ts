@@ -12,25 +12,22 @@ import { STATUS_OBJ } from '../dummy/config';
 export class PawnStore {
   constructor(private ds: DataService, private auth: AuthStore) {}
   process = signal<boolean>(false); 
-  createCustomer(item: any, callback: (success: boolean, result: any) => void) {
-    this.process.set(true);
-    const batch = this.ds.batchRef();
-    const ref = doc(this.ds.customerRef(), item.key);
+  async createCustomer(data: any, info_customer: any) {
+    try{
+      this.process.set(true);
+      const batch = this.ds.batchRef();
+      const ref = doc(this.ds.customerRef(), data?.key);
+      const ref_info_customer = doc(this.ds.infoCustomerRef(), info_customer?.key);
 
-    batch.set(ref, item, { merge: true });
-    batch
-      .commit()
-      .then(() => {
-        callback(true, null);
-      })
-      .catch((error) => {
-        alert(error);
-        callback(false, error);
-      })
-      .finally(() => {
-        this.process.set(false);
-      });
+      batch.set(ref, data, { merge: true });
+      batch.set(ref_info_customer, info_customer, { merge: true });
+      await batch.commit();
+    }catch (error) {
+      console.error('Batch operation failed:', error);
+      throw error;
+    }
   }
+
 
   fetchListing( statusKey: any) {
     const queryRef = [

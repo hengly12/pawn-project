@@ -6,7 +6,11 @@
           <input class="search-box" type="text" placeholder="Search Form Data" name="q" >
           <button class="search-icon" type="submit"><mat-icon>search</mat-icon></button>
         </nav>
-        <button class="btn-create-form" mat-flat-button [routerLink]="['/home/' + param() + '/listing/create-form/na']"> Create <mat-icon color="primary">add_box</mat-icon></button>
+        <div class="btn-create-form">
+          <button class="btn-check-customer" mat-button (click)="ShowDialog()">List Info <mat-icon> contacts</mat-icon></button>
+        <button class="btn-add-more" mat-flat-button [routerLink]="['/home/' + param() + '/listing/create-form/na']"> Create <mat-icon color="primary">add_box</mat-icon></button>
+        
+      </div>
         <!-- <i class="fa-regular fa-square-plus fa-sm" style="color: #74C0FC;width: 50%;"></i> -->
   
         <!-- <div class="link-header">
@@ -62,7 +66,7 @@
   
           </div>
         </mat-tab-nav-panel>
-      
+       
   </div>
   
   <!-- <div class="create-form"> 

@@ -51,4 +51,8 @@ export class DataService {
     return collection(this.db, `customer`) as CollectionReference<any>;
   }
 
+  infoCustomerRef() {
+    return collection(this.db, `info_customer`) as CollectionReference<any>;
+  }
+
 }
