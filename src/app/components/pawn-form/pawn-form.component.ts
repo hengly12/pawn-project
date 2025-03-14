@@ -1,22 +1,40 @@
 import { docData, serverTimestamp } from '@angular/fire/firestore';
-import { NgClass, NgFor, NgIf } from '@angular/common';
-import { ChangeDetectionStrategy, Component, ElementRef, OnInit, signal, ViewChild } from '@angular/core';
-import { AbstractControl, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { CurrencyPipe, NgClass, NgFor, NgIf } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  OnInit,
+  signal,
+  ViewChild,
+} from '@angular/core';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { provideNativeDateAdapter} from '@angular/material/core';
-import { MatDatepickerModule} from '@angular/material/datepicker';
-import {MatSelectModule} from '@angular/material/select';
+import { provideNativeDateAdapter } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatSelectModule } from '@angular/material/select';
 import { MatIcon } from '@angular/material/icon';
-import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { GENDER_DATA, ITEM_DATA, STATUS_OBJ } from '../../shared/dummy/config';
 import { DataService } from '../../shared/services/data.service';
 import { sign } from 'crypto';
-import { generateKeywords, toDateKey } from '../../shared/services/convert.service';
+import {
+  generateKeywords,
+  toDateKey,
+} from '../../shared/services/convert.service';
 import { mapUser } from '../../shared/services/mapping.service';
 import { AuthStore } from '../../auth/auth.store';
 import { PawnStore } from '../../shared/store/pawn.store';
-import {MatSnackBar} from '@angular/material/snack-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { FireStorageService } from '../../shared/services/fire-storage.service';
@@ -25,7 +43,6 @@ interface GenderOption {
   key: number;
   text: string;
   en_name: string;
-
 }
 @Component({
   selector: 'app-pawn-form',
@@ -41,18 +58,13 @@ interface GenderOption {
     MatIcon,
     MatAutocompleteModule,
     NgClass,
-],
-  providers: [provideNativeDateAdapter()],
+  ],
+  providers: [provideNativeDateAdapter(), CurrencyPipe],
   templateUrl: './pawn-form.component.html',
   styleUrl: './pawn-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-
-
 export class PawnFormComponent {
-
- 
-
   genders = signal<any>(GENDER_DATA);
 
   pawn_type = signal<any>(ITEM_DATA);
@@ -70,20 +82,20 @@ export class PawnFormComponent {
   currentFile: any;
   upload = true;
   image = false;
-  dragOver:boolean = false;
+  dragOver: boolean = false;
 
   @ViewChild('inputFile') inputFile!: ElementRef;
-  
+
   constructor(
-    private ds: DataService, 
+    private ds: DataService,
     private fb: FormBuilder,
     private auth: AuthStore,
     private store: PawnStore,
     private snackBar: MatSnackBar,
     private route: ActivatedRoute,
-    private storage: FireStorageService
-  ){}
- 
+    private storage: FireStorageService,
+    private currencyPipe: CurrencyPipe,
+  ) {}
 
   readonly range = new FormGroup({
     start: new FormControl<Date | null>(null),
@@ -93,8 +105,14 @@ export class PawnFormComponent {
   pawnForm = new FormGroup({
     full_name: new FormControl<any>(null, [Validators.required]),
     gender: new FormControl<GenderOption | null>(null, Validators.required),
-    phone_number: new FormControl<number | null>(null,[Validators.required, Validators.pattern('^[0-9]*$')]),
-    id_card: new FormControl<number | null>(null, [Validators.required, Validators.pattern('^[0-9]*$')]),
+    phone_number: new FormControl<number | null>(null, [
+      Validators.required,
+      Validators.pattern(/^\d{10}$/), // Adjust the length as needed
+    ]),
+    id_card: new FormControl<number | null>(null, [
+      Validators.required,
+      Validators.pattern(/^\d{9}$/),
+    ]),
     address: new FormControl<any>(null, [Validators.required]),
     pawn_type: new FormControl<any>(null, [Validators.required]),
     description: new FormControl(''),
@@ -110,90 +128,166 @@ export class PawnFormComponent {
     plate_number: new FormControl<any>(null, [Validators.required]),
     brand_name: new FormControl<any>(null, [Validators.required]),
     gold_weight: new FormControl<any>(null, [Validators.required]),
-    price_pawn: new FormControl<number | null>(null, [Validators.required, Validators.pattern('^[0-9]*$')]),
-    price_interest: new FormControl<number | null>(null, [Validators.required, Validators.pattern('^[0-9]*$')]),
+    price_pawn: new FormControl<number | null>(null, [
+      Validators.required,
+      Validators.pattern('^[0-9]*$'),
+    ]),
+    price_interest: new FormControl<number | null>(null, [
+      Validators.required,
+      Validators.pattern('^[0-9]*$'),
+    ]),
 
     file: new FormControl<any>(null),
-  // pawnForm = new FormGroup({
-  //   fullName: new FormControl<any>(null, [Validators.required]),
-  //   gender: new FormControl<GenderOption | null>(null, Validators.required),
-  //   phoneNum: new FormControl<number | null>(null,[Validators.required, Validators.pattern('^[0-9]*$')]),
-  //   idCard: new FormControl<number | null>(null, [Validators.required, Validators.pattern('^[0-9]*$')]),
-  //   address: new FormControl(''),
-  //   pawnItem: new FormControl<any>(null, [Validators.required]),
-  //   description: new FormControl(''),
-  //   dateCreated: new FormControl<Date | null>(null, Validators.required),
-  //   dateExpired: new FormControl<Date | null>(null, [Validators.required]),
-  //   image: new FormControl<string | null>(null),
-  //   phone: new FormControl<any>(null),
-  //   car: new FormControl<any>(null),
-  //   phoneId: new FormControl<any>(null, [Validators.required]),
-  //   motor:new FormControl<any>(null),
-  //   jewelry: new FormControl<any>(null),
-  //   others: new FormControl<any>(null),
-  //   plateNum: new FormControl<any>(null, [Validators.required]),
-  //   brandName: new FormControl<any>(null, [Validators.required]),
-  //   pawnPrice: new FormControl<string | null>(null, [Validators.required]),
-  //   monthlyInterest: new FormControl<string | null>(null, [Validators.required]),
-
+    // pawnForm = new FormGroup({
+    //   fullName: new FormControl<any>(null, [Validators.required]),
+    //   gender: new FormControl<GenderOption | null>(null, Validators.required),
+    //   phoneNum: new FormControl<number | null>(null,[Validators.required, Validators.pattern('^[0-9]*$')]),
+    //   idCard: new FormControl<number | null>(null, [Validators.required, Validators.pattern('^[0-9]*$')]),
+    //   address: new FormControl(''),
+    //   pawnItem: new FormControl<any>(null, [Validators.required]),
+    //   description: new FormControl(''),
+    //   dateCreated: new FormControl<Date | null>(null, Validators.required),
+    //   dateExpired: new FormControl<Date | null>(null, [Validators.required]),
+    //   image: new FormControl<string | null>(null),
+    //   phone: new FormControl<any>(null),
+    //   car: new FormControl<any>(null),
+    //   phoneId: new FormControl<any>(null, [Validators.required]),
+    //   motor:new FormControl<any>(null),
+    //   jewelry: new FormControl<any>(null),
+    //   others: new FormControl<any>(null),
+    //   plateNum: new FormControl<any>(null, [Validators.required]),
+    //   brandName: new FormControl<any>(null, [Validators.required]),
+    //   pawnPrice: new FormControl<string | null>(null, [Validators.required]),
+    //   monthlyInterest: new FormControl<string | null>(null, [Validators.required]),
   });
-  
-  ngOnInit(){
-  
-    
+
+  ngOnInit() {
     this.routeUnSubscribe.set(
-        this.route.params.subscribe(async (param) => {
-          let paramKey = param['id'];
-          const getData = await this.store.getCustomer(paramKey);
-          this.data.set(getData);
-          if(this.data()){
-             this.pawnForm.patchValue({
-      full_name: getData?.full_name,
-      phone_number: getData?.phone_number,
-      gender: getData?.gender,
-      id_card: getData?.id_card,
-      address: getData?.address,
+      this.route.params.subscribe(async (param) => {
+        let paramKey = param['id'];
+        const getData = await this.store.getCustomer(paramKey);
+        this.data.set(getData);
+        if (this.data()) {
+          this.pawnForm.patchValue({
+            full_name: getData?.full_name,
+            phone_number: getData?.phone_number,
+            gender: getData?.gender,
+            id_card: getData?.id_card,
+            address: getData?.address,
 
-              pawn_type: getData?.pawn_type,
+            pawn_type: getData?.pawn_type,
 
-              type_phone:getData?.type_phone,
-              type_phone_id:getData?.type_phone_id,
-              type_car:getData?.type_car,
-              type_motor:getData?.type_motor,
-              type_jewelry_name:getData?.type_jewelry_name,
-              gold_weight:getData?.gold_weight,
-              others:getData?.others,
+            type_phone: getData?.type_phone,
+            type_phone_id: getData?.type_phone_id,
+            type_car: getData?.type_car,
+            type_motor: getData?.type_motor,
+            type_jewelry_name: getData?.type_jewelry_name,
+            gold_weight: getData?.gold_weight,
+            others: getData?.others,
 
-              plate_number: getData?.plate_number,
-              brand_name: getData?.brand_name,
-              price_pawn: getData?.price_pawn,
-              price_interest: getData?.price_interest,
-              description: getData?. description,
-              date_expired: getData?.date_expired,
-
-              
-            })
-          }
-          if (this.data()?.photo) {
-            const currentValidators = this.pawnForm.controls.file.validator
-              ? this.pawnForm.controls.file.validator({} as AbstractControl)?.['validatorFn'] || []
-              : [];
-            const filteredValidators = currentValidators.filter(
-              (v: any) => v !== Validators.required
-            );
-            this.pawnForm.controls.file.setValidators(filteredValidators);
-            this.pawnForm.controls.file.updateValueAndValidity();
-          }
-          
-          this.preview = this.data()?.photo?.downloadUrl;
-          this.image = !!this.preview;
-          this.upload = !this.image;
+            plate_number: getData?.plate_number,
+            brand_name: getData?.brand_name,
+            price_pawn: getData?.price_pawn,
+            price_interest: getData?.price_interest,
+            description: getData?.description,
+            date_expired: getData?.date_expired,
+          });
         }
-      )
-    )
+        if (this.data()?.photo) {
+          const currentValidators = this.pawnForm.controls.file.validator
+            ? this.pawnForm.controls.file.validator({} as AbstractControl)?.[
+                'validatorFn'
+              ] || []
+            : [];
+          const filteredValidators = currentValidators.filter(
+            (v: any) => v !== Validators.required
+          );
+          this.pawnForm.controls.file.setValidators(filteredValidators);
+          this.pawnForm.controls.file.updateValueAndValidity();
+        }
+
+        this.preview = this.data()?.photo?.downloadUrl;
+        this.image = !!this.preview;
+        this.upload = !this.image;
+      })
+    );
+  }
+
+  limitPhoneNumber(event: any) {
+    let input = event.target.value.replace(/\D/g, ''); 
+    if (input.length > 10) {
+      input = input.substring(0, 10);
+    }
+    event.target.value = input; 
+    this.pawnForm.controls['phone_number'].setValue(input);
+  }
+
+  limitIdCardNumber(event: any) {
+    let input = event.target.value.replace(/\D/g, '');
+    if (input.length > 9) {
+      input = input.substring(0, 9);
+    }
+    event.target.value = input; 
+    this.pawnForm.controls['id_card'].setValue(input); 
+  }
+
+  formatCurrencyPricePawn(event: any) {
+    let value = event.target.value;
+   
+    value = value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '1$');
+
+    if (value) {
+  
+      const numericValue = parseFloat(value);
+   
+      const formattedValue = this.currencyPipe.transform(numericValue, 'USD');
+      if (formattedValue) {
+      
+        this.pawnForm.get('price_pawn')?.setValue(numericValue, {
+          emitEvent: false,
+        });
+      
+        event.target.value = formattedValue;
+      }
+    } else {
+      this.pawnForm.get('price_pawn')?.setValue(0, { emitEvent: false });
+    }
+  }
+
+  formatCurrencyPriceInterest(event: any) {
+    let value = event.target.value;
+   
+    value = value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+
+    if (value) {
+  
+      const numericValue = parseFloat(value);
+   
+      const formattedValue = this.currencyPipe.transform(numericValue, 'USD');
+      if (formattedValue) {
+      
+        this.pawnForm.get('price_interest')?.setValue(numericValue, {
+          emitEvent: false,
+        });
+      
+        event.target.value = formattedValue;
+      }
+    } else {
+      this.pawnForm.get('price_interest')?.setValue(0, { emitEvent: false });
+    }
+  }
+
+  getFormattedPricePawn(): string | null {
+    const value = this.pawnForm.get('price_pawn')?.value;
+    return this.currencyPipe.transform(value, 'USD');
+  }
+
+  getFormattedPriceInterest(): string | null {
+    const value = this.pawnForm.get('price_interest')?.value;
+    return this.currencyPipe.transform(value, 'USD');
+  }
 
  
-  }
 
   onFileDrop(event: any): void {
     event.preventDefSault();
@@ -210,7 +304,7 @@ export class PawnFormComponent {
 
   onDragLeave(event: any): void {
     event.preventDefault();
-    this.dragOver = false; 
+    this.dragOver = false;
   }
 
   closeImage() {
@@ -249,12 +343,11 @@ export class PawnFormComponent {
     }
   }
 
+  selectItem(item: any) {
+    this.seleted.set(item);
+    const weightControl = this.pawnForm.get('gold_weight');
+    const typePhoneIdControl = this.pawnForm.get('type_phone_id');
 
-  selectItem(item: any){
-    this.seleted.set(item)
-    const weightControl = this.pawnForm.get("gold_weight");
-    const typePhoneIdControl = this.pawnForm.get("type_phone_id");
-    
     if (item.key === 3) {
       weightControl?.setValidators(Validators.required);
       typePhoneIdControl?.clearValidators();
@@ -265,10 +358,9 @@ export class PawnFormComponent {
       weightControl?.clearValidators();
       typePhoneIdControl?.clearValidators();
     }
-    
+
     weightControl?.updateValueAndValidity();
     typePhoneIdControl?.updateValueAndValidity();
-    
   }
 
   displayGender = (item: any) => {
@@ -298,8 +390,8 @@ export class PawnFormComponent {
     this.imagePreview = []; // Clear image previews
   }
 
-  deleteItem(data: any){
-    this.store.deleteCustomer(data?.key)
+  deleteItem(data: any) {
+    this.store.deleteCustomer(data?.key);
   }
 
   async onSubmit() {
@@ -308,18 +400,16 @@ export class PawnFormComponent {
     //   return
     // }
 
-    
     this.loading.set(true);
     let photo = null;
     if (this.selectedFiles && this.selectedFiles.length > 0) {
       photo = await this.storage.uploadSelectedFile(
-          this.selectedFiles[0],
-          'image-thumnail'
+        this.selectedFiles[0],
+        'image-thumnail'
       );
-    }else if(this.data()?.photo){
+    } else if (this.data()?.photo) {
       photo = this.data()?.photo;
     }
-
 
     const {
       full_name,
@@ -343,14 +433,12 @@ export class PawnFormComponent {
       price_interest,
       description,
       date_expired,
-      
-      
     } = this.pawnForm.getRawValue();
     const toDay = new Date();
 
-    const info_customer: any ={
+    const info_customer: any = {
       key: this.data()?.key || this.ds.createKey(),
-      created_at: serverTimestamp() ,
+      created_at: serverTimestamp(),
       created_by: mapUser(this.auth?.profile),
       updated_at: serverTimestamp(),
       updated_by: mapUser(this.auth?.profile),
@@ -360,18 +448,18 @@ export class PawnFormComponent {
       isDeleted: false,
 
       full_name: full_name,
-      phone_number:phone_number,
-      gender:gender,
-      id_card:id_card,
-      address:address,
+      phone_number: phone_number,
+      gender: gender,
+      id_card: id_card,
+      address: address,
 
       pawnKey: this.ds.createKey(),
-    }
+    };
 
     const data: any = {
       key: this.data()?.key || this.ds.createKey(),
-      
-      created_at: serverTimestamp() ,
+
+      created_at: serverTimestamp(),
       created_by: mapUser(this.auth?.profile),
       updated_at: serverTimestamp(),
       updated_by: mapUser(this.auth?.profile),
@@ -381,10 +469,10 @@ export class PawnFormComponent {
       isDeleted: false,
 
       full_name: full_name,
-      phone_number:phone_number,
-      gender:gender,
-      id_card:id_card,
-      address:address,
+      phone_number: phone_number,
+      gender: gender,
+      id_card: id_card,
+      address: address,
 
       pawn_type: pawn_type,
       price_pawn: price_pawn,
@@ -392,48 +480,47 @@ export class PawnFormComponent {
       description: description,
       date_expired: date_expired,
       photo: photo,
-      pawn_item_key: info_customer?.pawnKey, 
+      pawn_item_key: info_customer?.pawnKey,
 
-
-      ...(this.seleted()?.key == 0 &&{  
-        plate_number: plate_number,
-        brand_name: brand_name,
-      }),
-      
-      ...(this.seleted()?.key == 1 &&{
-        type_phone_id:type_phone_id,
-        brand_name: brand_name,
-      }),
-
-      ...(this.seleted()?.key == 2 &&{
+      ...(this.seleted()?.key == 0 && {
         plate_number: plate_number,
         brand_name: brand_name,
       }),
 
-      ...(this.seleted()?.key == 3 &&{
-        type_jewelry_name:type_jewelry_name,
+      ...(this.seleted()?.key == 1 && {
+        type_phone_id: type_phone_id,
+        brand_name: brand_name,
+      }),
+
+      ...(this.seleted()?.key == 2 && {
+        plate_number: plate_number,
+        brand_name: brand_name,
+      }),
+
+      ...(this.seleted()?.key == 3 && {
+        type_jewelry_name: type_jewelry_name,
         gold_weight: gold_weight,
       }),
 
-      ...(this.seleted()?.key == 4 &&{
+      ...(this.seleted()?.key == 4 && {
         others: others,
       }),
+    };
 
-    }
-
-
-    console.log(data, 'data')
-    console.log(info_customer, 'info')
+    console.log(data, 'data');
+    console.log(info_customer, 'info');
 
     try {
       await this.store.createCustomer(data, info_customer);
-      this.snackBar.open(`ការរក្សាទុកទិន្នន័យបានជោគជ័យ`, "ជោគជ័យ", { duration: 3000 });
-        this.loading.set(false);
+      this.snackBar.open(`ការរក្សាទុកទិន្នន័យបានជោគជ័យ`, 'ជោគជ័យ', {
+        duration: 3000,
+      });
+      this.loading.set(false);
     } catch (e) {
-      this.snackBar.open(`ការរក្សាទុកទិន្នន័យបានបរាជ័យ`, "ជោគជ័យ", { duration: 3000 });
+      this.snackBar.open(`ការរក្សាទុកទិន្នន័យបានបរាជ័យ`, 'ជោគជ័យ', {
+        duration: 3000,
+      });
       this.loading.set(false);
     }
-
   }
 }
-

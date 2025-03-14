@@ -44,6 +44,7 @@ export class ListingComponent {
   ]);
 
   routeUnSubscribe = signal<any>(Subscription);
+  info_customer = signal<any>(null);
   data = signal<any>(null);
   param = signal<any>(null);
 
@@ -52,7 +53,10 @@ export class ListingComponent {
     public auth: AuthStore,
     private readonly route: ActivatedRoute,
     private readonly store: PawnStore,
+    
   ){}
+
+  
 
   ngOnInit(){
     this.routeUnSubscribe.set(
@@ -68,7 +72,7 @@ export class ListingComponent {
         }
         this.routeUnSubscribe.set(
           this.store.fetchListing(statusKey).subscribe( res =>{
-            console.log(res, 'data')
+            console.log(res, 'info_customer')
             this.data.set(res);
           })
         )
@@ -80,7 +84,7 @@ export class ListingComponent {
   ShowDialog(){
     const dialogRef = this.dialog.open(CustomerInfoComponent, {
       data: {
-        title: 'List Of Customer',
+        title: 'ព័ត៌មានអតិថិជន',
         description: 'Select To Read More Information'
       },
       width: '800px',

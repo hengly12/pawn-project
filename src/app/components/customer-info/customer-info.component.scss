@@ -1,25 +1,167 @@
-.show-dialog{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.show-dialog {
+  display: flex;
+  font-family: "Koh Santepheap", serif;
+  font-size: 20px;
+  color: #007dd9;
+  gap: 10px;
+  padding-top: 15px;
+  justify-content: space-between;
+  padding-inline: 15px;
+  align-items: baseline;
 }
 
-.alert-showdialog{
-    padding-top: 15px;
-    gap: 15px;
-    display: flex;
-    justify-content: flex-end;
-    border-top: solid 1px;
+.alert-showdialog {
+  padding-top: 10px;
+  gap: 15px;
+  display: flex;
+  justify-content: flex-end;
 }
 
-.close-dialog{
-    border-radius: 50px;
-    width: 80px;
+.close-dialog {
+  border-radius: 50px;
+  width: 35px;
+  font-size: 15px;
+  padding: 10px;
+  color: #ffffff;
+  background-color: #5b5b5b;
+  border: solid 0px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .mat-icon {
+    user-select: none;
+    background-repeat: no-repeat;
+    display: inline-block;
+    fill: currentColor;
+    height: 15px;
+    width: 15px;
+    overflow: hidden;
     font-size: 15px;
-    padding: 10px;
-    color: #ffffff;
-    background-color: #ed5858;
-    border: solid 0px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+}
+.close-dialog:hover {
+  background-color: #b53030d4;
+}
+
+::ng-deep .cdk-overlay-backdrop-showing {
+  opacity: 1;
+  position: fixed;
+}
+
+::ng-deep.mat-mdc-tab-labels {
+  display: flex;
+  flex: 1 0 auto;
+  justify-content: space-evenly;
+}
+
+.mat-mdc-card-title-group {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  flex-direction: row-reverse;
+}
+
+.search-box {
+  font-family: "Koh Santepheap", serif;
+  width: 50%;
+  height: 40px;
+  border-radius: 8px;
+  border-color: #ffffff;
+  background-color: rgba(221, 221, 221, 0.631372549);
+  font-size: 17px;
+  border: solid 0px;
+  margin-top: 10px;
+  margin-inline: -15px;
+  padding-inline: 40px;
+  // width: 290px;
+  // height: 30px;
+  // border-radius: 15px;
+  // border-color: #1a73e8;
+  // font-size: 15px
+}
+
+.nav-search {
+  display: flex;
+}
+
+.search-icon {
+  width: 25px;
+  height: 25px;
+  border: solid 0px;
+  font-size: 15px;
+  border-radius: 50px;
+  color: #757584;
+  background-color: #e6e6e6;
+  cursor: pointer;
+  position: relative;
+  left: 12px;
+  top: 13px;
+  .mat-icon {
+    height: 30px;
+    font-size: 35px;
+    width: 30px;
+  }
+}
+.search-icon:hover {
+  color: #1585f5;
+}
+
+.listing {
+  font-family: "Koh Santepheap", serif;
+  display: flex;
+  border: solid 1px rgba(201, 200, 200, 0.8588235294);
+  gap: 5px;
+  padding-top: 5px;
+  padding-bottom: 0px;
+  flex-direction: column;
+  overflow: auto;
+  height: calc(100vh - 235px);
+  .customer_info {
+    background-color: #b1ebf94d;
     cursor: pointer;
+    &.active {
+      color: #000000;
+      background-color: #bbddff;
+    }
+  }
+
+  .customer_info:hover {
+    background-color: #bbddff;
+  }
+}
+
+.listing_info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.customer_info {
+  display: flex;
+  gap: 10px;
+  border: solid 1px rgba(185, 185, 185, 0.6);
+  padding-bottom: 25px;
+  padding-top: 20px;
+  // background-image: url('https://i.pinimg.com/originals/7b/34/d3/7b34d33a578812832573513ae9909cba.png');
+  // background-size: cover;
+  // background-position: center;
+  // background-repeat: no-repeat;
+  align-items: center;
+}
+.profile-image {
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-bottom: 10px;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.profile-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }

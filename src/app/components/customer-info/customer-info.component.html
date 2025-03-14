@@ -1,10 +1,43 @@
+
+
 <div class="show-dialog">
 
 
-<h3>{{data?.title}}</h3>
-<p>{{data?.description}}</p>
+<h3>{{info_customer?.title}}</h3>
+<div class="alert-showdialog">
+    <button class="close-dialog" (click)="close()"><mat-icon>close</mat-icon></button>
+    </div>
+</div>
+<div class="nav-search">
+    <button class="search-icon" type="submit"><mat-icon>search</mat-icon></button>
+    <input class="search-box" type="text" placeholder="Search Form Data" name="q" >
+    
 </div>
 
-<div class="alert-showdialog">
-<button class="close-dialog" (click)="close()">Close</button>
-</div>
+
+
+  <mat-tab-nav-panel #tabPanel>
+    <div class="listing">
+
+      @for(item of data(); track item?.key){
+      <div class="customer_info" [routerLink]="['/home/' + param() + '/customer-info/create-form/' + item?.key]" routerLinkActive="active">
+        <div class="profile-image">
+          <img [src]="auth.profile?.photoFile || 'assets/images/customer-image.jpg'" alt="Profile Icon" />
+        </div>
+     
+        <div class="listing_info">
+        <div><h4 class="name">Name: {{item?.full_name}}</h4></div>
+        <div class="phone"> <h5>Phone: {{item?.phone_number}}</h5></div>
+        <div class="pawn_type"> <h5>Pawn Item: {{item?.pawn_type?.text}}</h5></div>
+        <div class="created_at"> <h5>Date Created: {{item?.created_at | getTimeAgo}}</h5></div>
+        <div class="date_expired"> <h5>Date Expired: {{item?.date_expired?.toDate() | date:'dd/MM/yyyy'}}</h5></div>
+      </div>
+    </div>
+      }
+
+    </div>
+  </mat-tab-nav-panel>
+
+  <!-- <div class="content">
+    <router-outlet></router-outlet>
+</div> -->

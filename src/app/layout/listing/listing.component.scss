@@ -67,6 +67,11 @@ display: flex;
   position: absolute;
 }
 
+.search-icon:hover{
+  color: #1585f5;
+  }
+
+
 .menu-bar{
   font-family: "Koh Santepheap", serif;
   width: 35px;
@@ -123,12 +128,12 @@ display: flex;
 
 .btn-add-more{
   background-color: #007bff;
-  width: 125px;
+  width: 140px;
 }
 .btn-check-customer{
   background-color: #36b38f;
   color: #fff !important;
-  width: 125px;
+  width: 140px;
 }
 
 
