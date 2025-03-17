@@ -3,36 +3,15 @@
 <div class="main-wrapper">
     <div class="dashboard">
       <nav class="nav-search">
-          <input class="search-box" type="text" placeholder="Search Form Data" name="q" >
+          <input class="search-box" type="text" placeholder="ស្វែងរកឯកសារ​អតិថិជន" name="q" >
           <button class="search-icon" type="submit"><mat-icon>search</mat-icon></button>
         </nav>
         <div class="btn-create-form">
           <button class="btn-check-customer" mat-button (click)="ShowDialog()">ព័ត៌មានអតិថិជន <mat-icon> contacts</mat-icon></button>
-        <button class="btn-add-more" mat-flat-button [routerLink]="['/home/' + param() + '/listing/create-form/na']"> Create <mat-icon color="primary">add_box</mat-icon></button>
+        <button class="btn-add-more" mat-flat-button [routerLink]="['/home/' + param() + '/listing/create-form/na']"> បង្កើតទម្រង់ <mat-icon color="primary">add_box</mat-icon></button>
         
       </div>
-        <!-- <i class="fa-regular fa-square-plus fa-sm" style="color: #74C0FC;width: 50%;"></i> -->
-  
-        <!-- <div class="link-header">
-        <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
-  
-          
-            <a routerLink="/home" routerLinkActive="active">
-          <mat-tab  label="កំពុងបញ្ចាំ">
-              <app-pawncard [childInput]="testItems()"></app-pawncard>
-          </mat-tab>
-          <div class="line"></div>
-        </a>
-    
-        <a routerLink="/report" routerLinkActive="active">
-          <mat-tab label="បញ្ចប់ការបញ្ចាំ">
-            <app-pawncard [childInput]="testItems()"></app-pawncard>
-          </mat-tab>
-          <div class="line"></div>
-      </a>
-        </mat-tab-group> -->
-  
-  
+
         <nav mat-tab-nav-bar class="list-tabs" [tabPanel]="tabPanel">
           @for (tab of tabs(); track tab?.key) {
             <a
@@ -55,11 +34,11 @@
               </div>
            
               <div class="listing_info">
-              <div><h4 class="name">Name: {{item?.full_name}}</h4></div>
-              <div class="phone"> <h5>Phone: {{item?.phone_number}}</h5></div>
-              <div class="pawn_type"> <h5>Pawn Item: {{item?.pawn_type?.text}}</h5></div>
-              <div class="created_at"> <h5>Date Created: {{item?.created_at | getTimeAgo}}</h5></div>
-              <div class="date_expired"> <h5>Date Expired: {{item?.date_expired?.toDate() | date:'dd/MM/yyyy'}}</h5></div>
+              <div><h4 class="name">ឈ្មោះ: {{item?.full_name}}</h4></div>
+              <div class="phone"> <h5>លេខទូរសព្ទ: {{item?.phone_number}}</h5></div>
+              <div class="pawn_type"> <h5>វត្ថុបញ្ចាំ: {{item?.pawn_type?.text}}</h5></div>
+              <div class="created_at"> <h5>រយៈពេលបានបង្កើត: {{item?.created_at | getTimeAgo}}</h5></div>
+              <div class="date_expired"> <h5>ថ្ងៃផុតកំណត់: {{item?.date_expired?.toDate() | date:'dd/MM/yyyy'}}</h5></div>
             </div>
           </div>
             }

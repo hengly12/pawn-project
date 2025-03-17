@@ -11,7 +11,7 @@
       </button>
       }@else {
       <button class="btn-save" type="submit" (click)="onSubmit()">
-        Save Form <mat-icon>save_alt</mat-icon>
+        រក្សាទុក <mat-icon>save_alt</mat-icon>
       </button>
       }
     </div>
@@ -33,6 +33,7 @@
                   class="custome-input"
                   placeholder="គោត្តនាម និងនាម។"
                   formControlName="full_name"
+                 
               /></label>
               <div
                 class="input-error"
@@ -103,6 +104,7 @@
                   pattern="[0-9]*"
                   inputmode="numeric"
                   (input)="limitPhoneNumber($event)"
+                 
                 />
               </label>
               <div
@@ -143,6 +145,7 @@
               pattern="[0-9]*"
               inputmode="numeric"
               (input)="limitIdCardNumber($event)"
+             
             />
           </label>
               <div
@@ -178,6 +181,7 @@
                   matInput
                   placeholder="អាស័យដ្ថានបច្ចុប្បន្ន"
                   formControlName="address"
+                
               /></label>
               <div
                 class="input-error"
@@ -204,6 +208,7 @@
                   placeholder="វត្ថុបញ្ចាំ"
                   formControlName="pawn_type"
                   [matAutocomplete]="AutoItem"
+                  
               /></label>
               <mat-autocomplete
                 #AutoItem="matAutocomplete"

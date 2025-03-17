@@ -117,7 +117,8 @@
   padding-bottom: 0px;
   flex-direction: column;
   overflow: auto;
-  height: calc(100vh - 235px);
+  height: calc(100vh - 200px);
+  width: 100%;
   .customer_info {
     background-color: #b1ebf94d;
     cursor: pointer;
@@ -135,20 +136,22 @@
 .listing_info {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 7px;
 }
 
 .customer_info {
-  display: flex;
-  gap: 10px;
-  border: solid 1px rgba(185, 185, 185, 0.6);
-  padding-bottom: 25px;
-  padding-top: 20px;
   // background-image: url('https://i.pinimg.com/originals/7b/34/d3/7b34d33a578812832573513ae9909cba.png');
   // background-size: cover;
   // background-position: center;
   // background-repeat: no-repeat;
-  align-items: center;
+  display: flex;
+    gap: 20px;
+    border: solid 1px rgba(185, 185, 185, 0.6);
+    padding-bottom: 25px;
+    padding-top: 20px;
+    align-items: center;
+    font-size: 18px;
+    padding-inline: 25px
 }
 .profile-image {
   width: 75px;
@@ -164,4 +167,10 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+::ng-deep.mat-mdc-dialog-surface {
+  border-radius: 8px !important;
+    margin-top: 45px;
+    height: 92%;
 }

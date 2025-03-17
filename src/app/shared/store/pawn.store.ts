@@ -40,6 +40,16 @@ export class PawnStore {
     ) as Observable<any[]>;
   }
 
+  fetchInfoListing() {
+    const queryRef = [
+      orderBy('created_at', 'desc'),
+      limit(50),
+    ];
+    return collectionData(
+      query(this.ds.infoCustomerRef(), ...queryRef)
+    ) as Observable<any[]>;
+  }
+
   async getCustomer(key: string) {
     return pushToObject(
       await getDoc(doc(this.ds.customerRef(), key)),

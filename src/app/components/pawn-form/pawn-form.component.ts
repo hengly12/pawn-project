@@ -4,8 +4,10 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  Input,
   OnInit,
   signal,
+  SimpleChanges,
   ViewChild,
 } from '@angular/core';
 import {
@@ -65,6 +67,8 @@ interface GenderOption {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PawnFormComponent {
+ 
+  
   genders = signal<any>(GENDER_DATA);
 
   pawn_type = signal<any>(ITEM_DATA);
@@ -74,6 +78,7 @@ export class PawnFormComponent {
   loading = signal<boolean>(false);
   routeUnSubscribe = signal<any>(Subscription);
   data = signal<any>(null);
+  // info_customer = signal<any>(null);
 
   message: string = '';
   preview: string = '';
@@ -85,6 +90,8 @@ export class PawnFormComponent {
   dragOver: boolean = false;
 
   @ViewChild('inputFile') inputFile!: ElementRef;
+
+  
 
   constructor(
     private ds: DataService,
@@ -168,6 +175,7 @@ export class PawnFormComponent {
         const getData = await this.store.getCustomer(paramKey);
         this.data.set(getData);
         if (this.data()) {
+          console.log('data()?.key:', this.data()?.key);
           this.pawnForm.patchValue({
             full_name: getData?.full_name,
             phone_number: getData?.phone_number,
@@ -211,6 +219,41 @@ export class PawnFormComponent {
         this.upload = !this.image;
       })
     );
+
+    this.enableCustomerInfo(); // Add this line
+    this.routeUnSubscribe.set(
+      this.route.params.subscribe(async (param) => {
+        // ... your existing code
+      })
+    );
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    console.log('changes[data]:', changes['data']);
+  console.log('this.data():', this.data());
+  if (changes['data'] && this.data()?.key) {
+    this.disableCustomerInfo();
+  } else {
+    this.enableCustomerInfo();
+  }
+  }
+
+  disableCustomerInfo() {
+    this.pawnForm.get('full_name')?.disable();
+    this.pawnForm.get('gender')?.disable();
+    this.pawnForm.get('phone_number')?.disable();
+    this.pawnForm.get('id_card')?.disable();
+    this.pawnForm.get('address')?.disable();
+    this.pawnForm.get('pawn_type')?.disable();
+  }
+
+  enableCustomerInfo() {
+    this.pawnForm.get('full_name')?.enable();
+    this.pawnForm.get('gender')?.enable();
+    this.pawnForm.get('phone_number')?.enable();
+    this.pawnForm.get('id_card')?.enable();
+    this.pawnForm.get('address')?.enable();
+    this.pawnForm.get('pawn_type')?.enable();
   }
 
   limitPhoneNumber(event: any) {
@@ -376,18 +419,18 @@ export class PawnFormComponent {
   onImageUpload(event: any) {
     const files = event.target.files;
     if (files && files.length) {
-      // Loop through selected files
+
       for (let file of files) {
         const reader = new FileReader();
         reader.onload = (e) => {
-          this.imagePreview.push(reader.result as string); // Add image preview to array
+          this.imagePreview.push(reader.result as string);
         };
-        reader.readAsDataURL(file); // Read file as DataURL for preview
+        reader.readAsDataURL(file);
       }
     }
   }
   clearPreviews() {
-    this.imagePreview = []; // Clear image previews
+    this.imagePreview = [];
   }
 
   deleteItem(data: any) {
@@ -507,8 +550,8 @@ export class PawnFormComponent {
       }),
     };
 
-    console.log(data, 'data');
-    console.log(info_customer, 'info');
+    // console.log(data, 'data');
+    // console.log(info_customer, 'info');
 
     try {
       await this.store.createCustomer(data, info_customer);
