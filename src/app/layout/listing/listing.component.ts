@@ -11,7 +11,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AuthStore } from '../../auth/auth.store';
 import { PawnStore } from '../../shared/store/pawn.store';
 import { GetTimeAgoPipe } from "../../shared/pipes/customs.pipe";
-import { DatePipe } from '@angular/common';
+import { DatePipe, NgIf } from '@angular/common';
 import { CustomerInfoComponent } from '../../components/customer-info/customer-info.component';
 
 
@@ -32,6 +32,7 @@ import { CustomerInfoComponent } from '../../components/customer-info/customer-i
     DatePipe,
     MatDialogModule, 
     MatButtonModule,
+    
 ],
   templateUrl: './listing.component.html',
   styleUrl: './listing.component.scss'
@@ -47,6 +48,7 @@ export class ListingComponent {
   info_customer = signal<any>(null);
   data = signal<any>(null);
   param = signal<any>(null);
+  today = new Date();
 
   constructor(
     private dialog: MatDialog,

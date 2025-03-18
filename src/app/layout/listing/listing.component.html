@@ -34,14 +34,41 @@
               </div>
            
               <div class="listing_info">
-              <div><h4 class="name">ឈ្មោះ: {{item?.full_name}}</h4></div>
-              <div class="phone"> <h5>លេខទូរសព្ទ: {{item?.phone_number}}</h5></div>
-              <div class="pawn_type"> <h5>វត្ថុបញ្ចាំ: {{item?.pawn_type?.text}}</h5></div>
-              <div class="created_at"> <h5>រយៈពេលបានបង្កើត: {{item?.created_at | getTimeAgo}}</h5></div>
-              <div class="date_expired"> <h5>ថ្ងៃផុតកំណត់: {{item?.date_expired?.toDate() | date:'dd/MM/yyyy'}}</h5></div>
+                <div class="full_name">
+                  <mat-icon>perm_identity</mat-icon>
+                  <h4>ឈ្មោះ: {{item?.full_name}}</h4>
+                </div>
+
+              <div class="phone_number">
+          <mat-icon> ring_volume</mat-icon>
+          <h5>លេខទូរសព្ទ: {{item?.phone_number}}</h5>
+        </div>
+
+              <div class="pawn_type"> 
+                <mat-icon>devices_other</mat-icon>
+                <h5>វត្ថុបញ្ចាំ: {{item?.pawn_type?.text}}</h5>
+              </div>
+
+              <div class="created_at">
+                <mat-icon>query_builder</mat-icon>
+                <h5>រយៈពេលបានបង្កើត: {{item?.created_at | getTimeAgo}}</h5>
+              </div>
+              <div class="date_expired">
+                <mat-icon>update</mat-icon>
+                <h5>ថ្ងៃផុតកំណត់: {{item?.date_expired?.toDate() | date:'dd/MM/yyyy'}}</h5>
+                @if(item?.date_expired?.toDate() < today){
+                  <span style="color: red;">(ផុតកំណត់)</span>
+                }
+                @if(item?.date_expired?.toDate() >= today){
+                  <span  style="color: green;">(នៅបន្តបង់)</span>
+                }
+              </div>
+              
+              
             </div>
           </div>
             }
+            
   
           </div>
         </mat-tab-nav-panel>

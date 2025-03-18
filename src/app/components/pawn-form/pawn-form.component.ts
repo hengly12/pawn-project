@@ -2,6 +2,7 @@ import { docData, serverTimestamp } from '@angular/fire/firestore';
 import { CurrencyPipe, NgClass, NgFor, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   Input,
@@ -67,10 +68,11 @@ interface GenderOption {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PawnFormComponent {
+  
  
   
   genders = signal<any>(GENDER_DATA);
-
+  days_countdown: number | null = null;
   pawn_type = signal<any>(ITEM_DATA);
   seletedCar = signal<boolean>(false);
   seleted = signal<any>(null);
@@ -102,6 +104,7 @@ export class PawnFormComponent {
     private route: ActivatedRoute,
     private storage: FireStorageService,
     private currencyPipe: CurrencyPipe,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   readonly range = new FormGroup({
@@ -125,6 +128,7 @@ export class PawnFormComponent {
     description: new FormControl(''),
     // dateCreated: new FormControl<Date | null>(null, Validators.required),
     date_expired: new FormControl<Date | null>(null, [Validators.required]),
+    
     photo: new FormControl<string | null>(null),
     type_phone: new FormControl<any>(null),
     type_car: new FormControl<any>(null),
@@ -172,6 +176,7 @@ export class PawnFormComponent {
     this.routeUnSubscribe.set(
       this.route.params.subscribe(async (param) => {
         let paramKey = param['id'];
+        this.checkDisableForm(paramKey)
         const getData = await this.store.getCustomer(paramKey);
         this.data.set(getData);
         if (this.data()) {
@@ -200,6 +205,8 @@ export class PawnFormComponent {
             description: getData?.description,
             date_expired: getData?.date_expired,
           });
+          
+
         }
         if (this.data()?.photo) {
           const currentValidators = this.pawnForm.controls.file.validator
@@ -217,44 +224,72 @@ export class PawnFormComponent {
         this.preview = this.data()?.photo?.downloadUrl;
         this.image = !!this.preview;
         this.upload = !this.image;
+
       })
     );
-
-    this.enableCustomerInfo(); // Add this line
-    this.routeUnSubscribe.set(
-      this.route.params.subscribe(async (param) => {
-        // ... your existing code
-      })
-    );
+    this.pawnForm.get('date_expired')?.valueChanges.subscribe(() => {
+      this.calculateDays();
+    });
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    console.log('changes[data]:', changes['data']);
-  console.log('this.data():', this.data());
-  if (changes['data'] && this.data()?.key) {
-    this.disableCustomerInfo();
-  } else {
-    this.enableCustomerInfo();
-  }
+  calculateDays() {
+    const date_expired = this.pawnForm.get('date_expired')?.value;
+  
+    if (date_expired) {
+      const date_expiredModified = new Date(date_expired);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+  
+      if (isNaN(date_expiredModified.getTime())) {
+        this.days_countdown = null;
+        console.error('Invalid date provided.');
+        return;
+      }
+  
+      const Time = date_expiredModified.getTime() - today.getTime();
+      this.days_countdown = Math.floor(Time / (1000 * 3600 * 24));
+    } else {
+      this.days_countdown = null;
+    }
   }
 
-  disableCustomerInfo() {
-    this.pawnForm.get('full_name')?.disable();
-    this.pawnForm.get('gender')?.disable();
-    this.pawnForm.get('phone_number')?.disable();
-    this.pawnForm.get('id_card')?.disable();
-    this.pawnForm.get('address')?.disable();
-    this.pawnForm.get('pawn_type')?.disable();
+  checkDisableForm(param: any){
+    if(param == 'na'){
+      this.pawnForm.get('full_name')?.enable();
+      this.pawnForm.get('phone_number')?.enable();
+      this.pawnForm.get('gender')?.enable();
+      this.pawnForm.get('id_card')?.enable();
+      this.pawnForm.get('address')?.enable();
+      this.pawnForm.get('pawn_type')?.enable();
+      this.pawnForm.get('type_phone')?.enable();
+      this.pawnForm.get('type_phone_id')?.enable();
+      this.pawnForm.get('type_car')?.enable();
+      this.pawnForm.get('type_motor')?.enable();
+      this.pawnForm.get('type_jewelry_name')?.enable();
+      this.pawnForm.get('gold_weight')?.enable();
+      this.pawnForm.get('others')?.enable();
+      this.pawnForm.get('plate_number')?.enable();
+      this.pawnForm.get('brand_name')?.enable();
+    }else{
+      this.pawnForm.get('full_name')?.disable();
+      this.pawnForm.get('phone_number')?.disable();
+      this.pawnForm.get('gender')?.disable();
+      this.pawnForm.get('id_card')?.disable();
+      this.pawnForm.get('address')?.disable();
+      this.pawnForm.get('pawn_type')?.disable();
+      this.pawnForm.get('type_phone')?.disable();
+      this.pawnForm.get('type_phone_id')?.disable();
+      this.pawnForm.get('type_car')?.disable();
+      this.pawnForm.get('type_motor')?.disable();
+      this.pawnForm.get('type_jewelry_name')?.disable();
+      this.pawnForm.get('gold_weight')?.disable();
+      this.pawnForm.get('others')?.disable();
+      this.pawnForm.get('plate_number')?.disable();
+      this.pawnForm.get('brand_name')?.disable();
+    }
   }
 
-  enableCustomerInfo() {
-    this.pawnForm.get('full_name')?.enable();
-    this.pawnForm.get('gender')?.enable();
-    this.pawnForm.get('phone_number')?.enable();
-    this.pawnForm.get('id_card')?.enable();
-    this.pawnForm.get('address')?.enable();
-    this.pawnForm.get('pawn_type')?.enable();
-  }
+
 
   limitPhoneNumber(event: any) {
     let input = event.target.value.replace(/\D/g, ''); 
@@ -378,6 +413,7 @@ export class PawnFormComponent {
             this.upload = false;
             this.image = true;
           }
+          this.cdr.detectChanges();
         };
 
         reader.readAsDataURL(this.currentFile);

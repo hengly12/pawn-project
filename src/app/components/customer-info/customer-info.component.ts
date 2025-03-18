@@ -4,15 +4,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTabsModule } from '@angular/material/tabs';
-import { RouterOutlet, RouterLink, RouterLinkActive, ActivatedRoute } from '@angular/router';
+import { RouterLink, RouterLinkActive, ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { MatCardModule } from '@angular/material/card';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { AuthStore } from '../../auth/auth.store';
 import { PawnStore } from '../../shared/store/pawn.store';
-import { GetTimeAgoPipe } from "../../shared/pipes/customs.pipe";
-import { DatePipe } from '@angular/common';
-import { AppLayoutComponent } from '../../layout/app-layout/app-layout.component';
+
 
 
 
@@ -24,13 +22,10 @@ import { AppLayoutComponent } from '../../layout/app-layout/app-layout.component
     MatMenuModule,
     MatSidenavModule,
     MatButtonModule,
-    RouterOutlet,
     MatTabsModule,
     RouterLink,
     RouterLinkActive,
     MatCardModule,
-    GetTimeAgoPipe,
-    DatePipe,
     MatDialogModule, 
     MatButtonModule,
 ],
@@ -41,17 +36,18 @@ export class CustomerInfoComponent {
 
   routeUnSubscribe = signal<any>(Subscription);
   data = signal<any>(null);
-  param = signal<any>(null);
+  param = signal<any>('active');
+  
 
   
 
   constructor(
-  public auth: AuthStore,
-  private readonly route: ActivatedRoute,
-  private readonly store: PawnStore,
-
-  public dialogRef: MatDialogRef<AppLayoutComponent>,
+    public dialogRef: MatDialogRef<CustomerInfoComponent>,
     @Inject(MAT_DIALOG_DATA) public info_customer: any,
+    public auth: AuthStore,
+    private readonly route: ActivatedRoute,
+    private readonly store: PawnStore,
+
   ){
     console.log(info_customer, 'info')
   }
@@ -62,6 +58,7 @@ export class CustomerInfoComponent {
         this.data.set(res)
       })
     )
+
   }
 
   ngOnDestroy(){
