@@ -25,3 +25,9 @@ table {
   mat-grid-tile {
     background: lightblue;
   }
+
+  .report-table{
+    display: flex;
+    flex-direction: column;
+    background-color: lightblue;
+  }

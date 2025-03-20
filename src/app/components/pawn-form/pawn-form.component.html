@@ -1,18 +1,25 @@
 <div class="pawn-content-flex">
   <div class="btn-create-form">
     <h2>ចុះបញ្ជីបញ្ចាំ</h2>
+    
     <div class="btn-button-form">
       @if(data()?.key){
-      <button class="btn-delete" (click)="deleteItem(data())">
+        <button mat-icon-button [matMenuTriggerFor]="beforeMenu" aria-label="Example icon-button with a menu">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #beforeMenu="matMenu" xPosition="before">
+        <button mat-menu-item class="btn-delete" (click)="deleteItem(data())">
         Delete <mat-icon>delete</mat-icon>
       </button>
-      <button class="btn-edit" type="submit" (click)="onSubmit()">
+      <button mat-menu-item class="btn-edit" type="submit" (click)="onSubmit()">
         Edit Form <mat-icon>edit</mat-icon>
       </button>
+    </mat-menu>
       }@else {
-      <button class="btn-save" type="submit" (click)="onSubmit()">
+        <button class="btn-save" type="submit" (click)="onSubmit()">
         រក្សាទុក <mat-icon>save_alt</mat-icon>
       </button>
+      
       }
     </div>
   </div>

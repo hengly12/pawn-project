@@ -25,7 +25,7 @@ import { MatInputModule } from '@angular/material/input';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSelectModule } from '@angular/material/select';
-import { MatIcon } from '@angular/material/icon';
+import { MatIcon, MatIconModule } from '@angular/material/icon';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { GENDER_DATA, ITEM_DATA, STATUS_OBJ } from '../../shared/dummy/config';
 import { DataService } from '../../shared/services/data.service';
@@ -41,6 +41,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { FireStorageService } from '../../shared/services/fire-storage.service';
+import { MatButtonModule } from '@angular/material/button';
+import { MatMenuModule } from '@angular/material/menu';
 
 interface GenderOption {
   key: number;
@@ -61,6 +63,10 @@ interface GenderOption {
     MatIcon,
     MatAutocompleteModule,
     NgClass,
+    MatButtonModule,
+    MatMenuModule,
+    MatIconModule,
+    
   ],
   providers: [provideNativeDateAdapter(), CurrencyPipe],
   templateUrl: './pawn-form.component.html',
@@ -227,9 +233,9 @@ export class PawnFormComponent {
 
       })
     );
-    this.pawnForm.get('date_expired')?.valueChanges.subscribe(() => {
-      this.calculateDays();
-    });
+    // this.pawnForm.get('date_expired')?.valueChanges.subscribe(() => {
+    //   this.calculateDays();
+    // });
   }
 
   calculateDays() {

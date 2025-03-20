@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { DataService } from '../services/data.service';
 import { AuthStore } from '../../auth/auth.store';
-import { deleteDoc, doc, getDoc, getDocs, limit, orderBy, query, startAfter, updateDoc, where } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDoc, getDocs, limit, orderBy, query, startAfter, updateDoc, where } from 'firebase/firestore';
 import { collectionData } from '@angular/fire/firestore';
 import { interval, map, Observable, switchMap } from 'rxjs';
 import { pushToArray, pushToObject, toUpperCaseTrim } from '../services/mapping.service';
@@ -66,4 +66,31 @@ export class PawnStore {
     });
   }
 
+  // Corrected placement of updateItemStatus
+  updateItemStatus(itemKey: string, newStatus: number): Observable<void> {
+    return new Observable((observer) => {
+      updateDoc(doc(this.ds.customerRef(), itemKey), {
+        'status.key': newStatus, // Update the status.key field
+      })
+        .then(() => {
+          observer.next();
+          observer.complete();
+        })
+        .catch((error) => {
+          observer.error(error);
+        });
+    });
+  }
+
+  async searchListing(search: string, statusKey: any): Promise<any> {
+    const ref = this.ds.customerRef();
+    const queryConstraints = [
+      where('keywords', 'array-contains', toUpperCaseTrim(search)),
+      where('status.key', '==', statusKey),
+      orderBy('created_at', 'desc'),
+      limit(20),
+    ];
+    const appQuery = query(ref, ...queryConstraints);
+    return pushToArray(await getDocs(appQuery));
+  }
 }

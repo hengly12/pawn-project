@@ -60,7 +60,7 @@ display: flex;
   font-size: 15px;
   border-radius: 50px;
   color: #757584;
-  background-color: #e6e6e6;
+  background-color: #eaeaea;
   cursor: pointer;
   top: 100px;
   left: 300px;
@@ -70,7 +70,23 @@ display: flex;
 .search-icon:hover{
   color: #1585f5;
   }
+.clear-icon{
+  width: 30px;
+  height: 30px;
+  border: solid 0px;
+  font-size: 15px;
+  border-radius: 50px;
+  color: #757584;
+  background-color: #eaeaea;
+  cursor: pointer;
+  top: 100px;
+  left: 300px;
+  position: absolute;
+}
 
+.clear-icon:hover{
+  color: #9b1616;
+}
 
 .menu-bar{
   font-family: "Koh Santepheap", serif;

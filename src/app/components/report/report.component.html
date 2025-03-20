@@ -1,6 +1,8 @@
-<div class="report-monthly"> <h1>Monthly Report</h1></div>
-<mat-grid-list cols="2" rowHeight="1:1">
-    <mat-grid-tile>
+
+<div class="report-table">
+<div class="report-monthly"></div>
+<h2>Monthly Report</h2>
+ 
 <table mat-table [dataSource]="transactions" class="mat-elevation-z8">
   <ng-container matColumnDef="item">
     <th mat-header-cell *matHeaderCellDef><h2>Pawn Items</h2></th>
@@ -54,5 +56,65 @@
     class="example-second-footer-row"
   ></tr>
 </table>
-</mat-grid-tile>
-</mat-grid-list>
+
+
+  <div class="report-monthly">
+    <h2>Year Report</h2>
+  </div>
+
+   
+  <table mat-table [dataSource]="transactions" class="mat-elevation-z8">
+    <ng-container matColumnDef="item">
+      <th mat-header-cell *matHeaderCellDef><h2>Pawn Items</h2></th>
+      <td mat-cell *matCellDef="let transaction">{{ transaction.item }}</td>
+      <td mat-footer-cell *matFooterCellDef>Total</td>
+    </ng-container>
+  
+    <ng-container matColumnDef="cost">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let transaction">
+        {{ transaction.cost | currency }}
+      </td>
+      <td mat-footer-cell *matFooterCellDef>{{ getTotalCost() | currency }}</td>
+    </ng-container>
+  
+    <ng-container matColumnDef="item-description">
+      <th mat-header-cell *matHeaderCellDef><h3>Item</h3></th>
+    </ng-container>
+  
+    <ng-container matColumnDef="cost-description">
+      <th mat-header-cell *matHeaderCellDef><h3>Price in USD</h3></th>
+    </ng-container>
+  
+    <ng-container matColumnDef="disclaimer">
+      <td mat-footer-cell *matFooterCellDef colspan="2">
+        Total Income This Month
+      </td>
+    </ng-container>
+  
+    <tr
+      mat-header-row
+      *matHeaderRowDef="displayedColumns"
+      class="example-first-header-row"
+    ></tr>
+    <tr
+      mat-header-row
+      *matHeaderRowDef="['item-description', 'cost-description']"
+      class="example-second-header-row"
+    ></tr>
+  
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  
+    <tr
+      mat-footer-row
+      *matFooterRowDef="displayedColumns"
+      class="example-first-footer-row"
+    ></tr>
+    <tr
+      mat-footer-row
+      *matFooterRowDef="['disclaimer']"
+      class="example-second-footer-row"
+    ></tr>
+  </table>
+</div>
+  
