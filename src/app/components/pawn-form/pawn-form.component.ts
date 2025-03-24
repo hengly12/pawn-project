@@ -39,10 +39,12 @@ import { AuthStore } from '../../auth/auth.store';
 import { PawnStore } from '../../shared/store/pawn.store';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription } from 'rxjs';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FireStorageService } from '../../shared/services/fire-storage.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { AlertComponent } from '../../shared/pages/alert/alert.component';
 
 interface GenderOption {
   key: number;
@@ -66,7 +68,7 @@ interface GenderOption {
     MatButtonModule,
     MatMenuModule,
     MatIconModule,
-    
+    MatDialogModule,
   ],
   providers: [provideNativeDateAdapter(), CurrencyPipe],
   templateUrl: './pawn-form.component.html',
@@ -74,9 +76,6 @@ interface GenderOption {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PawnFormComponent {
-  
- 
-  
   genders = signal<any>(GENDER_DATA);
   days_countdown: number | null = null;
   pawn_type = signal<any>(ITEM_DATA);
@@ -99,9 +98,8 @@ export class PawnFormComponent {
 
   @ViewChild('inputFile') inputFile!: ElementRef;
 
-  
-
   constructor(
+    public dialog: MatDialog,
     private ds: DataService,
     private fb: FormBuilder,
     private auth: AuthStore,
@@ -111,6 +109,8 @@ export class PawnFormComponent {
     private storage: FireStorageService,
     private currencyPipe: CurrencyPipe,
     private cdr: ChangeDetectorRef,
+    private router: Router,
+    
   ) {}
 
   readonly range = new FormGroup({
@@ -134,7 +134,7 @@ export class PawnFormComponent {
     description: new FormControl(''),
     // dateCreated: new FormControl<Date | null>(null, Validators.required),
     date_expired: new FormControl<Date | null>(null, [Validators.required]),
-    
+
     photo: new FormControl<string | null>(null),
     type_phone: new FormControl<any>(null),
     type_car: new FormControl<any>(null),
@@ -182,7 +182,7 @@ export class PawnFormComponent {
     this.routeUnSubscribe.set(
       this.route.params.subscribe(async (param) => {
         let paramKey = param['id'];
-        this.checkDisableForm(paramKey)
+        this.checkDisableForm(paramKey);
         const getData = await this.store.getCustomer(paramKey);
         this.data.set(getData);
         if (this.data()) {
@@ -211,8 +211,6 @@ export class PawnFormComponent {
             description: getData?.description,
             date_expired: getData?.date_expired,
           });
-          
-
         }
         if (this.data()?.photo) {
           const currentValidators = this.pawnForm.controls.file.validator
@@ -230,7 +228,6 @@ export class PawnFormComponent {
         this.preview = this.data()?.photo?.downloadUrl;
         this.image = !!this.preview;
         this.upload = !this.image;
-
       })
     );
     // this.pawnForm.get('date_expired')?.valueChanges.subscribe(() => {
@@ -240,18 +237,18 @@ export class PawnFormComponent {
 
   calculateDays() {
     const date_expired = this.pawnForm.get('date_expired')?.value;
-  
+
     if (date_expired) {
       const date_expiredModified = new Date(date_expired);
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-  
+
       if (isNaN(date_expiredModified.getTime())) {
         this.days_countdown = null;
         console.error('Invalid date provided.');
         return;
       }
-  
+
       const Time = date_expiredModified.getTime() - today.getTime();
       this.days_countdown = Math.floor(Time / (1000 * 3600 * 24));
     } else {
@@ -259,8 +256,8 @@ export class PawnFormComponent {
     }
   }
 
-  checkDisableForm(param: any){
-    if(param == 'na'){
+  checkDisableForm(param: any) {
+    if (param == 'na') {
       this.pawnForm.get('full_name')?.enable();
       this.pawnForm.get('phone_number')?.enable();
       this.pawnForm.get('gender')?.enable();
@@ -276,7 +273,7 @@ export class PawnFormComponent {
       this.pawnForm.get('others')?.enable();
       this.pawnForm.get('plate_number')?.enable();
       this.pawnForm.get('brand_name')?.enable();
-    }else{
+    } else {
       this.pawnForm.get('full_name')?.disable();
       this.pawnForm.get('phone_number')?.disable();
       this.pawnForm.get('gender')?.disable();
@@ -295,14 +292,12 @@ export class PawnFormComponent {
     }
   }
 
-
-
   limitPhoneNumber(event: any) {
-    let input = event.target.value.replace(/\D/g, ''); 
+    let input = event.target.value.replace(/\D/g, '');
     if (input.length > 10) {
       input = input.substring(0, 10);
     }
-    event.target.value = input; 
+    event.target.value = input;
     this.pawnForm.controls['phone_number'].setValue(input);
   }
 
@@ -311,26 +306,24 @@ export class PawnFormComponent {
     if (input.length > 9) {
       input = input.substring(0, 9);
     }
-    event.target.value = input; 
-    this.pawnForm.controls['id_card'].setValue(input); 
+    event.target.value = input;
+    this.pawnForm.controls['id_card'].setValue(input);
   }
 
   formatCurrencyPricePawn(event: any) {
     let value = event.target.value;
-   
+
     value = value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '1$');
 
     if (value) {
-  
       const numericValue = parseFloat(value);
-   
+
       const formattedValue = this.currencyPipe.transform(numericValue, 'USD');
       if (formattedValue) {
-      
         this.pawnForm.get('price_pawn')?.setValue(numericValue, {
           emitEvent: false,
         });
-      
+
         event.target.value = formattedValue;
       }
     } else {
@@ -340,20 +333,18 @@ export class PawnFormComponent {
 
   formatCurrencyPriceInterest(event: any) {
     let value = event.target.value;
-   
+
     value = value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
 
     if (value) {
-  
       const numericValue = parseFloat(value);
-   
+
       const formattedValue = this.currencyPipe.transform(numericValue, 'USD');
       if (formattedValue) {
-      
         this.pawnForm.get('price_interest')?.setValue(numericValue, {
           emitEvent: false,
         });
-      
+
         event.target.value = formattedValue;
       }
     } else {
@@ -370,8 +361,6 @@ export class PawnFormComponent {
     const value = this.pawnForm.get('price_interest')?.value;
     return this.currencyPipe.transform(value, 'USD');
   }
-
- 
 
   onFileDrop(event: any): void {
     event.preventDefSault();
@@ -461,7 +450,6 @@ export class PawnFormComponent {
   onImageUpload(event: any) {
     const files = event.target.files;
     if (files && files.length) {
-
       for (let file of files) {
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -475,8 +463,45 @@ export class PawnFormComponent {
     this.imagePreview = [];
   }
 
-  deleteItem(data: any) {
-    this.store.deleteCustomer(data?.key);
+  ShowDialogDeleteForm(data: any) {
+    const dialogRef = this.dialog.open(AlertComponent, {
+      data: {
+        title: 'Confirm Deletion',
+        description: 'Are you sure you want to delete this item?',
+      },
+      width: '350px',
+      role: 'dialog',
+      panelClass: 'custom-dialog',
+    });
+  
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.store.deleteCustomer(data?.key)
+          .then(() => {
+            this.router.navigate(['home/active/listing']);
+          })
+          .catch((error) => {
+            console.error('Error deleting customer:', error)
+          });
+      }
+    });
+  }
+  
+  async endPawn(data: any): Promise<void> {
+    if (data?.key) {
+      try {
+        await this.store.endPawn(data.key);
+        this.snackBar.open(`Pawn ended successfully.`, 'Success', {
+          duration: 3000,
+        });
+        this.router.navigate(['home/inactive/listing']);
+      } catch (error) {
+        console.error('Error ending pawn:', error);
+        this.snackBar.open(`Failed to end pawn.`, 'Error', {
+          duration: 3000,
+        });
+      }
+    }
   }
 
   async onSubmit() {
@@ -566,6 +591,7 @@ export class PawnFormComponent {
       date_expired: date_expired,
       photo: photo,
       pawn_item_key: info_customer?.pawnKey,
+      
 
       ...(this.seleted()?.key == 0 && {
         plate_number: plate_number,

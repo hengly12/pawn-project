@@ -1,52 +1,69 @@
-
-
 <div class="show-dialog">
-
-
-<h3>{{info_customer?.title}}</h3>
-<div class="alert-showdialog">
-    <button class="close-dialog" (click)="close()"><mat-icon>close</mat-icon></button>
-    </div>
-</div>
-<div class="nav-search">
-    <button class="search-icon" type="submit"><mat-icon>search</mat-icon></button>
-    <input class="search-box" type="text" placeholder="ស្វែងរកឯកសារ​អតិថិជន" name="q" >
-    
-</div>
-
-  <div class="listing">
-
-    @for(item of data(); track item?.key){
-    <div class="customer_info" [routerLink]="['/home/' + param() + '/listing/create-form/' + item?.key]" routerLinkActive="active">
-      <div class="profile-image">
-        <img [src]="auth.profile?.photoFile || 'assets/images/customer-image.jpg'" alt="Profile Icon" />
-      </div>
-   
-      <div class="listing_info">
-
-        <div class="full_name">
-          <mat-icon>perm_identity</mat-icon>
-          <h4>ឈ្មោះ: {{item?.full_name}}</h4>
-        </div>
-
-        <div class="gender">
-          <mat-icon>supervisor_account</mat-icon>
-          <h5>ភេទ: {{item?.gender?.text}}</h5>
-        </div>
-
-        <div class="phone_number">
-          <mat-icon> ring_volume</mat-icon>
-          <h5>លេខទូរសព្ទ: {{item?.phone_number}}</h5>
-        </div>
-
-        <div class="id_card">
-          <mat-icon>chrome_reader_mode</mat-icon>
-          <h5>លេខអត្តសញ្ញាណប័ណ្ណ: {{item?.id_card}}</h5>
-        </div>
-    </div>
+  <h3>{{ info_customer?.title }}</h3>
+  <div class="alert-showdialog">
+      <button class="close-dialog" (click)="close()">
+          <mat-icon>close</mat-icon>
+      </button>
   </div>
-    }
+</div>
+<form [formGroup]="form">
+  <nav class="nav-search">
+      <input
+          class="search-box"
+          type="search"
+          formControlName="search"
+          #searchInput
+          placeholder="ស្វែងរកឯកសារ​អតិថិជន"
+          name="q"
+      />
 
-  <!-- <div class="content">
-    <router-outlet></router-outlet>
-</div> -->
+      @if (!showClearIcon) {
+      <button class="search-icon" type="button">
+          <mat-icon>search</mat-icon>
+      </button>
+      } @if (showClearIcon) {
+      <button class="clear-icon" type="button" (click)="clearInput()">
+          <mat-icon>clear</mat-icon>
+      </button>
+      }
+  </nav>
+</form>
+
+<div class="listing">
+  @for (item of data(); track item?.key) {
+  <div
+      class="customer_info"
+      [routerLink]="['/home/' + param() + '/listing/create-form/' + item?.key]"
+      routerLinkActive="active"
+  >
+      <div class="profile-image">
+          <img
+              [src]="auth.profile?.photoFile || 'assets/images/customer-image.jpg'"
+              alt="Profile Icon"
+          />
+      </div>
+
+      <div class="listing_info">
+          <div class="full_name">
+              <mat-icon>perm_identity</mat-icon>
+              <h4>ឈ្មោះ: {{ item?.full_name }}</h4>
+          </div>
+
+          <div class="gender">
+              <mat-icon>supervisor_account</mat-icon>
+              <h5>ភេទ: {{ item?.gender?.text }}</h5>
+          </div>
+
+          <div class="phone_number">
+              <mat-icon>ring_volume</mat-icon>
+              <h5>លេខទូរសព្ទ: {{ item?.phone_number }}</h5>
+          </div>
+
+          <div class="id_card">
+              <mat-icon>chrome_reader_mode</mat-icon>
+              <h5>លេខអត្តសញ្ញាណប័ណ្ណ: {{ item?.id_card }}</h5>
+          </div>
+      </div>
+  </div>
+  }
+</div>

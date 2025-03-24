@@ -66,15 +66,6 @@
     background-color: #1a73e8
   }
 
-  .btn-edit{
-    width: fit-content;
-    margin: 10px;
-  }
-  .btn-delete{
-    margin: 10px;
-    width: 120px;
-  
-  }
 
   .btn-edit:hover{
     background-color: #dfdfdf;
@@ -165,6 +156,7 @@
   border-right: none;
   border-left: none;
   padding-inline: 10px;
+  background-color: #ffffff;
 }
 
 .custome-input-date-expire{

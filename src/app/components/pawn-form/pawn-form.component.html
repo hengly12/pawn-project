@@ -8,11 +8,14 @@
           <mat-icon>more_vert</mat-icon>
         </button>
         <mat-menu #beforeMenu="matMenu" xPosition="before">
-        <button mat-menu-item class="btn-delete" (click)="deleteItem(data())">
-        Delete <mat-icon>delete</mat-icon>
-      </button>
+          <button mat-menu-item class="btn-end-pawn" (click)="endPawn(data())">
+            End Pawn <mat-icon>assignment_turned_in</mat-icon>
+          </button>
+          <button mat-menu-item class="btn-delete" (click)="ShowDialogDeleteForm(data())">
+            Delete <mat-icon>delete</mat-icon>
+          </button>
       <button mat-menu-item class="btn-edit" type="submit" (click)="onSubmit()">
-        Edit Form <mat-icon>edit</mat-icon>
+        Save <mat-icon>edit</mat-icon>
       </button>
     </mat-menu>
       }@else {
@@ -222,7 +225,7 @@
                 [displayWith]="displayItem"
               >
                 @for(item of pawn_type(); track item){
-                <mat-option [value]="item" (click)="selectItem(item)">
+                <mat-option [value]="item">
                   {{ item.text }}
                 </mat-option>
                 }

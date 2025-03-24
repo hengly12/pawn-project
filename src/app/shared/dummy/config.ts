@@ -49,6 +49,7 @@ export const STATUS_OBJ = {
   CHECKED_IN: { key: 3, text: 'CHECKED_IN' },
   EXTENDED: { key: 4, text: 'EXTENDED' },
   CHECK_OUT: { key: 5, text: 'CHECK_OUT' },
+  ENDED_PAWN: {key: 6, text: 'Ended Pawn'},
 };
 
 export const NOTIFY_OBJ = {

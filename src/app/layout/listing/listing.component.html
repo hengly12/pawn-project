@@ -5,7 +5,7 @@
       <div class="dashboard">
         <nav class="nav-search">
           <input class="search-box" type="search" formControlName="search" #searchInput 
-       placeholder="ស្វែងរកឯកសារ​អតិថិជន" name="q" (input)="onInputChange()">
+       placeholder="ស្វែងរកឯកសារ​អតិថិជន" name="q">
 
 @if (!showClearIcon) {
   <button class="search-icon" type="button">
@@ -67,7 +67,7 @@
                   <h5>រយៈពេលបានបង្កើត: {{item?.created_at | getTimeAgo}}</h5>
                 </div>
                 <div class="date_expired">
-                  <mat-icon>update</mat-icon>
+                  <mat-icon>date_range</mat-icon>
                   <h5>ថ្ងៃផុតកំណត់: {{item?.date_expired?.toDate() | date:'dd/MM/yyyy'}}</h5>
                   @if(item?.date_expired?.toDate() < today){
                     <span style="color: red;">(ផុតកំណត់)</span>

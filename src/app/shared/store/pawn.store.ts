@@ -11,7 +11,7 @@ import { STATUS_OBJ } from '../dummy/config';
 })
 export class PawnStore {
   constructor(private ds: DataService, private auth: AuthStore) {}
-  process = signal<boolean>(false); 
+  process = signal<boolean>(false);
   async createCustomer(data: any, info_customer: any) {
     try{
       this.process.set(true);
@@ -40,6 +40,17 @@ export class PawnStore {
     ) as Observable<any[]>;
   }
 
+  fetchListingExpiredDate( dateExpired: any) {
+    const queryRef = [
+      where('date_expired', '==', dateExpired),
+      orderBy('created_at', 'desc'),
+      limit(30),
+    ];
+    return collectionData(
+      query(this.ds.customerRef(), ...queryRef)
+    ) as Observable<any[]>;
+  }
+
   fetchInfoListing() {
     const queryRef = [
       orderBy('created_at', 'desc'),
@@ -57,7 +68,9 @@ export class PawnStore {
   }
 
   deleteCustomer(key: string) {
-    return deleteDoc(doc(this.ds.customerRef(), key));
+    return updateDoc(doc(this.ds.customerRef(), key), {
+      status: STATUS_OBJ.DELETED,
+    });
   }
 
   updateStatusInactive(data: any) {
@@ -93,4 +106,16 @@ export class PawnStore {
     const appQuery = query(ref, ...queryConstraints);
     return pushToArray(await getDocs(appQuery));
   }
+
+  async endPawn(key: string): Promise<void> {
+  try {
+    await updateDoc(doc(this.ds.customerRef(), key), {
+      'status.key': STATUS_OBJ.ENDED_PAWN,
+    });
+    console.log('Pawn ended successfully.');
+  } catch (error) {
+    console.error('Error ending pawn:', error);
+    throw error;
+  }
+}
 }

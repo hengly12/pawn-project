@@ -27,4 +27,5 @@ export class AlertComponent {
   yes(){
     this.dialogRef.close(true)
   }
+
 }
