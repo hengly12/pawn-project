@@ -187,6 +187,7 @@ export class PawnFormComponent {
         this.data.set(getData);
         if (this.data()) {
           console.log('data()?.key:', this.data()?.key);
+          this.selectItem(this.data()?.pawn_type)
           this.pawnForm.patchValue({
             full_name: getData?.full_name,
             phone_number: getData?.phone_number,
@@ -418,6 +419,7 @@ export class PawnFormComponent {
   }
 
   selectItem(item: any) {
+    console.log(item)
     this.seleted.set(item);
     const weightControl = this.pawnForm.get('gold_weight');
     const typePhoneIdControl = this.pawnForm.get('type_phone_id');
@@ -463,6 +465,10 @@ export class PawnFormComponent {
     this.imagePreview = [];
   }
 
+  clearForm() {
+    this.pawnForm.reset();
+  }
+
   ShowDialogDeleteForm(data: any) {
     const dialogRef = this.dialog.open(AlertComponent, {
       data: {
@@ -477,9 +483,9 @@ export class PawnFormComponent {
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.store.deleteCustomer(data?.key)
-          .then(() => {
-            this.router.navigate(['home/active/listing']);
-          })
+          // .then(() => {
+          //   this.router.navigate(['home/active/listing']);
+          // })
           .catch((error) => {
             console.error('Error deleting customer:', error)
           });
@@ -487,21 +493,33 @@ export class PawnFormComponent {
     });
   }
   
-  async endPawn(data: any): Promise<void> {
-    if (data?.key) {
-      try {
-        await this.store.endPawn(data.key);
-        this.snackBar.open(`Pawn ended successfully.`, 'Success', {
-          duration: 3000,
-        });
-        this.router.navigate(['home/inactive/listing']);
-      } catch (error) {
-        console.error('Error ending pawn:', error);
-        this.snackBar.open(`Failed to end pawn.`, 'Error', {
-          duration: 3000,
-        });
+  endPawn(data: any): void {
+    const dialogRef = this.dialog.open(AlertComponent, {
+      data: {
+        title: 'Confirm End Pawn',
+        description: 'Are you sure you want to end this pawn?',
+      },
+      width: '350px',
+      role: 'dialog',
+      panelClass: 'custom-dialog',
+    });
+  
+    dialogRef.afterClosed().subscribe(async (result) => {
+      if (result && data?.key) {
+        try {
+          await this.store.endPawn(data?.key);
+          this.snackBar.open(`Pawn ended successfully.`, 'Success', {
+            duration: 3000,
+          });
+          this.router.navigate(['home/active/listing']);
+        } catch (error) {
+          console.error('Error ending pawn:', error);
+          this.snackBar.open(`Failed to end pawn.`, 'Error', {
+            duration: 3000,
+          });
+        }
       }
-    }
+    });
   }
 
   async onSubmit() {

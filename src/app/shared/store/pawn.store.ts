@@ -11,6 +11,7 @@ import { STATUS_OBJ } from '../dummy/config';
 })
 export class PawnStore {
   constructor(private ds: DataService, private auth: AuthStore) {}
+  
   process = signal<boolean>(false);
   async createCustomer(data: any, info_customer: any) {
     try{
@@ -110,7 +111,7 @@ export class PawnStore {
   async endPawn(key: string): Promise<void> {
   try {
     await updateDoc(doc(this.ds.customerRef(), key), {
-      'status.key': STATUS_OBJ.ENDED_PAWN,
+      status: STATUS_OBJ.DISABLED,
     });
     console.log('Pawn ended successfully.');
   } catch (error) {

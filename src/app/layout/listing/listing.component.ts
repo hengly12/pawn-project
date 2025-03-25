@@ -40,6 +40,9 @@ import { switchMap, takeUntil } from 'rxjs/operators';
   styleUrl: './listing.component.scss'
 })
 export class ListingComponent implements OnInit, OnDestroy {
+  pawnForm!: FormGroup;
+  private routeSub!: Subscription; // Store subscription to unsubscribe later
+  
   showFiller = false;
   tabs = signal<any>([
     { key: 'active', label: 'កំពុងបញ្ចាំ' },
@@ -161,6 +164,8 @@ export class ListingComponent implements OnInit, OnDestroy {
       console.log(`Dialog result: ${result}`);
     });
   }
+
+  
 
   clearInput() {
     this.form.get('search')?.setValue('');

@@ -276,9 +276,14 @@
 }
 
 .input-error{
+  margin-inline: 245px;
   color: crimson;
 }
 
+.input-error-date{
+  margin-inline: 0px;
+  color: crimson;
+}
 .upload-image {
   width: 790px;
     height: 250px;

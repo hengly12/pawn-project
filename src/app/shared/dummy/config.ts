@@ -21,6 +21,17 @@ export const Languages = {
   },
 } as const;
 
+export interface ItemType {
+  key: number;
+  text: string;
+}
+
+export interface GenderOption {
+  key: number;
+  text: string;
+  en_name: string;
+}
+
 export const LanguagesArray = Object.values(Languages);
 export const DefaultLanguage = Languages.km;
 
@@ -57,18 +68,19 @@ export const NOTIFY_OBJ = {
   CHECK_IN: { key:2, text: 'Foreigner Check In' },
 };
 
+
 export const GENDER_DATA = [
   { key: 0, text: 'ប្រុស', en_name: 'Male' },
   { key: 1, text: 'ស្រី', en_name: 'Female' },
   { key: 2, text: 'ដទៃទៀត', en_name: 'Other' },
 ];
 
-export const ITEM_DATA = [
-  { key: 0, text: 'Car',},
-  { key: 1, text: 'Phone', },
-  { key: 2, text: 'Motor', },
-  { key: 3, text: 'Jewelry', },
-  { key: 4, text: 'Others', },
+export const ITEM_DATA: ItemType[] = [
+  { key: 0, text: 'Car' },
+  { key: 1, text: 'Phone' },
+  { key: 2, text: 'Motor' },
+  { key: 3, text: 'Jewelry' },
+  { key: 4, text: 'Others' },
 ];
 
 export const STAY_STATUS = {

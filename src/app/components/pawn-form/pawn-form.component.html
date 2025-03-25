@@ -128,15 +128,7 @@
               </div>
 
               <!-- Error message if not exactly 10 digits -->
-              <div
-                class="input-error"
-                *ngIf="
-                  pawnForm.controls['phone_number'].hasError('pattern') &&
-                  pawnForm.controls['phone_number'].touched
-                "
-              >
-                លេខទូរសព្ទត្រូវតែមាន 9 ឬ 10 ខ្ទង់។
-              </div>
+              
               <!-- </mat-error>
         </mat-form-field> -->
             </div>
@@ -225,7 +217,7 @@
                 [displayWith]="displayItem"
               >
                 @for(item of pawn_type(); track item){
-                <mat-option [value]="item">
+                <mat-option (click)="selectItem(item)" [value]="item">
                   {{ item.text }}
                 </mat-option>
                 }
@@ -578,7 +570,7 @@
               /></label>
              
               <div
-                class="input-error"
+                class="input-error-date"
                 *ngIf="
                   pawnForm.controls['date_expired'].hasError('required') &&
                   pawnForm.controls['date_expired'].touched
