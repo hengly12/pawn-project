@@ -29,11 +29,12 @@
   </nav>
 </form>
 
-<div class="listing">
+<div class="listing" >
   @for (item of data(); track item?.key) {
-  <div
+  <div (click)="close()"
       class="customer_info"
-      [routerLink]="['/home/' + param() + '/listing/create-form/' + item?.key]"
+      [routerLink]="['/home/' + info_customer?.param + '/listing/create-form/'+ item?.key]"
+
       routerLinkActive="active"
   >
       <div class="profile-image">
@@ -42,6 +43,8 @@
               alt="Profile Icon"
           />
       </div>
+
+      
 
       <div class="listing_info">
           <div class="full_name">

@@ -1,36 +1,127 @@
 import { Injectable, signal } from '@angular/core';
 import { DataService } from '../services/data.service';
 import { AuthStore } from '../../auth/auth.store';
-import { collection, deleteDoc, doc, getDoc, getDocs, limit, orderBy, query, startAfter, updateDoc, where } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDoc, getDocs, limit, orderBy, query, startAfter, updateDoc, where, } from 'firebase/firestore';
 import { collectionData } from '@angular/fire/firestore';
 import { interval, map, Observable, switchMap } from 'rxjs';
-import { pushToArray, pushToObject, toUpperCaseTrim } from '../services/mapping.service';
+import { pushToArray, pushToObject, toUpperCaseTrim, } from '../services/mapping.service';
 import { STATUS_OBJ } from '../dummy/config';
+
 @Injectable({
   providedIn: 'root',
 })
+
 export class PawnStore {
   constructor(private ds: DataService, private auth: AuthStore) {}
-  
+
   process = signal<boolean>(false);
-  async createCustomer(data: any, info_customer: any) {
-    try{
+  async createCustomerinfo(data: any, info_customer: any) {
+    try {
       this.process.set(true);
       const batch = this.ds.batchRef();
       const ref = doc(this.ds.customerRef(), data?.key);
-      const ref_info_customer = doc(this.ds.infoCustomerRef(), info_customer?.key);
+      const ref_info_customer = doc(
+        this.ds.infoCustomerRef(),
+        info_customer?.key
+      );
 
       batch.set(ref, data, { merge: true });
       batch.set(ref_info_customer, info_customer, { merge: true });
       await batch.commit();
-    }catch (error) {
+    } catch (error) {
+      console.error('Batch operation failed:', error);
+      throw error;
+    }
+  }
+
+  async createCustomer(data: any, info_customer: any) {
+    try {
+      this.process.set(true);
+      const batch = this.ds.batchRef();
+      const ref = doc(this.ds.customerRef(), data?.key);
+      const ref_info_customer = doc(
+        this.ds.infoCustomerRef(),
+        info_customer?.key
+      );
+
+      batch.set(ref, data, { merge: true });
+      batch.set(ref_info_customer, info_customer, { merge: true });
+      await batch.commit();
+    } catch (error) {
+      console.error('Batch operation failed:', error);
+      throw error;
+    }
+  }
+
+  async createCustomerinfoNews(data: any, info_update: any) {
+    try {
+      this.process.set(true);
+      const batch = this.ds.batchRef();
+      const ref = doc(this.ds.customerRef(), data?.key);
+      const ref_info_customer = doc(
+        this.ds.infoCustomerRef(),
+        info_update?.key
+      );
+
+      batch.set(ref, data, { merge: true });
+      batch.set(ref_info_customer, info_update, { merge: true });
+      await batch.commit();
+    } catch (error) {
       console.error('Batch operation failed:', error);
       throw error;
     }
   }
 
 
-  fetchListing( statusKey: any) {
+  async createCustomerEdit(data: any) {
+    try {
+      this.process.set(true);
+      const batch = this.ds.batchRef();
+      const ref = doc(this.ds.customerRef(), data?.key);
+
+      batch.set(ref, data, { merge: true });
+      await batch.commit();
+    } catch (error) {
+      console.error('Batch operation failed:', error);
+      throw error;
+    }
+  }
+
+
+  // async createCustomerinfo(data: any, info_customer: any) {
+  //   try {
+  //     this.process.set(true);
+  //     const batch = this.ds.batchRef();
+  //     const ref = doc(this.ds.customerRef(), data?.key);
+  //     const ref_info_customer = doc(
+  //       this.ds.infoCustomerRef(),
+  //       info_customer?.key
+  //     );
+
+  //     batch.set(ref, data, { merge: true });
+  //     batch.set(ref_info_customer, info_customer, { merge: true });
+  //     await batch.commit();
+  //   } catch (error) {
+  //     console.error('Batch operation failed:', error);
+  //     throw error;
+  //   }
+  // }
+
+  // async createCustomer(data: any) {
+  //   try {
+  //     this.process.set(true);
+  //     const batch = this.ds.batchRef();
+  //     const ref = doc(this.ds.customerRef(), data?.key);
+
+  //     batch.set(ref, data, { merge: true });
+  //     await batch.commit();
+  //   } catch (error) {
+  //     console.error('Batch operation failed:', error);
+  //     throw error;
+  //   }
+  // }
+
+  fetchListing(statusKey: any) {
     const queryRef = [
       where('status.key', '==', statusKey),
       orderBy('created_at', 'desc'),
@@ -41,7 +132,7 @@ export class PawnStore {
     ) as Observable<any[]>;
   }
 
-  fetchListingExpiredDate( dateExpired: any) {
+  fetchListingExpiredDate(dateExpired: any) {
     const queryRef = [
       where('date_expired', '==', dateExpired),
       orderBy('created_at', 'desc'),
@@ -53,19 +144,18 @@ export class PawnStore {
   }
 
   fetchInfoListing() {
-    const queryRef = [
-      orderBy('created_at', 'desc'),
-      limit(50),
-    ];
+    const queryRef = [orderBy('created_at', 'desc'), limit(50)];
     return collectionData(
       query(this.ds.infoCustomerRef(), ...queryRef)
     ) as Observable<any[]>;
   }
 
   async getCustomer(key: string) {
-    return pushToObject(
-      await getDoc(doc(this.ds.customerRef(), key)),
-    );
+    return pushToObject(await getDoc(doc(this.ds.customerRef(), key)));
+  }
+
+  async getCustomerInFo(key: string) {
+    return pushToObject(await getDoc(doc(this.ds.infoCustomerRef(), key)));
   }
 
   deleteCustomer(key: string) {
@@ -80,11 +170,10 @@ export class PawnStore {
     });
   }
 
-  // Corrected placement of updateItemStatus
   updateItemStatus(itemKey: string, newStatus: number): Observable<void> {
     return new Observable((observer) => {
       updateDoc(doc(this.ds.customerRef(), itemKey), {
-        'status.key': newStatus, // Update the status.key field
+        'status.key': newStatus,
       })
         .then(() => {
           observer.next();
@@ -109,14 +198,26 @@ export class PawnStore {
   }
 
   async endPawn(key: string): Promise<void> {
-  try {
-    await updateDoc(doc(this.ds.customerRef(), key), {
-      status: STATUS_OBJ.DISABLED,
-    });
-    console.log('Pawn ended successfully.');
-  } catch (error) {
-    console.error('Error ending pawn:', error);
-    throw error;
+    try {
+      await updateDoc(doc(this.ds.customerRef(), key), {
+        status: STATUS_OBJ.DISABLED,
+      });
+      console.log('Pawn ended successfully.');
+    } catch (error) {
+      console.error('Error ending pawn:', error);
+      throw error;
+    }
   }
-}
+
+  async restorePawn(key: string): Promise<void> {
+    try {
+      await updateDoc(doc(this.ds.customerRef(), key), {
+        status: STATUS_OBJ.ACTIVE,
+      });
+      console.log('Restore Pawn successfully.');
+    } catch (error) {
+      console.error('Error Restore Pawn:', error);
+      throw error;
+    }
+  }
 }

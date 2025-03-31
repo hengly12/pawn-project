@@ -4,6 +4,7 @@ export interface IPAWNSHOP {
     created_by: any
     updated_at: any;
     updated_by: any
+    date_expired:any;
     date_key: number;
     status: any;
     keywords: string[];

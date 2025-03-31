@@ -35,10 +35,11 @@ import { FormBuilder, FormGroup, FormControl, ReactiveFormsModule } from '@angul
 export class CustomerInfoComponent implements OnInit, OnDestroy {
     routeUnSubscribe = signal<any>(Subscription);
     data = signal<any>(null);
-    param = signal<any>('active');
+    param = signal<any>(null);
     form!: FormGroup;
     showClearIcon = false;
     originalData = signal<any>([]);
+   
     private searchSubscription: Subscription | undefined;
 
     @ViewChild('searchInput') searchInput: ElementRef | undefined;
@@ -65,6 +66,7 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
                 this.originalData.set(res);
             })
         );
+
 
         this.searchSubscription = this.form.get('search')?.valueChanges.subscribe((value: string) => {
             if (value && value.trim() !== '') {

@@ -1,25 +1,7 @@
-import { docData, serverTimestamp } from '@angular/fire/firestore';
+import { arrayUnion, docData, serverTimestamp } from '@angular/fire/firestore';
 import { CurrencyPipe, NgClass, NgFor, NgIf } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  ElementRef,
-  Input,
-  OnInit,
-  signal,
-  SimpleChanges,
-  ViewChild,
-} from '@angular/core';
-import {
-  AbstractControl,
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnInit, signal, SimpleChanges, ViewChild, } from '@angular/core';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators, } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { provideNativeDateAdapter } from '@angular/material/core';
@@ -30,10 +12,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { GENDER_DATA, ITEM_DATA, STATUS_OBJ } from '../../shared/dummy/config';
 import { DataService } from '../../shared/services/data.service';
 import { sign } from 'crypto';
-import {
-  generateKeywords,
-  toDateKey,
-} from '../../shared/services/convert.service';
+import { generateKeywords, toDateKey, } from '../../shared/services/convert.service';
 import { mapUser } from '../../shared/services/mapping.service';
 import { AuthStore } from '../../auth/auth.store';
 import { PawnStore } from '../../shared/store/pawn.store';
@@ -45,6 +24,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AlertComponent } from '../../shared/pages/alert/alert.component';
+import { NgxPrintModule } from 'ngx-print';
 
 interface GenderOption {
   key: number;
@@ -69,6 +49,7 @@ interface GenderOption {
     MatMenuModule,
     MatIconModule,
     MatDialogModule,
+    NgxPrintModule,
   ],
   providers: [provideNativeDateAdapter(), CurrencyPipe],
   templateUrl: './pawn-form.component.html',
@@ -76,6 +57,10 @@ interface GenderOption {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PawnFormComponent {
+  currentTitle = 'ទម្រង់បញ្ចាំទ្រព្យ';
+  originalTitle = 'ទម្រង់បញ្ចាំទ្រព្យ';
+  printTitle = 'វិក័យប័ត្របង្កាន់ដៃ';
+
   genders = signal<any>(GENDER_DATA);
   days_countdown: number | null = null;
   pawn_type = signal<any>(ITEM_DATA);
@@ -85,6 +70,7 @@ export class PawnFormComponent {
   loading = signal<boolean>(false);
   routeUnSubscribe = signal<any>(Subscription);
   data = signal<any>(null);
+  param = signal<any>(null);
   // info_customer = signal<any>(null);
 
   message: string = '';
@@ -95,6 +81,7 @@ export class PawnFormComponent {
   upload = true;
   image = false;
   dragOver: boolean = false;
+  datainfo = signal<any>(null);
 
   @ViewChild('inputFile') inputFile!: ElementRef;
 
@@ -109,8 +96,7 @@ export class PawnFormComponent {
     private storage: FireStorageService,
     private currencyPipe: CurrencyPipe,
     private cdr: ChangeDetectorRef,
-    private router: Router,
-    
+    private router: Router
   ) {}
 
   readonly range = new FormGroup({
@@ -123,7 +109,7 @@ export class PawnFormComponent {
     gender: new FormControl<GenderOption | null>(null, Validators.required),
     phone_number: new FormControl<number | null>(null, [
       Validators.required,
-      Validators.pattern(/^\d{10}$/), // Adjust the length as needed
+      Validators.pattern(/^\d{10}$/),
     ]),
     id_card: new FormControl<number | null>(null, [
       Validators.required,
@@ -155,45 +141,27 @@ export class PawnFormComponent {
     ]),
 
     file: new FormControl<any>(null),
-    // pawnForm = new FormGroup({
-    //   fullName: new FormControl<any>(null, [Validators.required]),
-    //   gender: new FormControl<GenderOption | null>(null, Validators.required),
-    //   phoneNum: new FormControl<number | null>(null,[Validators.required, Validators.pattern('^[0-9]*$')]),
-    //   idCard: new FormControl<number | null>(null, [Validators.required, Validators.pattern('^[0-9]*$')]),
-    //   address: new FormControl(''),
-    //   pawnItem: new FormControl<any>(null, [Validators.required]),
-    //   description: new FormControl(''),
-    //   dateCreated: new FormControl<Date | null>(null, Validators.required),
-    //   dateExpired: new FormControl<Date | null>(null, [Validators.required]),
-    //   image: new FormControl<string | null>(null),
-    //   phone: new FormControl<any>(null),
-    //   car: new FormControl<any>(null),
-    //   phoneId: new FormControl<any>(null, [Validators.required]),
-    //   motor:new FormControl<any>(null),
-    //   jewelry: new FormControl<any>(null),
-    //   others: new FormControl<any>(null),
-    //   plateNum: new FormControl<any>(null, [Validators.required]),
-    //   brandName: new FormControl<any>(null, [Validators.required]),
-    //   pawnPrice: new FormControl<string | null>(null, [Validators.required]),
-    //   monthlyInterest: new FormControl<string | null>(null, [Validators.required]),
   });
 
   ngOnInit() {
     this.routeUnSubscribe.set(
       this.route.params.subscribe(async (param) => {
         let paramKey = param['id'];
-        this.checkDisableForm(paramKey);
+        this.param.set(paramKey);
         const getData = await this.store.getCustomer(paramKey);
-        this.data.set(getData);
-        if (this.data()) {
-          console.log('data()?.key:', this.data()?.key);
-          this.selectItem(this.data()?.pawn_type)
+
+        const getDatainFoCusotmer = await this.store.getCustomerInFo(paramKey);
+
+        this.datainfo.set(getDatainFoCusotmer);
+        this.checkDisableForm(paramKey);
+        if (getData && getDatainFoCusotmer) {
+          this.selectItem(this.data()?.pawn_type);
           this.pawnForm.patchValue({
-            full_name: getData?.full_name,
-            phone_number: getData?.phone_number,
-            gender: getData?.gender,
-            id_card: getData?.id_card,
-            address: getData?.address,
+            full_name: getData?.full_name || getDatainFoCusotmer?.full_name,
+            phone_number: getData?.phone_number || getDatainFoCusotmer?.phone_number,
+            gender: getData?.gender || getDatainFoCusotmer?.gender,
+            id_card: getData?.id_card || getDatainFoCusotmer?.id_card,
+            address: getData?.address || getDatainFoCusotmer?.address,
 
             pawn_type: getData?.pawn_type,
 
@@ -210,7 +178,7 @@ export class PawnFormComponent {
             price_pawn: getData?.price_pawn,
             price_interest: getData?.price_interest,
             description: getData?.description,
-            date_expired: getData?.date_expired,
+            date_expired: getData?.date_expired?.toDate(),
           });
         }
         if (this.data()?.photo) {
@@ -274,7 +242,18 @@ export class PawnFormComponent {
       this.pawnForm.get('others')?.enable();
       this.pawnForm.get('plate_number')?.enable();
       this.pawnForm.get('brand_name')?.enable();
-    } else {
+    } else if(this.datainfo()?.pawnKey){
+      this.pawnForm.get('pawn_type')?.enable();
+      this.pawnForm.get('type_phone')?.enable();
+      this.pawnForm.get('type_phone_id')?.enable();
+      this.pawnForm.get('type_car')?.enable();
+      this.pawnForm.get('type_motor')?.enable();
+      this.pawnForm.get('type_jewelry_name')?.enable();
+      this.pawnForm.get('gold_weight')?.enable();
+      this.pawnForm.get('others')?.enable();
+      this.pawnForm.get('plate_number')?.enable();
+      this.pawnForm.get('brand_name')?.enable();
+    }else {
       this.pawnForm.get('full_name')?.disable();
       this.pawnForm.get('phone_number')?.disable();
       this.pawnForm.get('gender')?.disable();
@@ -419,24 +398,25 @@ export class PawnFormComponent {
   }
 
   selectItem(item: any) {
-    console.log(item)
-    this.seleted.set(item);
-    const weightControl = this.pawnForm.get('gold_weight');
-    const typePhoneIdControl = this.pawnForm.get('type_phone_id');
+    if (item) {
+      this.seleted.set(item);
+      const weightControl = this.pawnForm.get('gold_weight');
+      const typePhoneIdControl = this.pawnForm.get('type_phone_id');
 
-    if (item.key === 3) {
-      weightControl?.setValidators(Validators.required);
-      typePhoneIdControl?.clearValidators();
-    } else if (item.key === 1) {
-      typePhoneIdControl?.setValidators(Validators.required);
-      weightControl?.clearValidators();
-    } else {
-      weightControl?.clearValidators();
-      typePhoneIdControl?.clearValidators();
+      if (item.key === 3) {
+        weightControl?.setValidators(Validators.required);
+        typePhoneIdControl?.clearValidators();
+      } else if (item.key === 1) {
+        typePhoneIdControl?.setValidators(Validators.required);
+        weightControl?.clearValidators();
+      } else {
+        weightControl?.clearValidators();
+        typePhoneIdControl?.clearValidators();
+      }
+
+      weightControl?.updateValueAndValidity();
+      typePhoneIdControl?.updateValueAndValidity();
     }
-
-    weightControl?.updateValueAndValidity();
-    typePhoneIdControl?.updateValueAndValidity();
   }
 
   displayGender = (item: any) => {
@@ -461,6 +441,7 @@ export class PawnFormComponent {
       }
     }
   }
+
   clearPreviews() {
     this.imagePreview = [];
   }
@@ -479,20 +460,21 @@ export class PawnFormComponent {
       role: 'dialog',
       panelClass: 'custom-dialog',
     });
-  
+
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.store.deleteCustomer(data?.key)
+        this.store
+          .deleteCustomer(data?.key)
           // .then(() => {
           //   this.router.navigate(['home/active/listing']);
           // })
           .catch((error) => {
-            console.error('Error deleting customer:', error)
+            console.error('Error deleting customer:', error);
           });
       }
     });
   }
-  
+
   endPawn(data: any): void {
     const dialogRef = this.dialog.open(AlertComponent, {
       data: {
@@ -503,7 +485,7 @@ export class PawnFormComponent {
       role: 'dialog',
       panelClass: 'custom-dialog',
     });
-  
+
     dialogRef.afterClosed().subscribe(async (result) => {
       if (result && data?.key) {
         try {
@@ -511,7 +493,7 @@ export class PawnFormComponent {
           this.snackBar.open(`Pawn ended successfully.`, 'Success', {
             duration: 3000,
           });
-          this.router.navigate(['home/active/listing']);
+          // this.router.navigate(['home/inactive/listing']);
         } catch (error) {
           console.error('Error ending pawn:', error);
           this.snackBar.open(`Failed to end pawn.`, 'Error', {
@@ -522,11 +504,47 @@ export class PawnFormComponent {
     });
   }
 
+  restorePawn(data: any): void {
+    const dialogRef = this.dialog.open(AlertComponent, {
+      data: {
+        title: 'Confirm End Pawn',
+        description: 'Are you sure you want to end this pawn?',
+      },
+      width: '350px',
+      role: 'dialog',
+      panelClass: 'custom-dialog',
+    });
+
+    dialogRef.afterClosed().subscribe(async (result) => {
+      if (result && data?.key) {
+        try {
+          await this.store.restorePawn(data?.key);
+          this.snackBar.open(`Pawn ended successfully.`, 'Success', {
+            duration: 3000,
+          });
+          // this.router.navigate(['home/active/listing']);
+        } catch (error) {
+          console.error('Error ending pawn:', error);
+          this.snackBar.open(`Failed to end pawn.`, 'Error', {
+            duration: 3000,
+          });
+        }
+      }
+    });
+  }
+
+  updatePawnData(updatedData: any): void {
+    console.log('Updating pawn data:', updatedData);
+  }
+
+  PrinForm() {
+    window.print();
+  }
   async onSubmit() {
-    // if(this.pawnForm.invalid){
-    //   alert('សូមបញ្ចូលព័ត៍មាន');
-    //   return
-    // }
+    if(this.pawnForm.invalid){
+      alert('សូមបញ្ចូលព័ត៍មាន');
+      return
+    }
 
     this.loading.set(true);
     let photo = null;
@@ -563,9 +581,10 @@ export class PawnFormComponent {
       date_expired,
     } = this.pawnForm.getRawValue();
     const toDay = new Date();
+    let key = this.ds.createKey();
 
     const info_customer: any = {
-      key: this.data()?.key || this.ds.createKey(),
+      key: this.ds.createKey(),
       created_at: serverTimestamp(),
       created_by: mapUser(this.auth?.profile),
       updated_at: serverTimestamp(),
@@ -581,11 +600,11 @@ export class PawnFormComponent {
       id_card: id_card,
       address: address,
 
-      pawnKey: this.ds.createKey(),
+      pawnKey: arrayUnion(key),
     };
 
     const data: any = {
-      key: this.data()?.key || this.ds.createKey(),
+      key: this.data()?.key || key,
 
       created_at: serverTimestamp(),
       created_by: mapUser(this.auth?.profile),
@@ -608,8 +627,7 @@ export class PawnFormComponent {
       description: description,
       date_expired: date_expired,
       photo: photo,
-      pawn_item_key: info_customer?.pawnKey,
-      
+      pawn_item_key: info_customer?.key,
 
       ...(this.seleted()?.key == 0 && {
         plate_number: plate_number,
@@ -636,20 +654,68 @@ export class PawnFormComponent {
       }),
     };
 
+    const info_update: any ={
+      key: this.datainfo()?.key,
+      updated_at: serverTimestamp(),
+      updated_by: mapUser(this.auth?.profile),
+
+      pawnKey: arrayUnion(data?.key)
+    }
+
     // console.log(data, 'data');
     // console.log(info_customer, 'info');
-
-    try {
-      await this.store.createCustomer(data, info_customer);
-      this.snackBar.open(`ការរក្សាទុកទិន្នន័យបានជោគជ័យ`, 'ជោគជ័យ', {
-        duration: 3000,
-      });
-      this.loading.set(false);
-    } catch (e) {
-      this.snackBar.open(`ការរក្សាទុកទិន្នន័យបានបរាជ័យ`, 'ជោគជ័យ', {
-        duration: 3000,
-      });
-      this.loading.set(false);
+    if (this.param() == 'na'){
+      try {
+        await this.store.createCustomer(data, info_customer);
+        this.snackBar.open(`ការរក្សាទុកទិន្នន័យបានជោគជ័យ`, 'ជោគជ័យ', {
+          duration: 3000,
+        });
+        this.loading.set(false);
+      } catch (e) {
+        this.snackBar.open(`ការរក្សាទុកទិន្នន័យបានបរាជ័យ`, 'ជោគជ័យ', {
+          duration: 3000,
+        });
+        this.loading.set(false);
+      }
+    }else if (this.datainfo()?.pawnKey){
+      try {
+        await this.store.createCustomerinfoNews(data, info_update);
+        this.snackBar.open(`ការរក្សាទុកទិន្នន័យបានជោគជ័យ`, 'ជោគជ័យ', {
+          duration: 3000,
+        });
+        this.loading.set(false);
+      } catch (e) {
+        this.snackBar.open(`ការរក្សាទុកទិន្នន័យបានបរាជ័យ`, 'ជោគជ័យ', {
+          duration: 3000,
+        });
+        this.loading.set(false);
+      }
+    }else{
+      try {
+        await this.store.createCustomerEdit(data);
+        this.snackBar.open(`ការរក្សាទុកទិន្នន័យបានជោគជ័យ`, 'ជោគជ័យ', {
+          duration: 3000,
+        });
+        this.loading.set(false);
+      } catch (e) {
+        this.snackBar.open(`ការរក្សាទុកទិន្នន័យបានបរាជ័យ`, 'ជោគជ័យ', {
+          duration: 3000,
+        });
+        this.loading.set(false);
+      }
     }
+ 
+  }
+
+  printForm() {
+    this.currentTitle = this.printTitle;
+
+    setTimeout(() => {
+      window.print();
+
+      setTimeout(() => {
+        this.currentTitle = this.originalTitle;
+      }, 500);
+    }, 100);
   }
 }

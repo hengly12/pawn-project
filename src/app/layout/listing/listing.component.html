@@ -1,99 +1,117 @@
-
-
 <div class="main-wrapper">
-    <form [formGroup]="form">
-      <div class="dashboard">
-        <nav class="nav-search">
-          <input class="search-box" type="search" formControlName="search" #searchInput 
-       placeholder="ស្វែងរកឯកសារ​អតិថិជន" name="q">
+  <form [formGroup]="form">
+    <div class="dashboard">
+      <nav class="nav-search">
+        <input
+          class="search-box"
+          type="search"
+          formControlName="search"
+          #searchInput
+          placeholder="ស្វែងរកឯកសារ​អតិថិជន"
+          name="q"
+        />
 
-@if (!showClearIcon) {
-  <button class="search-icon" type="button">
-    <mat-icon>search</mat-icon>
-  </button>
-}
+        @if (!showClearIcon) {
+        <button class="search-icon" type="button">
+          <mat-icon>search</mat-icon>
+        </button>
+        } @if (showClearIcon) {
+        <button class="clear-icon" type="button" (click)="clearInput()">
+          <mat-icon>clear</mat-icon>
+        </button>
+        }
+      </nav>
+      <div class="btn-create-form">
+        <button class="btn-check-customer" mat-button (click)="ShowDialog()">
+          ព័ត៌មានអតិថិជន <mat-icon> contacts</mat-icon>
+        </button>
+        <button
+          class="btn-add-more"
+          mat-flat-button
+          (click)="clearFormInputs()"
+          [routerLink]="['/home/' + param() + '/listing/create-form/na']"
+        >
+          បង្កើតទម្រង់ <mat-icon color="primary">add_box</mat-icon>
+        </button>
+      </div>
 
-@if (showClearIcon) {
-  <button  class="clear-icon" type="button" (click)="clearInput()"><mat-icon>clear</mat-icon>
-  </button>
-}
-      
-          </nav>
-          <div class="btn-create-form">
-            <button class="btn-check-customer" mat-button (click)="ShowDialog()">ព័ត៌មានអតិថិជន <mat-icon> contacts</mat-icon></button>
-          <button class="btn-add-more" mat-flat-button [routerLink]="['/home/' + param() + '/listing/create-form/na']"> បង្កើតទម្រង់ <mat-icon color="primary">add_box</mat-icon></button>
-          
-        </div>
-  
-          <nav mat-tab-nav-bar class="list-tabs" [tabPanel]="tabPanel">
-            @for (tab of tabs(); track tab?.key) {
-              <a
-                mat-tab-link
-                [routerLink]="['/home/' + tab?.key + '/listing']"
-                [active]="rla.isActive"
-                #rla="routerLinkActive"
-                routerLinkActive="active">
-                {{ tab?.label }}
-              </a>
-            }
-          </nav>
-          <mat-tab-nav-panel #tabPanel>
-            <div class="listing">
-  
-              @for(item of data(); track item?.key){
-              <div class="customer_info" [routerLink]="['/home/' + param() + '/listing/create-form/' + item?.key]" routerLinkActive="active">
-                <div class="profile-image">
-                  <img [src]="auth.profile?.photoFile || 'assets/images/customer-image.jpg'" alt="Profile Icon" />
-                </div>
-             
-                <div class="listing_info">
-                  <div class="full_name">
-                    <mat-icon>perm_identity</mat-icon>
-                    <h4>ឈ្មោះ: {{item?.full_name}}</h4>
-                  </div>
-  
-                <div class="phone_number">
-            <mat-icon> ring_volume</mat-icon>
-            <h5>លេខទូរសព្ទ: {{item?.phone_number}}</h5>
-          </div>
-  
-                <div class="pawn_type"> 
-                  <mat-icon>devices_other</mat-icon>
-                  <h5>វត្ថុបញ្ចាំ: {{item?.pawn_type?.text}}</h5>
-                </div>
-  
-                <div class="created_at">
-                  <mat-icon>query_builder</mat-icon>
-                  <h5>រយៈពេលបានបង្កើត: {{item?.created_at | getTimeAgo}}</h5>
-                </div>
-                <div class="date_expired">
-                  <mat-icon>date_range</mat-icon>
-                  <h5>ថ្ងៃផុតកំណត់: {{item?.date_expired?.toDate() | date:'dd/MM/yyyy'}}</h5>
-                  @if(item?.date_expired?.toDate() < today){
-                    <span style="color: red;">(ផុតកំណត់)</span>
-                  }
-                  @if(item?.date_expired?.toDate() >= today){
-                    <span  style="color: green;">(នៅបន្តបង់)</span>
-                  }
-                </div>
-                
-                
+      <nav mat-tab-nav-bar class="list-tabs" [tabPanel]="tabPanel">
+        @for (tab of tabs(); track tab?.key) {
+        <a
+          mat-tab-link
+          [routerLink]="['/home/' + tab?.key + '/listing']"
+          [active]="rla.isActive"
+          #rla="routerLinkActive"
+          routerLinkActive="active"
+        >
+          {{ tab?.label }}
+        </a>
+        }
+      </nav>
+      <mat-tab-nav-panel #tabPanel>
+        <div class="listing">
+          @for(item of data(); track item?.key){
+          <div
+            class="customer_info"
+            [routerLink]="[
+              '/home/' + param() + '/listing/create-form/' + item?.key
+            ]"
+            routerLinkActive="active"
+          >
+            <div class="profile-image">
+              <img
+                [src]="
+                  auth.profile?.photoFile || 'assets/images/customer-image.jpg'
+                "
+                alt="Profile Icon"
+              />
+            </div>
+
+            <div class="listing_info">
+              <div class="full_name">
+                <mat-icon>perm_identity</mat-icon>
+                <h4>ឈ្មោះ: {{ item?.full_name }}</h4>
+              </div>
+
+              <div class="phone_number">
+                <mat-icon> ring_volume</mat-icon>
+                <h5>លេខទូរសព្ទ: {{ item?.phone_number }}</h5>
+              </div>
+
+              <div class="pawn_type">
+                <mat-icon>devices_other</mat-icon>
+                <h5>វត្ថុបញ្ចាំ: {{ item?.pawn_type?.text }}</h5>
+              </div>
+
+              <div class="created_at">
+                <mat-icon>query_builder</mat-icon>
+                <h5>រយៈពេលបានបង្កើត: {{ item?.created_at | getTimeAgo }}</h5>
+              </div>
+              <div class="date_expired">
+                <mat-icon>date_range</mat-icon>
+                <h5>
+                  ថ្ងៃផុតកំណត់:
+                  {{ item?.date_expired?.toDate() | date : "dd/MM/yyyy" }}
+                </h5>
+                @if(item?.date_expired?.toDate() < today){
+                <span style="color: red">(ផុតកំណត់)</span>
+                } @if(item?.date_expired?.toDate() >= today){
+                <span style="color: green">(នៅបន្តបង់)</span>
+                }
               </div>
             </div>
-              }
-              
-    
-            </div>
-          </mat-tab-nav-panel>
-         
+          </div>
+          }
+        </div>
+      </mat-tab-nav-panel>
     </div>
-    </form>
-  
+  </form>
+
   <!-- <div class="create-form"> 
     <app-pawn-form></app-pawn-form>
   </div> -->
-  
+
   <div class="content">
-      <router-outlet></router-outlet>
+    <router-outlet></router-outlet>
   </div>
-  </div>
+</div>

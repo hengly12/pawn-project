@@ -1,42 +1,41 @@
-
-@use '@angular/material' as mat;
+@use "@angular/material" as mat;
 
 // Customize the entire app. Change :root to your selector if you want to scope the styles.
 :root {
-  @include mat.tabs-overrides((
-    active-indicator-color: orange,
-    divider-color: red,
-  ));
+  @include mat.tabs-overrides(
+    (
+      active-indicator-color: orange,
+      divider-color: red,
+    )
+  );
 }
-.main-wrapper{
+.main-wrapper {
   font-family: "Koh Santepheap", serif;
-display: flex;
+  display: flex;
 }
 
-.dashboard{
+.dashboard {
   font-family: "Koh Santepheap", serif;
-    height: auto;
-    width: 100%;
-    max-width: 350px;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
-    background-color: #fff;
-    margin-top: 5px;
-    border-radius: 8px; 
-    .nav-search {
-      font-family: "Koh Santepheap", serif;
-      display: flex;
-        justify-content: flex-start;
-        padding: 10px;
-        background-color: #ffffff;
-        border-bottom: solid 0;
-        height: 60px;
-        gap: 6px;
-        
-  
-      }
+  height: auto;
+  width: 100%;
+  max-width: 350px;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  margin-top: 5px;
+  border-radius: 8px;
+  .nav-search {
+    font-family: "Koh Santepheap", serif;
+    display: flex;
+    justify-content: flex-start;
+    padding: 10px;
+    background-color: #ffffff;
+    border-bottom: solid 0;
+    height: 60px;
+    gap: 6px;
+  }
 }
 
-.search-box{
+.search-box {
   font-family: "Koh Santepheap", serif;
   width: 330px;
   height: 35px;
@@ -53,7 +52,7 @@ display: flex;
   // font-size: 15px
 }
 
-.search-icon{
+.search-icon {
   width: 30px;
   height: 30px;
   border: solid 0px;
@@ -67,10 +66,10 @@ display: flex;
   position: absolute;
 }
 
-.search-icon:hover{
+.search-icon:hover {
   color: #1585f5;
-  }
-.clear-icon{
+}
+.clear-icon {
   width: 30px;
   height: 30px;
   border: solid 0px;
@@ -84,11 +83,11 @@ display: flex;
   position: absolute;
 }
 
-.clear-icon:hover{
+.clear-icon:hover {
   color: #9b1616;
 }
 
-.menu-bar{
+.menu-bar {
   font-family: "Koh Santepheap", serif;
   width: 35px;
   display: flex;
@@ -96,16 +95,16 @@ display: flex;
   justify-content: space-around;
   height: 30px;
   font-size: 25px;
-  border-color: #74C0FC;
+  border-color: #74c0fc;
   cursor: pointer;
   border-radius: 6px;
   margin: 5px;
-  i{
+  i {
     color: #000;
   }
 }
 
-.list-tabs{
+.list-tabs {
   font-family: "Koh Santepheap", serif;
 }
 
@@ -124,34 +123,29 @@ display: flex;
   padding: 20px;
 }
 
-.content{
-  display: flex;
-  justify-content: center;
+.content {
   margin: 0 auto;
-
 }
-.create-form{
+.create-form {
   width: 100%;
 }
 
-.btn-create-form{
+.btn-create-form {
   display: flex;
-    margin: 0px auto;
-    border: solid 0px;
-    justify-content: space-around;
-    
+  margin: 0px auto;
+  border: solid 0px;
+  justify-content: space-around;
 }
 
-.btn-add-more{
+.btn-add-more {
   background-color: #007bff;
   width: 140px;
 }
-.btn-check-customer{
+.btn-check-customer {
   background-color: #36b38f;
   color: #fff !important;
   width: 140px;
 }
-
 
 // .link-header{
 //   display: flex;
@@ -187,56 +181,53 @@ display: flex;
   display: flex;
   flex: 1 0 auto;
   justify-content: space-evenly;
-  
 }
 
 .mat-mdc-card-title-group {
-  display: flex
-;
+  display: flex;
   justify-content: flex-end;
   width: 100%;
   flex-direction: row-reverse;
 }
 
-.listing{
+.listing {
   font-family: "Koh Santepheap", serif;
   display: flex;
   border: solid 1px rgba(201, 200, 200, 0.8588235294);
-  gap: 5px;
   padding-top: 5px;
   padding-bottom: 0px;
   flex-direction: column;
   overflow: auto;
   height: calc(100vh - 235px);
-    .customer_info{
-        cursor: pointer;
-        &.active{
-          color: #000000;
-          background-color: #bbddff;
-        }
-    }
- 
-    .customer_info:hover{
-        background-color: #bbddff
+  .customer_info {
+    cursor: pointer;
+    &.active {
+      color: #000000;
+      background-color: #bbddff;
     }
   }
 
-.listing_info{
-  display: flex;
-    flex-direction: column;
-    gap: 3px;
+  .customer_info:hover {
+    background-color: #bbddff;
+  }
 }
 
-.customer_info{
+.listing_info {
   display: flex;
-    gap: 10px;
-    border: solid 1px rgba(185, 185, 185, 0.6);
-    padding-bottom: 25px;
-    padding-top: 20px;
-    // background-image: url('https://i.pinimg.com/originals/7b/34/d3/7b34d33a578812832573513ae9909cba.png');
-    // background-size: cover;
-    // background-position: center;
-    // background-repeat: no-repeat;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.customer_info {
+  display: flex;
+  gap: 10px;
+  border: solid 1px rgba(185, 185, 185, 0.6);
+  padding-bottom: 25px;
+  padding-top: 20px;
+  // background-image: url('https://i.pinimg.com/originals/7b/34/d3/7b34d33a578812832573513ae9909cba.png');
+  // background-size: cover;
+  // background-position: center;
+  // background-repeat: no-repeat;
 }
 .profile-image {
   width: 75px;
@@ -266,7 +257,7 @@ display: flex;
   gap: 10px;
 }
 
-.pawn_type{
+.pawn_type {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -281,11 +272,11 @@ display: flex;
 .date_expired {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .date_expiredModified {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
