@@ -98,3 +98,12 @@ export const ROLE_OBJ = {
 export const REGISTER_TYPE = {
   PHONE: { key: 1, name: 'Phone Number'}
 }
+
+export const Weight_Of_Gold = [
+  { key: 0, text: 'លី : ', en_name: 'Li : ' },
+  { key: 1, text: 'ហ៊ុន : ', en_name: 'Houn : ' },
+  { key: 2, text: 'ជី : ', en_name: 'Chi : ' },
+  { key: 3, text: 'តម្លឹង : ', en_name: 'Tael : ' },
+  { key: 4, text: 'គីឡូ : ', en_name: 'Kg : ' },
+  { key: 5, text: 'អោន : ', en_name: 'Aon : ' },
+];

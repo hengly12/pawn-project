@@ -8,7 +8,18 @@
 </div>
 <form [formGroup]="form">
   <nav class="nav-search">
+
+    @if (!showClearIcon) {
+        <button class="search-icon" type="button">
+            <mat-icon>search</mat-icon>
+        </button>
+      } @if (showClearIcon) {
+      <button class="clear-icon" type="button" (click)="clearInput()">
+          <mat-icon>clear</mat-icon>
+      </button>
+      }
       <input
+      
           class="search-box"
           type="search"
           formControlName="search"
@@ -16,16 +27,6 @@
           placeholder="ស្វែងរកឯកសារ​អតិថិជន"
           name="q"
       />
-
-      @if (!showClearIcon) {
-      <button class="search-icon" type="button">
-          <mat-icon>search</mat-icon>
-      </button>
-      } @if (showClearIcon) {
-      <button class="clear-icon" type="button" (click)="clearInput()">
-          <mat-icon>clear</mat-icon>
-      </button>
-      }
   </nav>
 </form>
 
@@ -39,7 +40,7 @@
   >
       <div class="profile-image">
           <img
-              [src]="auth.profile?.photoFile || 'assets/images/customer-image.jpg'"
+              [src]="auth.profile?.photoFile || 'assets/images/profile-image.jpg'"
               alt="Profile Icon"
           />
       </div>

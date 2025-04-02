@@ -85,7 +85,7 @@
 
               <div class="created_at">
                 <mat-icon>query_builder</mat-icon>
-                <h5>រយៈពេលបានបង្កើត: {{ item?.created_at | getTimeAgo }}</h5>
+                <h5 matTooltip=" ថ្ងៃបង្កើតៈ {{ item?.created_at | Date:'fullDate' }}" >រយៈពេលបានបង្កើត: {{ item?.created_at | getTimeAgo }}</h5>
               </div>
               <div class="date_expired">
                 <mat-icon>date_range</mat-icon>

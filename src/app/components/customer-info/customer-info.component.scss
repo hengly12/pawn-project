@@ -18,31 +18,32 @@
 }
 
 .close-dialog {
-  border-radius: 50px;
-  width: 35px;
+  border-radius: 15px;
+  height: 30px;
+  width: 30px;
   font-size: 15px;
   padding: 10px;
   color: #ffffff;
-  background-color: #5b5b5b;
+  background-color: #5e5e5e;
   border: solid 0px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   cursor: pointer;
-  display: flex;
+  display: flex
+;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
   .mat-icon {
-    user-select: none;
-    background-repeat: no-repeat;
-    display: inline-block;
     fill: currentColor;
     height: 15px;
     width: 15px;
-    overflow: hidden;
-    font-size: 15px;
+    font-size: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 }
 .close-dialog:hover {
-  background-color: #b53030d4;
+  background-color: #696868d4;
 }
 
 ::ng-deep .cdk-overlay-backdrop-showing {
@@ -82,16 +83,16 @@
 
 .search-icon{
   width: 30px;
-  height: 30px;
-  border: solid 0px;
-  font-size: 15px;
-  border-radius: 50px;
-  color: #757584;
-  background-color: #eaeaea;
-  cursor: pointer;
-  top: 65px;
-  left: 290px;
-  position: absolute;
+    height: 30px;
+    border: solid 0px;
+    font-size: 15px;
+    border-radius: 50px;
+    color: #757584;
+    background-color: #eaeaea;
+    cursor: pointer;
+    top: 60px;
+    left: 290px;
+    position: absolute;
 }
 
 .search-icon:hover{
@@ -99,16 +100,16 @@
   }
 .clear-icon{
   width: 30px;
-  height: 30px;
-  border: solid 0px;
-  font-size: 15px;
-  border-radius: 50px;
-  color: #757584;
-  background-color: #eaeaea;
-  cursor: pointer;
-  top: 65px;
-  left: 290px;
-  position: absolute;
+    height: 30px;
+    border: solid 0px;
+    font-size: 15px;
+    border-radius: 50px;
+    color: #757584;
+    background-color: #e8e8e9;
+    cursor: pointer;
+    top: 60px;
+    left: 290px;
+    position: absolute;
 }
 
 .clear-icon:hover{
@@ -119,7 +120,6 @@
   font-family: "Koh Santepheap", serif;
   display: flex;
   border: solid 1px rgba(201, 200, 200, 0.8588235294);
-  gap: 5px;
   padding-top: 5px;
   padding-bottom: 0px;
   flex-direction: column;
@@ -145,18 +145,19 @@
 }
 
 .customer_info {
-  // background-image: url('https://i.pinimg.com/originals/7b/34/d3/7b34d33a578812832573513ae9909cba.png');
-  // background-size: cover;
-  // background-position: center;
-  // background-repeat: no-repeat;
-  display: flex;
-  gap: 20px;
-  border: solid 1px rgba(185, 185, 185, 0.6);
-  padding-bottom: 25px;
-  padding-top: 20px;
-  font-size: 18px;
-  padding-inline: 25px;
-  flex-direction: row;
+  background-image: url('https://i.pinimg.com/originals/7b/34/d3/7b34d33a578812832573513ae9909cba.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex
+  ;
+      gap: 15px;
+      border: solid 1px rgba(185, 185, 185, 0.6);
+      padding-bottom: 25px;
+      padding-top: 30px;
+      font-size: 18px;
+      padding-inline: 30px;
+      flex-direction: row;
 }
 .profile-image {
   width: 75px;
@@ -178,6 +179,7 @@
   border-radius: 8px !important;
   margin-top: 45px;
   height: 92%;
+  width: 200%;
 }
 
 .full_name {

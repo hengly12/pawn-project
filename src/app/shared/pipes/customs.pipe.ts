@@ -1135,7 +1135,7 @@ export class GetTimeAgoPipe implements PipeTransform {
 export class DatedPipe implements PipeTransform {
   transform(
     value: Timestamp | null,
-    format: string = 'dd/MM/yyyy'
+    format: string = 'fullDate'
   ): string | null {
     if (!value) return null;
 

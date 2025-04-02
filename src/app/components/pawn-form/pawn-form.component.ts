@@ -7,9 +7,9 @@ import { MatInputModule } from '@angular/material/input';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSelectModule } from '@angular/material/select';
-import { MatIcon, MatIconModule } from '@angular/material/icon';
+import { MatIcon } from '@angular/material/icon';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { GENDER_DATA, ITEM_DATA, STATUS_OBJ } from '../../shared/dummy/config';
+import { GENDER_DATA, ITEM_DATA, STATUS_OBJ, Weight_Of_Gold } from '../../shared/dummy/config';
 import { DataService } from '../../shared/services/data.service';
 import { sign } from 'crypto';
 import { generateKeywords, toDateKey, } from '../../shared/services/convert.service';
@@ -25,6 +25,9 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AlertComponent } from '../../shared/pages/alert/alert.component';
 import { NgxPrintModule } from 'ngx-print';
+import {MatIconModule} from '@angular/material/icon';
+
+
 
 interface GenderOption {
   key: number;
@@ -50,6 +53,7 @@ interface GenderOption {
     MatIconModule,
     MatDialogModule,
     NgxPrintModule,
+    
   ],
   providers: [provideNativeDateAdapter(), CurrencyPipe],
   templateUrl: './pawn-form.component.html',
@@ -60,7 +64,7 @@ export class PawnFormComponent {
   currentTitle = 'ទម្រង់បញ្ចាំទ្រព្យ';
   originalTitle = 'ទម្រង់បញ្ចាំទ្រព្យ';
   printTitle = 'វិក័យប័ត្របង្កាន់ដៃ';
-
+  weightOfGold = signal<any>(Weight_Of_Gold);
   genders = signal<any>(GENDER_DATA);
   days_countdown: number | null = null;
   pawn_type = signal<any>(ITEM_DATA);
@@ -72,7 +76,8 @@ export class PawnFormComponent {
   data = signal<any>(null);
   param = signal<any>(null);
   // info_customer = signal<any>(null);
-
+  displayUSD: string = '';
+  displayKHR: string = '';
   message: string = '';
   preview: string = '';
   progress: number = 0;
@@ -97,7 +102,14 @@ export class PawnFormComponent {
     private currencyPipe: CurrencyPipe,
     private cdr: ChangeDetectorRef,
     private router: Router
+    
   ) {}
+
+  async getKHRExchangeRate(): Promise<number> {
+    return 4100;
+  }
+
+  
 
   readonly range = new FormGroup({
     start: new FormControl<Date | null>(null),
@@ -109,7 +121,7 @@ export class PawnFormComponent {
     gender: new FormControl<GenderOption | null>(null, Validators.required),
     phone_number: new FormControl<number | null>(null, [
       Validators.required,
-      Validators.pattern(/^\d{10}$/),
+      Validators.pattern(/^\d{6,10}$/),
     ]),
     id_card: new FormControl<number | null>(null, [
       Validators.required,
@@ -124,13 +136,13 @@ export class PawnFormComponent {
     photo: new FormControl<string | null>(null),
     type_phone: new FormControl<any>(null),
     type_car: new FormControl<any>(null),
-    type_phone_id: new FormControl<any>(null, [Validators.required]),
+    type_phone_id: new FormControl<any>(null,),
     type_motor: new FormControl<any>(null),
     type_jewelry_name: new FormControl<any>(null),
     others: new FormControl<any>(null),
-    plate_number: new FormControl<any>(null, [Validators.required]),
-    brand_name: new FormControl<any>(null, [Validators.required]),
-    gold_weight: new FormControl<any>(null, [Validators.required]),
+    plate_number: new FormControl<any>(null,),
+    brand_name: new FormControl<any>(null,),
+    gold_weight: new FormControl<any>(null,),
     price_pawn: new FormControl<number | null>(null, [
       Validators.required,
       Validators.pattern('^[0-9]*$'),
@@ -143,6 +155,45 @@ export class PawnFormComponent {
     file: new FormControl<any>(null),
   });
 
+ updateFormValidators() {
+    const selectedKey = this.seleted()?.key;
+    const typePhoneIdControl = this.pawnForm.get('type_phone_id');
+    const plateNumberControl = this.pawnForm.get('plate_number');
+    const brandNameControl = this.pawnForm.get('brand_name');
+    const goldWeightControl = this.pawnForm.get('gold_weight');
+  
+    if (selectedKey === 1) {
+      typePhoneIdControl?.setValidators(Validators.required);
+      brandNameControl?.setValidators(Validators.required);
+    } else {
+      typePhoneIdControl?.clearValidators();
+      if(selectedKey !==0 && selectedKey !== 2){
+        brandNameControl?.clearValidators();
+      }
+    }
+  
+    if (selectedKey === 0 || selectedKey === 2) {
+      plateNumberControl?.setValidators(Validators.required);
+      brandNameControl?.setValidators(Validators.required);
+    } else {
+      plateNumberControl?.clearValidators();
+      if(selectedKey !== 1){
+        brandNameControl?.clearValidators();
+      }
+    }
+  
+    if (selectedKey === 3) {
+      goldWeightControl?.setValidators(Validators.required);
+    } else {
+      goldWeightControl?.clearValidators();
+    }
+  
+    typePhoneIdControl?.updateValueAndValidity();
+    plateNumberControl?.updateValueAndValidity();
+    brandNameControl?.updateValueAndValidity();
+    goldWeightControl?.updateValueAndValidity();
+  }
+
   ngOnInit() {
     this.routeUnSubscribe.set(
       this.route.params.subscribe(async (param) => {
@@ -151,7 +202,7 @@ export class PawnFormComponent {
         const getData = await this.store.getCustomer(paramKey);
 
         const getDatainFoCusotmer = await this.store.getCustomerInFo(paramKey);
-
+        this.data.set(getData)
         this.datainfo.set(getDatainFoCusotmer);
         this.checkDisableForm(paramKey);
         if (getData && getDatainFoCusotmer) {
@@ -203,6 +254,7 @@ export class PawnFormComponent {
     //   this.calculateDays();
     // });
   }
+
 
   calculateDays() {
     const date_expired = this.pawnForm.get('date_expired')?.value;
@@ -290,47 +342,123 @@ export class PawnFormComponent {
     this.pawnForm.controls['id_card'].setValue(input);
   }
 
-  formatCurrencyPricePawn(event: any) {
+
+  // formatCurrencyPricePawn(event: any) {
+  //   let value = event.target.value;
+  //   value = value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+
+  //   if (value) {
+  //     const numericValue = parseFloat(value);
+
+  //     const formattedValue = this.currencyPipe.transform(numericValue, 'USD');
+  //     if (formattedValue) {
+  //       this.pawnForm.get('price_pawn')?.setValue(numericValue, {
+  //         emitEvent: false,
+  //       });
+
+  //       event.target.value = formattedValue;
+  //     }
+  //   } else {
+  //     this.pawnForm.get('price_pawn')?.setValue(0, { emitEvent: false });
+  //   }
+  // }
+
+  // formatCurrencyPriceInterest(event: any) {
+  //   let value = event.target.value;
+  //   value = value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+
+  //   if (value) {
+  //     const numericValue = parseFloat(value);
+
+  //     const formattedValue = this.currencyPipe.transform(numericValue, 'USD');
+  //     if (formattedValue) {
+  //       this.pawnForm.get('price_interest')?.setValue(numericValue, {
+  //         emitEvent: false,
+  //       });
+
+  //       event.target.value = formattedValue;
+  //     }
+  //   } else {
+  //     this.pawnForm.get('price_interest')?.setValue(0, { emitEvent: false });
+  //   }
+  // }
+
+  async formatCurrencyPricePawn(event: any) {
     let value = event.target.value;
-
-    value = value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '1$');
-
-    if (value) {
-      const numericValue = parseFloat(value);
-
-      const formattedValue = this.currencyPipe.transform(numericValue, 'USD');
-      if (formattedValue) {
-        this.pawnForm.get('price_pawn')?.setValue(numericValue, {
-          emitEvent: false,
-        });
-
-        event.target.value = formattedValue;
-      }
-    } else {
-      this.pawnForm.get('price_pawn')?.setValue(0, { emitEvent: false });
-    }
-  }
-
-  formatCurrencyPriceInterest(event: any) {
-    let value = event.target.value;
-
     value = value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
 
     if (value) {
       const numericValue = parseFloat(value);
 
-      const formattedValue = this.currencyPipe.transform(numericValue, 'USD');
-      if (formattedValue) {
-        this.pawnForm.get('price_interest')?.setValue(numericValue, {
-          emitEvent: false,
-        });
+      this.pawnForm.get('price_pawn')?.setValue(numericValue, {
+        emitEvent: false,
+      });
 
-        event.target.value = formattedValue;
-      }
+     
+      const formattedUSD = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+      }).format(numericValue);
+
+    
+      const exchangeRate = await this.getKHRExchangeRate();
+      const khrValue = numericValue * exchangeRate;
+      const formattedKHR = new Intl.NumberFormat('km-KH', {
+        style: 'currency',
+        currency: 'KHR',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(khrValue);
+
+
+      event.target.value = `${formattedUSD} / ${formattedKHR}`;
+
+    
+      this.displayUSD = formattedUSD;
+      this.displayKHR = formattedKHR;
+
     } else {
-      this.pawnForm.get('price_interest')?.setValue(0, { emitEvent: false });
+      this.pawnForm.get('price_pawn')?.setValue(0, { emitEvent: false });
+      event.target.value = '';
+      this.displayUSD = '';
+      this.displayKHR = '';
     }
   }
+  
+async formatCurrencyPriceInterest(event: any){
+  let value = event.target.value;
+  value = value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+  if (value) {
+    const numericValue = parseFloat(value);
+    this.pawnForm.get('price_interest')?.setValue(numericValue,{
+      emitEvent: false,
+    });
+    
+
+  const formattedUSD = new Intl.NumberFormat('en-US',{
+    style: 'currency',
+    currency: 'USD',
+  }).format(numericValue);
+
+const exchangeRate = await this.getKHRExchangeRate();
+const khrValue = numericValue * exchangeRate;
+const formattedKHR = new Intl.NumberFormat('km-KH',{
+  style: 'currency',
+  currency: 'KHR',
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 0,
+}).format(khrValue);
+
+event.target.value = `${formattedUSD} / ${formattedKHR}`;
+this.displayUSD = formattedUSD;
+this.displayKHR = formattedKHR;
+} else{
+  this.pawnForm.get('price_interest')?.setValue(0,{ emitEvent: false});
+  event.target.value = '';
+  this.displayUSD = '';
+  this.displayKHR = '';
+}
+}
 
   getFormattedPricePawn(): string | null {
     const value = this.pawnForm.get('price_pawn')?.value;
@@ -427,6 +555,10 @@ export class PawnFormComponent {
     return item?.text;
   };
 
+  displayWeightOfGold = (item: any) =>{
+    return item?.text;
+  }
+
   imagePreview: string[] = [];
 
   onImageUpload(event: any) {
@@ -453,8 +585,8 @@ export class PawnFormComponent {
   ShowDialogDeleteForm(data: any) {
     const dialogRef = this.dialog.open(AlertComponent, {
       data: {
-        title: 'Confirm Deletion',
-        description: 'Are you sure you want to delete this item?',
+        title: 'លុបទម្រង់ឯកសារ!',
+        description: 'តើអ្នកពិតជាចង់លុបទម្រង់ឯកសារមួយនេះ?',
       },
       width: '350px',
       role: 'dialog',
@@ -478,8 +610,8 @@ export class PawnFormComponent {
   endPawn(data: any): void {
     const dialogRef = this.dialog.open(AlertComponent, {
       data: {
-        title: 'Confirm End Pawn',
-        description: 'Are you sure you want to end this pawn?',
+        title: 'បញ្ចប់ការបញ្ចាំ!',
+        description: 'តើអ្នកពិតជាចង់បញ្ចប់ការបញ្ចាំមួយនេះ?',
       },
       width: '350px',
       role: 'dialog',
@@ -490,14 +622,14 @@ export class PawnFormComponent {
       if (result && data?.key) {
         try {
           await this.store.endPawn(data?.key);
-          this.snackBar.open(`Pawn ended successfully.`, 'Success', {
-            duration: 3000,
+          this.snackBar.open(`បញ្ចប់ការបញ្ចាំបានជោគជ័យ`, 'ជោគជ័យ', {
+            duration: 6000,
           });
           // this.router.navigate(['home/inactive/listing']);
         } catch (error) {
           console.error('Error ending pawn:', error);
-          this.snackBar.open(`Failed to end pawn.`, 'Error', {
-            duration: 3000,
+          this.snackBar.open(`បញ្ចប់ការបញ្ចាំបានបរាជ័យ.`, 'បរាជ័យ', {
+            duration: 6000,
           });
         }
       }
@@ -507,8 +639,8 @@ export class PawnFormComponent {
   restorePawn(data: any): void {
     const dialogRef = this.dialog.open(AlertComponent, {
       data: {
-        title: 'Confirm End Pawn',
-        description: 'Are you sure you want to end this pawn?',
+        title: 'ទាញយកទម្រង់បញ្ចាំទៅវិញ!',
+        description: 'តើអ្នកពិតជាចង់ទាញយកទម្រង់បញ្ចាំមួយនេះទៅវិញ?',
       },
       width: '350px',
       role: 'dialog',
@@ -519,14 +651,14 @@ export class PawnFormComponent {
       if (result && data?.key) {
         try {
           await this.store.restorePawn(data?.key);
-          this.snackBar.open(`Pawn ended successfully.`, 'Success', {
-            duration: 3000,
+          this.snackBar.open(`ទាញយកទម្រង់បញ្ចាំវិញបានជោគជ័យ`, 'ជោគជ័យ', {
+            duration: 6000,
           });
           // this.router.navigate(['home/active/listing']);
         } catch (error) {
           console.error('Error ending pawn:', error);
-          this.snackBar.open(`Failed to end pawn.`, 'Error', {
-            duration: 3000,
+          this.snackBar.open(`ទាញយកទម្រង់បញ្ចាំវិញបរាជ័យ`, 'បរាជ័យ', {
+            duration: 6000,
           });
         }
       }

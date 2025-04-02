@@ -10,12 +10,13 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AuthStore } from '../../auth/auth.store';
 import { PawnStore } from '../../shared/store/pawn.store';
-import { GetTimeAgoPipe } from '../../shared/pipes/customs.pipe';
+import { GetTimeAgoPipe, DatedPipe } from '../../shared/pipes/customs.pipe';
 import { CommonModule, DatePipe, NgIf } from '@angular/common';
 import { CustomerInfoComponent } from '../../components/customer-info/customer-info.component';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { FormBuilder, FormGroup, FormControl, ReactiveFormsModule, } from '@angular/forms';
 import { switchMap, takeUntil } from 'rxjs/operators';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-listing',
@@ -35,7 +36,9 @@ import { switchMap, takeUntil } from 'rxjs/operators';
     CommonModule,
     AngularFirestoreModule,
     ReactiveFormsModule,
-  ],
+    MatTooltipModule,
+    DatedPipe
+],
   templateUrl: './listing.component.html',
   styleUrl: './listing.component.scss',
 })
