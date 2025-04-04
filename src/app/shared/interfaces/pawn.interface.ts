@@ -37,8 +37,9 @@ export interface IPAWNSHOP {
     type_jewelry_text?: any;
     gold_weight?: any;
 
-    price_interest: any;
-    price_pawn: any;
+    price_interest?: any;
+    price_pawn?: any;
+    
     
 
 }

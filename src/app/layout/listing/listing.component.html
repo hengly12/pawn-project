@@ -31,7 +31,7 @@
           (click)="clearFormInputs()"
           [routerLink]="['/home/' + param() + '/listing/create-form/na']"
         >
-          បង្កើតទម្រង់ <mat-icon color="primary">add_box</mat-icon>
+          បង្កើតថ្មី <mat-icon color="primary">add_box</mat-icon>
         </button>
       </div>
 
@@ -61,7 +61,7 @@
             <div class="profile-image">
               <img
                 [src]="
-                  auth.profile?.photoFile || 'assets/images/customer-image.jpg'
+                  auth.profile?.photoFile || 'assets/images/Admin-Pic.jpg'
                 "
                 alt="Profile Icon"
               />

@@ -2,32 +2,150 @@
 .report-monthly{
     display: flex;
 }
-table {
-    width: 100%;
+.pawn-table-container {
+  width: 100%;
+  overflow-x: auto; /* For smaller screens */
+}
+
+.pawn-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+
+  th,
+  td {
+    padding: 0.75rem;
+    border: 1px solid #dee2e6;
+    text-align: left;
   }
-  
-  .example-first-header-row th {
-    border-bottom: none;
+
+  thead {
+    background-color: #f8f9fa;
   }
-  
-  .example-second-header-row {
-    font-style: italic;
-  }
-  
-  .example-first-footer-row {
+
+  th {
     font-weight: bold;
   }
-  
-  .example-second-footer-row td {
-    font-style: italic;
+
+  tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
   }
-  
-  mat-grid-tile {
-    background: lightblue;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem 0;
+
+  button {
+    padding: 0.5rem 1rem;
+    margin: 0 0.25rem;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    cursor: pointer;
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
   }
+
+  span {
+    margin: 0 0.5rem;
+  }
+}
 
   .report-table{
     display: flex;
     flex-direction: column;
     background-color: lightblue;
+  }
+
+  .dashboard-monthly-report {
+    font-family: "Koh Santepheap", serif;
+    height: auto;
+    width: 100%;
+    max-width: 350px;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    margin-top: 5px;
+    border-radius: 8px;
+  }
+
+  .dashboard-monthly-picker {
+    font-family: "Koh Santepheap", serif;
+    height: auto;
+    width: 100%;
+    max-width: 350px;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    margin-top: 5px;
+    border-radius: 8px;
+  }
+
+  .main-wrapper {
+    font-family: "Koh Santepheap", serif;
+    display: flex;
+  }
+
+  .listing-monthly-report {
+    font-family: "Koh Santepheap", serif;
+    display: flex;
+        border: solid 0px rgba(201, 200, 200, 0.8588235294);
+        flex-direction: column;
+        overflow: auto;
+        height: calc(115vh - 223px);
+        background-color: #fff;
+        margin-top: 5px;
+        margin-inline: 5px;
+        width: 150%;
+    .customer_info {
+      cursor: pointer;
+      &.active {
+        color: #000000;
+        background-color: #bbddff;
+      }
+    }
+  }
+
+  .listing-monthly-picker {
+    font-family: "Koh Santepheap", serif;
+    display: flex;
+        border: solid 0px rgba(201, 200, 200, 0.8588235294);
+        flex-direction: column;
+        overflow: auto;
+        height: calc(115vh - 223px);
+        background-color: #fff;
+        margin-top: 5px;
+        margin-inline: 110px;
+        width: 80%;
+    .customer_info {
+      cursor: pointer;
+      &.active {
+        color: #000000;
+        background-color: #bbddff;
+      }
+    }
+  }
+
+  .listing-table{
+    font-family: "Koh Santepheap", serif;
+    display: flex;
+    border: solid 0px rgba(201, 200, 200, 0.8588235294);
+    flex-direction: column;
+    overflow: auto;
+    height: calc(115vh - 223px);
+    background-color: #fff;
+    width: 50%;
+    position: absolute;
+    margin-inline: 70px;
+    margin-top: 5px;
+    .customer_info {
+      cursor: pointer;
+      &.active {
+        color: #000000;
+        background-color: #bbddff;
+      }
+    }
   }

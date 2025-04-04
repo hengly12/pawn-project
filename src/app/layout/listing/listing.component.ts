@@ -37,7 +37,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     AngularFirestoreModule,
     ReactiveFormsModule,
     MatTooltipModule,
-    DatedPipe
+    DatedPipe,
 ],
   templateUrl: './listing.component.html',
   styleUrl: './listing.component.scss',
@@ -157,7 +157,7 @@ export class ListingComponent implements OnInit, OnDestroy {
   ShowDialog() {
     const dialogRef = this.dialog.open(CustomerInfoComponent, {
       data: {
-        title: 'ព័ត៌មានអតិថិជន',
+        title: 'ជ្រើសរើសព័ត៌មានអតិថិជន',
         description: 'Select To Read More Information',
         param: this.param(),
       },

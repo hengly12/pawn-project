@@ -792,7 +792,9 @@ this.displayKHR = formattedKHR;
       updated_by: mapUser(this.auth?.profile),
 
       pawnKey: arrayUnion(data?.key)
+      
     }
+    this.router.navigate(['home/active/listing']);
 
     // console.log(data, 'data');
     // console.log(info_customer, 'info');

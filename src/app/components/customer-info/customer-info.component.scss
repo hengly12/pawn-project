@@ -24,7 +24,7 @@
   font-size: 15px;
   padding: 10px;
   color: #ffffff;
-  background-color: #5e5e5e;
+  background-color: #e8e8e9;
   border: solid 0px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   cursor: pointer;
@@ -34,6 +34,7 @@
   align-items: center;
   .mat-icon {
     fill: currentColor;
+    color: #8b8b8b;
     height: 15px;
     width: 15px;
     font-size: 18px;
@@ -43,7 +44,7 @@
   }
 }
 .close-dialog:hover {
-  background-color: #696868d4;
+  background-color: #c4c4c4d4;
 }
 
 ::ng-deep .cdk-overlay-backdrop-showing {
@@ -145,10 +146,10 @@
 }
 
 .customer_info {
-  background-image: url('https://i.pinimg.com/originals/7b/34/d3/7b34d33a578812832573513ae9909cba.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  // background-image: url('https://i.pinimg.com/originals/7b/34/d3/7b34d33a578812832573513ae9909cba.png');
+  // background-size: cover;
+  // background-position: center;
+  // background-repeat: no-repeat;
   display: flex
   ;
       gap: 15px;
@@ -177,9 +178,9 @@
 
 ::ng-deep.mat-mdc-dialog-surface {
   border-radius: 8px !important;
-  margin-top: 45px;
-  height: 92%;
-  width: 200%;
+  margin-top: 35px;
+  height: 89%;
+  width: 200%
 }
 
 .full_name {

@@ -1,120 +1,79 @@
+<div class="main-wrapper">
+  <form >
+    <div class=".dashboard-monthly-report">
+      
+      <mat-tab-nav-panel>
+        <div class="listing-monthly-report">
+          <div >
+            <h2>Monthly report</h2>
+          </div>
+        </div>
+        </mat-tab-nav-panel>
+    
+    </div>
+  </form>
 
+
+
+  <form >
+    <div class=".dashboard-monthly-picker">
+      
+      <mat-tab-nav-panel>
+        <div class="listing-monthly-picker">
+          <div >
+            <h2>ជ្រើសរើសថ្ងៃខែឆ្នាំ</h2>
+          </div>
+        </div>
+        </mat-tab-nav-panel>
+    
+    </div>
+  </form>
+
+
+  <form >
+    <div class=".dashboard-table">
+      <mat-tab-nav-panel>
+        <div class="listing-table">
 <div class="report-table">
 <div class="report-monthly"></div>
 <h2>Monthly Report</h2>
  
-<table mat-table [dataSource]="transactions" class="mat-elevation-z8">
-  <ng-container matColumnDef="item">
-    <th mat-header-cell *matHeaderCellDef><h2>Pawn Items</h2></th>
-    <td mat-cell *matCellDef="let transaction">{{ transaction.item }}</td>
-    <td mat-footer-cell *matFooterCellDef>Total</td>
-  </ng-container>
-
-  <ng-container matColumnDef="cost">
-    <th mat-header-cell *matHeaderCellDef></th>
-    <td mat-cell *matCellDef="let transaction">
-      {{ transaction.cost | currency }}
-    </td>
-    <td mat-footer-cell *matFooterCellDef>{{ getTotalCost() | currency }}</td>
-  </ng-container>
-
-  <ng-container matColumnDef="item-description">
-    <th mat-header-cell *matHeaderCellDef><h3>Item</h3></th>
-  </ng-container>
-
-  <ng-container matColumnDef="cost-description">
-    <th mat-header-cell *matHeaderCellDef><h3>Price in USD</h3></th>
-  </ng-container>
-
-  <ng-container matColumnDef="disclaimer">
-    <td mat-footer-cell *matFooterCellDef colspan="2">
-      Total Income This Month
-    </td>
-  </ng-container>
-
-  <tr
-    mat-header-row
-    *matHeaderRowDef="displayedColumns"
-    class="example-first-header-row"
-  ></tr>
-  <tr
-    mat-header-row
-    *matHeaderRowDef="['item-description', 'cost-description']"
-    class="example-second-header-row"
-  ></tr>
-
-  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-
-  <tr
-    mat-footer-row
-    *matFooterRowDef="displayedColumns"
-    class="example-first-footer-row"
-  ></tr>
-  <tr
-    mat-footer-row
-    *matFooterRowDef="['disclaimer']"
-    class="example-second-footer-row"
-  ></tr>
-</table>
-
-
-  <div class="report-monthly">
-    <h2>Year Report</h2>
-  </div>
-
-   
-  <table mat-table [dataSource]="transactions" class="mat-elevation-z8">
-    <ng-container matColumnDef="item">
-      <th mat-header-cell *matHeaderCellDef><h2>Pawn Items</h2></th>
-      <td mat-cell *matCellDef="let transaction">{{ transaction.item }}</td>
-      <td mat-footer-cell *matFooterCellDef>Total</td>
-    </ng-container>
-  
-    <ng-container matColumnDef="cost">
-      <th mat-header-cell *matHeaderCellDef></th>
-      <td mat-cell *matCellDef="let transaction">
-        {{ transaction.cost | currency }}
-      </td>
-      <td mat-footer-cell *matFooterCellDef>{{ getTotalCost() | currency }}</td>
-    </ng-container>
-  
-    <ng-container matColumnDef="item-description">
-      <th mat-header-cell *matHeaderCellDef><h3>Item</h3></th>
-    </ng-container>
-  
-    <ng-container matColumnDef="cost-description">
-      <th mat-header-cell *matHeaderCellDef><h3>Price in USD</h3></th>
-    </ng-container>
-  
-    <ng-container matColumnDef="disclaimer">
-      <td mat-footer-cell *matFooterCellDef colspan="2">
-        Total Income This Month
-      </td>
-    </ng-container>
-  
-    <tr
-      mat-header-row
-      *matHeaderRowDef="displayedColumns"
-      class="example-first-header-row"
-    ></tr>
-    <tr
-      mat-header-row
-      *matHeaderRowDef="['item-description', 'cost-description']"
-      class="example-second-header-row"
-    ></tr>
-  
-    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-  
-    <tr
-      mat-footer-row
-      *matFooterRowDef="displayedColumns"
-      class="example-first-footer-row"
-    ></tr>
-    <tr
-      mat-footer-row
-      *matFooterRowDef="['disclaimer']"
-      class="example-second-footer-row"
-    ></tr>
+<div class="pawn-table-container">
+  <table class="pawn-table">
+    <thead>
+      <tr>
+        <th>Full Name</th>
+        <th>Gender</th>
+        <th>Phone Number</th>
+        <th>Address</th>
+        <th>Pawn Type</th>
+        <th>Pawn Price</th>
+        <th>Interest Price</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of data">
+        <td>{{ item.full_name }}</td>
+        <td>{{ item.gender }}</td>
+        <td>{{ item.phone_number }}</td>
+        <td>{{ item.address }}</td>
+        <td>{{ item.pawn_type }}</td>
+        <td>{{ item.price_pawn | currency:'USD':'symbol':'1.2-2' }}</td>
+        <td>{{ item.price_interest | currency:'USD':'symbol':'1.2-2' }}</td>
+      </tr>
+    </tbody>
   </table>
+
+
 </div>
+
+
   
+</div>
+</div>
+</mat-tab-nav-panel>
+
+</div>
+</form>
+</div>
+

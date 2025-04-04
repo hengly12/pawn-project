@@ -492,9 +492,9 @@
             <input
                     class="custome-input"
                     matInput
-                    placeholder="សូមបញ្ចូលទម្ងន់ ជី , អោន , តម្លឹង , គីឡូ"
+                    placeholder="សូមបញ្ចូលទម្ងន់ លី , ហ៊ុន , ជី , តម្លឹង , គីឡូ , អោន"
                     formControlName="gold_weight"
-                    type="text" aria-label="Text" [matAutocomplete]="AutoGender"/>
+                    type="text" aria-label="Text" />
                 <label
                   class="input-error"
                   *ngIf="
@@ -506,16 +506,6 @@
                 </label>
             </div>
               </div>
-              <mat-autocomplete
-                  #AutoGender="matAutocomplete"
-                  [displayWith]="displayGender"
-                >
-                  @for(item of weightOfGold(); track item){
-                  <mat-option [value]="item">
-                    {{ item?.text }}
-                  </mat-option>
-                  }
-                </mat-autocomplete>
                 <!-- </mat-form-field> -->
               </div>
               }@else if(seleted()?.key == 4){

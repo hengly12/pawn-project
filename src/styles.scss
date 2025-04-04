@@ -40,6 +40,7 @@ body {
   font-family:  Roboto, "Helvetica Neue", sans-serif;
 }
 
+
 body {
   margin          : 0;
   font-family     : Roboto, "Helvetica Neue", sans-serif;
@@ -64,10 +65,12 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
   body{
     visibility: hidden;
+    
   }
-
+ 
   .main-wrapper{
-   margin-inline: -100%;
+    width: 170%;
+    margin-inline:-20% ;
   }
   button{
     visibility: hidden;
