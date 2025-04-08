@@ -150,6 +150,10 @@ export class PawnStore {
     ) as Observable<any[]>;
   }
 
+  async getCustomerDemo() {
+    return collectionData(this.ds.customerRef())
+  }
+
   async getCustomer(key: string) {
     return pushToObject(await getDoc(doc(this.ds.customerRef(), key)));
   }

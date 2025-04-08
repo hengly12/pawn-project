@@ -1,79 +1,173 @@
 <div class="main-wrapper">
-  <form >
+  <form>
     <div class=".dashboard-monthly-report">
-      
       <mat-tab-nav-panel>
         <div class="listing-monthly-report">
-          <div >
-            <h2>Monthly report</h2>
+          <div>
+            <h2>{{ reportTitle }}</h2>
+            <p>{{ reportDescription }}</p>
           </div>
         </div>
-        </mat-tab-nav-panel>
-    
+      </mat-tab-nav-panel>
     </div>
   </form>
 
-
-
-  <form >
+  <form>
     <div class=".dashboard-monthly-picker">
-      
       <mat-tab-nav-panel>
         <div class="listing-monthly-picker">
-          <div >
+          <div>
             <h2>ជ្រើសរើសថ្ងៃខែឆ្នាំ</h2>
           </div>
+
+          <div class="filter-container">
+            <div class="filter-buttons">
+              <mat-form-field appearance="outline">
+                <mat-label>Choose a date</mat-label>
+                <input
+                  matInput
+                  [matDatepicker]="picker"
+                  [formControl]="selectedDate"
+                />
+                <mat-datepicker-toggle
+                  matIconSuffix
+                  [for]="picker"
+                ></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </mat-form-field>
+              <button
+                type="button"
+                mat-button
+                (click)="onFilterChange($event, 'all')"
+                [ngClass]="{ active: selectedFilter === 'all' }"
+              >
+                All Time
+              </button>
+              <button
+                type="button"
+                mat-button
+                (click)="onFilterChange($event, 'today')"
+                [ngClass]="{ active: selectedFilter === 'today' }"
+              >
+                Today
+              </button>
+              <button
+                type="button"
+                mat-button
+                (click)="onFilterChange($event, 'yesterday')"
+                [ngClass]="{ active: selectedFilter === 'yesterday' }"
+              >
+                Yesterday
+              </button>
+              <button
+                type="button"
+                mat-button
+                (click)="onFilterChange($event, 'thisMonth')"
+                [ngClass]="{ active: selectedFilter === 'thisMonth' }"
+              >
+                This Month
+              </button>
+              <button
+                type="button"
+                mat-button
+                (click)="onFilterChange($event, 'thisYear')"
+                [ngClass]="{ active: selectedFilter === 'thisYear' }"
+              >
+                This Year
+              </button>
+            </div>
+          </div>
         </div>
-        </mat-tab-nav-panel>
-    
+      </mat-tab-nav-panel>
     </div>
   </form>
 
-
-  <form >
+  <form>
     <div class=".dashboard-table">
       <mat-tab-nav-panel>
         <div class="listing-table">
-<div class="report-table">
-<div class="report-monthly"></div>
-<h2>Monthly Report</h2>
- 
-<div class="pawn-table-container">
-  <table class="pawn-table">
-    <thead>
-      <tr>
-        <th>Full Name</th>
-        <th>Gender</th>
-        <th>Phone Number</th>
-        <th>Address</th>
-        <th>Pawn Type</th>
-        <th>Pawn Price</th>
-        <th>Interest Price</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let item of data">
-        <td>{{ item.full_name }}</td>
-        <td>{{ item.gender }}</td>
-        <td>{{ item.phone_number }}</td>
-        <td>{{ item.address }}</td>
-        <td>{{ item.pawn_type }}</td>
-        <td>{{ item.price_pawn | currency:'USD':'symbol':'1.2-2' }}</td>
-        <td>{{ item.price_interest | currency:'USD':'symbol':'1.2-2' }}</td>
-      </tr>
-    </tbody>
-  </table>
+          <div class="report-table">
+            <div class="report-monthly"></div>
+            <h2>Monthly Report</h2>
 
-
+            <div class="pawn-table-container">
+              <table class="pawn-table">
+                <thead>
+                  <tr class="table-hight">
+                    <th><h3>គោត្តនាម និងនាម</h3></th>
+                    <th><h3>ភេទ</h3></th>
+                    <th><h3>លេខទូរសព្ទ</h3></th>
+                    <th><h3>អាស័យដ្ថាន</h3></th>
+                    <th><h3>វត្ថុបញ្ចាំ</h3></th>
+                    <th><h3>តម្លៃវត្ថុបញ្ចាំ</h3></th>
+                    <th><h3>តម្លៃការប្រាក់</h3></th>
+                    <th><h3>ថ្ងៃបង្កើត</h3></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of filteredData">
+                    <td>{{ item.full_name }}</td>
+                    <td>
+                      <ng-container
+                        *ngIf="item.gender && typeof item.gender === 'object' && item.gender !== null; else stringGender"
+                      >
+                        {{ item.gender.text }}
+                      </ng-container>
+                      <ng-template #stringGender>{{ item.gender }}</ng-template>
+                    </td>
+                    <td>{{ item.phone_number }}</td>
+                    <td>{{ item.address }}</td>
+                    <td>
+                      <ng-container
+                        *ngIf="
+                          item.pawn_type &&
+                          typeof item.pawn_type === 'object' &&
+                          item.pawn_type !== null;
+                          else stringPawnType
+                        "
+                      >
+                        {{ item.pawn_type.text }}
+                      </ng-container>
+                      <ng-template #stringPawnType>{{
+                        item.pawn_type
+                      }}</ng-template>
+                    </td>
+                    <td>
+                      {{
+                        item.price_pawn | currency : "USD" : "symbol" : "1.2-2"
+                      }}
+                    </td>
+                    <td>
+                      {{
+                        item.price_interest
+                          | currency : "USD" : "symbol" : "1.2-2"
+                      }}
+                    </td>
+                    <td>{{ item.created_at?.toDate() | date : "dd/MM/yy" }}</td>
+                  </tr>
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td colspan="5"><h3>តម្លៃសរុប</h3></td>
+                    <td>
+                      {{
+                        totalPawnPrice | currency : "USD" : "symbol" : "1.2-2"
+                      }}
+                    </td>
+                    <td>
+                      {{
+                        totalInterestPrice
+                          | currency : "USD" : "symbol" : "1.2-2"
+                      }}
+                    </td>
+                    <td></td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        </div>
+      </mat-tab-nav-panel>
+    </div>
+  </form>
 </div>
-
-
-  
-</div>
-</div>
-</mat-tab-nav-panel>
-
-</div>
-</form>
-</div>
-

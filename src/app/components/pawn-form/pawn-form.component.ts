@@ -130,7 +130,7 @@ export class PawnFormComponent {
     address: new FormControl<any>(null, [Validators.required]),
     pawn_type: new FormControl<any>(null, [Validators.required]),
     description: new FormControl(''),
-    // dateCreated: new FormControl<Date | null>(null, Validators.required),
+    created_at: new FormControl<Date | null>(null,),
     date_expired: new FormControl<Date | null>(null, [Validators.required]),
 
     photo: new FormControl<string | null>(null),
@@ -229,6 +229,7 @@ export class PawnFormComponent {
             price_pawn: getData?.price_pawn,
             price_interest: getData?.price_interest,
             description: getData?.description,
+            created_at: getData?.created_at,
             date_expired: getData?.date_expired?.toDate(),
           });
         }
@@ -710,7 +711,9 @@ this.displayKHR = formattedKHR;
       price_pawn,
       price_interest,
       description,
+      created_at,
       date_expired,
+
     } = this.pawnForm.getRawValue();
     const toDay = new Date();
     let key = this.ds.createKey();
@@ -757,6 +760,7 @@ this.displayKHR = formattedKHR;
       price_pawn: price_pawn,
       price_interest: price_interest,
       description: description,
+      
       date_expired: date_expired,
       photo: photo,
       pawn_item_key: info_customer?.key,

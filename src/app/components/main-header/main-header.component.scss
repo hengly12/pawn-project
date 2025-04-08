@@ -134,7 +134,18 @@
     cursor: pointer;
   }
 
- 
+  ::ng-deep.cdk-overlay-pane {
+    position: absolute;
+    pointer-events: auto;
+    box-sizing: border-box;
+    display: flex;
+    max-width: 100%;
+    max-height: 100%;
+    width: 200px !important;
+    margin-inline: 25px !important;
+    margin-top: 4px !important;
+    justify-content: space-around;
+  }
   
   .button-signout:hover{
     color: white;
@@ -181,7 +192,7 @@
     border-radius: inherit;
 }
 
-::ng-deep .mat-mdc-menu-panel {
+::ng-deep.mat-mdc-menu-panel {
   background: #fff !important;
 }
 ::ng-deep .cdk-overlay-container{

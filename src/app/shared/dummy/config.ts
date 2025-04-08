@@ -1,5 +1,6 @@
 import { assets } from '../services/mapping.service';
 
+
 export const Languages = {
   km: {
     key: 'km',
