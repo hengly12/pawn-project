@@ -1,15 +1,12 @@
-import { routes } from './../../app.routes';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
-import { assets } from '../../shared/services/mapping.service';
-import {MatIconModule} from '@angular/material/icon';
-import {MatMenuModule} from '@angular/material/menu';
-import {MatButtonModule} from '@angular/material/button';
-import {MatBadgeModule} from '@angular/material/badge';
-import { MatDialog } from '@angular/material/dialog'
+import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatButtonModule } from '@angular/material/button';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatDialog } from '@angular/material/dialog';
 import { AlertComponent } from '../../shared/pages/alert/alert.component';
-import { result } from 'lodash';
 import { AuthStore } from '../../auth/auth.store';
-import {MatTabsModule} from '@angular/material/tabs';
+import { MatTabsModule } from '@angular/material/tabs';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 
@@ -18,8 +15,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
   standalone: true,
   imports: [
     RouterLink,
-    MatButtonModule, 
-    MatMenuModule, 
+    MatButtonModule,
+    MatMenuModule,
     MatIconModule,
     MatBadgeModule,
     MatTabsModule,
@@ -27,21 +24,17 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     MatProgressBarModule
   ],
   templateUrl: './main-header.component.html',
-
-  
   styleUrl: './main-header.component.scss',
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class MainHeaderComponent {
-  // logo = signal<any>(assets('images/pawn-logo.jpg'))
-  // profileIcon = signal<any>(assets('images/one-punch.jpg'))
   constructor(
     private dialog: MatDialog,
     public auth: AuthStore,
     private router: Router
-  ){}
-  
-  signOut(){
+  ) {}
+
+  signOut() {
     const dialogRef = this.dialog.open(AlertComponent, {
       data: {
         title: 'Sign Out!',
@@ -50,13 +43,12 @@ export class MainHeaderComponent {
       width: '350px',
       role: 'dialog',
       panelClass: 'custom-dialog'
-    })
+    });
 
     dialogRef.afterClosed().subscribe(result => {
-      if(result){
-        this.auth?.signOut();
+      if (result) {
+        this.auth.signOut();
       }
-    })
+    });
   }
 }
-

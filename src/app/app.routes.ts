@@ -37,9 +37,9 @@ export const routes: Routes = [
   },
   {
     path: '',
-    // canActivate: [AuthGuard],
+    canActivate: [AuthGuard],
     component: AppLayoutComponent,
-    // data: { authGuardPipe: () => redirectUnauthorizedTo(['/auth']) },
+    data: { authGuardPipe: () => redirectUnauthorizedTo(['/auth']) },
     children: [
       { path: '', redirectTo: 'home', pathMatch: 'full' },
       { path:'home',component:LayoutWrapperComponent,

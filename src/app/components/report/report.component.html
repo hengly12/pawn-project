@@ -3,9 +3,30 @@
     <div class=".dashboard-monthly-report">
       <mat-tab-nav-panel>
         <div class="listing-monthly-report">
-          <div>
-            <h2>{{ reportTitle }}</h2>
-            <p>{{ reportDescription }}</p>
+          <div class="sidebar">
+            <ul class="sidebar-title">
+              <div>
+                <h2>Sidebar</h2>
+              </div>
+              <li class="search-container">
+                <nav class="nav-search">
+                  <input
+                    class="search-box"
+                    type="search"
+                    (keyup)="applyNameFilter($event)"
+                    placeholder="ស្វែងរកឯកសារ​អតិថិជន"
+                    name="q"
+                  />
+                  <button class="search-icon" type="button">
+                    <mat-icon>search</mat-icon>
+                  </button>
+                </nav>
+              </li>
+              <li><a>Home</a></li>
+              <li><a>Message</a></li>
+              <li><a>Help</a></li>
+              <li><a>Print</a></li>
+            </ul>
           </div>
         </div>
       </mat-tab-nav-panel>
@@ -19,62 +40,39 @@
           <div>
             <h2>ជ្រើសរើសថ្ងៃខែឆ្នាំ</h2>
           </div>
-
           <div class="filter-container">
             <div class="filter-buttons">
+
+              <div class="date-picker-range">
+                <div class="date-start">
               <mat-form-field appearance="outline">
-                <mat-label>Choose a date</mat-label>
-                <input
-                  matInput
-                  [matDatepicker]="picker"
-                  [formControl]="selectedDate"
-                />
-                <mat-datepicker-toggle
-                  matIconSuffix
-                  [for]="picker"
-                ></mat-datepicker-toggle>
-                <mat-datepicker #picker></mat-datepicker>
+                <mat-label>Start Date</mat-label>
+                <input matInput [formControl]="dateRange.controls['start']" [matDatepicker]="startDatePicker" placeholder="Start Date">
+                <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+                <mat-datepicker #startDatePicker></mat-datepicker>
               </mat-form-field>
-              <button
-                type="button"
-                mat-button
-                (click)="onFilterChange($event, 'all')"
-                [ngClass]="{ active: selectedFilter === 'all' }"
-              >
-                All Time
-              </button>
-              <button
-                type="button"
-                mat-button
-                (click)="onFilterChange($event, 'today')"
-                [ngClass]="{ active: selectedFilter === 'today' }"
-              >
-                Today
-              </button>
-              <button
-                type="button"
-                mat-button
-                (click)="onFilterChange($event, 'yesterday')"
-                [ngClass]="{ active: selectedFilter === 'yesterday' }"
-              >
-                Yesterday
-              </button>
-              <button
-                type="button"
-                mat-button
-                (click)="onFilterChange($event, 'thisMonth')"
-                [ngClass]="{ active: selectedFilter === 'thisMonth' }"
-              >
-                This Month
-              </button>
-              <button
-                type="button"
-                mat-button
-                (click)="onFilterChange($event, 'thisYear')"
-                [ngClass]="{ active: selectedFilter === 'thisYear' }"
-              >
-                This Year
-              </button>
+            </div>
+            <div class="date-end">
+              <mat-form-field appearance="outline">
+                <mat-label>End Date</mat-label>
+                <input matInput [formControl]="dateRange.controls['end']" [matDatepicker]="endDatePicker" placeholder="End Date">
+                <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+                <mat-datepicker #endDatePicker></mat-datepicker>
+              </mat-form-field>
+            </div>
+            </div>
+            <div class="date-filter-btn">
+              <button mat-button type="button" (click)="applyDateFilter()"  [ngClass]="{'active-filter': selectedFilter === 'dateRange'}">Apply Filter</button>
+              <button mat-button type="button" (click)="resetFilters()">Reset Filter</button>
+            </div>
+            
+            <div class="filter-all-time">
+              <button mat-button type="button" (click)="onFilterChange(null, 'all')" [ngClass]="{'active-filter': selectedFilter === 'all'}">All Time</button>
+              <button mat-button type="button" (click)="onFilterChange(null, 'today')" [ngClass]="{'active-filter': selectedFilter === 'today'}">Today</button>
+              <button mat-button type="button" (click)="onFilterChange(null, 'yesterday')" [ngClass]="{'active-filter': selectedFilter === 'yesterday'}">Yesterday</button>
+              <button mat-button type="button" (click)="onFilterChange(null, 'thisMonth')" [ngClass]="{'active-filter': selectedFilter === 'thisMonth'}">This Month</button>
+              <button mat-button type="button" (click)="onFilterChange(null, 'thisYear')" [ngClass]="{'active-filter': selectedFilter === 'thisYear'}">This Year</button>
+            </div>
             </div>
           </div>
         </div>
@@ -88,20 +86,38 @@
         <div class="listing-table">
           <div class="report-table">
             <div class="report-monthly"></div>
-            <h2>Monthly Report</h2>
-
+            <h2>{{ reportTitle }}</h2>
             <div class="pawn-table-container">
               <table class="pawn-table">
                 <thead>
                   <tr class="table-hight">
-                    <th><h3>គោត្តនាម និងនាម</h3></th>
-                    <th><h3>ភេទ</h3></th>
-                    <th><h3>លេខទូរសព្ទ</h3></th>
-                    <th><h3>អាស័យដ្ថាន</h3></th>
-                    <th><h3>វត្ថុបញ្ចាំ</h3></th>
-                    <th><h3>តម្លៃវត្ថុបញ្ចាំ</h3></th>
-                    <th><h3>តម្លៃការប្រាក់</h3></th>
-                    <th><h3>ថ្ងៃបង្កើត</h3></th>
+                    <th>
+                      <h3>គោត្តនាម និងនាម</h3>
+                    </th>
+                    <th>
+                      <h3>ភេទ</h3>
+                    </th>
+                    <th>
+                      <h3>លេខទូរសព្ទ</h3>
+                    </th>
+                    <th>
+                      <h3>អាស័យដ្ថាន</h3>
+                    </th>
+                    <th>
+                      <h3>វត្ថុបញ្ចាំ</h3>
+                    </th>
+                    <th>
+                      <h3>តម្លៃវត្ថុបញ្ចាំ</h3>
+                    </th>
+                    <th>
+                      <h3>តម្លៃការប្រាក់</h3>
+                    </th>
+                    <th>
+                      <h3>ថ្ងៃបង្កើត</h3>
+                    </th>
+                    <th>
+                      <h3>ចំនួនដង បញ្ចាំ</h3>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -109,7 +125,12 @@
                     <td>{{ item.full_name }}</td>
                     <td>
                       <ng-container
-                        *ngIf="item.gender && typeof item.gender === 'object' && item.gender !== null; else stringGender"
+                        *ngIf="
+                          item.gender &&
+                          typeof item.gender === 'object' &&
+                          item.gender !== null;
+                          else stringGender
+                        "
                       >
                         {{ item.gender.text }}
                       </ng-container>
@@ -140,15 +161,20 @@
                     <td>
                       {{
                         item.price_interest
-                          | currency : "USD" : "symbol" : "1.2-2"
+                        | currency : "USD" : "symbol" : "1.2-2"
                       }}
                     </td>
                     <td>{{ item.created_at?.toDate() | date : "dd/MM/yy" }}</td>
+                    <td>
+                      {{ getUserPawnKeyCount(item.full_name, item.pawnKey) }}
+                    </td>
                   </tr>
                 </tbody>
                 <tfoot>
                   <tr>
-                    <td colspan="5"><h3>តម្លៃសរុប</h3></td>
+                    <td colspan="5">
+                      <h3>តម្លៃសរុប</h3>
+                    </td>
                     <td>
                       {{
                         totalPawnPrice | currency : "USD" : "symbol" : "1.2-2"
@@ -157,9 +183,10 @@
                     <td>
                       {{
                         totalInterestPrice
-                          | currency : "USD" : "symbol" : "1.2-2"
+                        | currency : "USD" : "symbol" : "1.2-2"
                       }}
                     </td>
+                    <td></td>
                     <td></td>
                   </tr>
                 </tfoot>

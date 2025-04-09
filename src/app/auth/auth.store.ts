@@ -28,7 +28,12 @@ export class AuthStore {
   readonly residence = signal<any | null>(null);
   loading: boolean = false;
 
-  constructor(public lang: TranslateStore, private readonly ds: DataService,     private residenceChangeService: ResidenceChangeService,private router: Router) {
+  constructor(
+    public lang: TranslateStore,
+    private readonly ds: DataService,
+    private residenceChangeService: ResidenceChangeService,
+    private router: Router
+  ) {
     this.auth.onAuthStateChanged(async (user) => {
       this.loading = true;
       this.user = user;
@@ -42,8 +47,7 @@ export class AuthStore {
   async signIn(email: string, password: string) {
     return signInWithEmailAndPassword(this.auth, email, password);
   }
-  async register(email: string, password: string ): Promise<void> {
-  
+  async register(email: string, password: string): Promise<void> {
     try {
       await createUserWithEmailAndPassword(this.auth, email, password);
     } catch (error) {
@@ -58,8 +62,8 @@ export class AuthStore {
     // console.log('profile', profile);
   }
   // signInWithGoogle() {
-  //   const provider = new OAuthProvider('google.com');
-  //   return signInWithPopup(this.auth, provider);
+  //  const provider = new OAuthProvider('google.com');
+  //  return signInWithPopup(this.auth, provider);
   // }
   async signInWithGoogle() {
     const provider = new OAuthProvider('google.com');
@@ -71,15 +75,19 @@ export class AuthStore {
       const userRef = doc(this.ds.userRef(), user.uid);
       const userSnap = await getDoc(userRef);
       if (userSnap.exists()) {
-        await setDoc(userRef, {
-          email: user.email,
-          displayName: user.displayName || null,
-          photoURL: user.photoURL,
-          phoneNumber: user.phoneNumber || null,
-          login_at: serverTimestamp(),
-          updated_by: mapUser(this.user),
-          updated_at: serverTimestamp(),
-        }, { merge: true });
+        await setDoc(
+          userRef,
+          {
+            email: user.email,
+            displayName: user.displayName || null,
+            photoURL: user.photoURL,
+            phoneNumber: user.phoneNumber || null,
+            login_at: serverTimestamp(),
+            updated_by: mapUser(this.user),
+            updated_at: serverTimestamp(),
+          },
+          { merge: true }
+        );
       } else {
         await setDoc(userRef, {
           key: user.uid,
@@ -107,7 +115,7 @@ export class AuthStore {
         });
       }
     } catch (error) {
-      console.error("Error signing in with Google: ", error);
+      console.error('Error signing in with Google: ', error);
     }
   }
 
@@ -128,12 +136,18 @@ export class AuthStore {
     return docsToObject(await getDoc(doc(this.ds.userRef(), key)));
   }
 
-
-
   signOut() {
-    return this.auth.signOut().then(() =>{
-      this.router.navigate(['/auth/login'])
-    })
+    return this.auth.signOut().then(() => {
+      localStorage.removeItem('authToken');
+      sessionStorage.removeItem('user');
+      this.user = null;
+      this.profile = null;
+      this.ownerHomeAccount = null;
+      this.residence.set(null);
+      window.location.replace('/auth/login');
+    }).catch((error) => {
+      console.error("Sign out error", error)
+    });
   }
 
   changePassword(
@@ -144,11 +158,14 @@ export class AuthStore {
   ) {
     signInWithEmailAndPassword(this.auth, emailLog, currentPassword)
       .then((user) => {
-        
         const userRef = doc(this.ds.userRef(), this.profile?.key);
-        setDoc(userRef, {
-          passCode: newPassword,
-        }, { merge: true }); 
+        setDoc(
+          userRef,
+          {
+            passCode: newPassword,
+          },
+          { merge: true }
+        );
 
         updatePassword(user.user, newPassword)
           .then(() => {
@@ -163,7 +180,6 @@ export class AuthStore {
         alert('Your current password incorrect.');
         callback(false, err);
       });
-
   }
 
   changePasswordAccount(
@@ -186,10 +202,8 @@ export class AuthStore {
         callback(true, null);
       })
       .catch((error) => {
-        console.error("Failed to update the account:", error);
-        callback(false, error.message || "An error occurred.");
+        console.error('Failed to update the account:', error);
+        callback(false, error.message || 'An error occurred.');
       });
   }
-
-
 }

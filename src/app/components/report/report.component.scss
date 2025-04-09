@@ -38,7 +38,6 @@
 }
 
 
-
 .pagination {
   display: flex;
   justify-content: center;
@@ -80,10 +79,6 @@
   border-radius: 8px;
 }
 
-.main-wrapper {
-  font-family: "Koh Santepheap", serif;
-  display: flex;
-}
 
 .listing-monthly-report {
   font-family: "Koh Santepheap", serif;
@@ -94,7 +89,7 @@
   height: calc(115vh - 223px);
   background-color: #fff;
   margin-top: 5px;
-  margin-inline: 5px;
+  margin-inline: 0px;
   width: 100%;
   .customer_info {
     cursor: pointer;
@@ -107,15 +102,17 @@
 
 .listing-monthly-picker {
   font-family: "Koh Santepheap", serif;
-  display: flex;
-  border: solid 0px rgba(201, 200, 200, 0.8588235294);
-  flex-direction: column;
-  overflow: auto;
-  height: calc(115vh - 223px);
-  background-color: #fff;
-  margin-top: 5px;
-  margin-inline: 25px;
-  width: 100%;
+    display: flex;
+    border: solid 0px rgba(201, 200, 200, 0.8588235294);
+    flex-direction: column;
+    overflow: auto;
+    height: calc(115vh - 223px);
+    background-color: #fff;
+    margin-top: 5px;
+    margin-inline: 0px;
+    width: 130%;
+    padding-inline: 5px;
+    padding-top: 10px;
   .customer_info {
     cursor: pointer;
     &.active {
@@ -133,9 +130,9 @@
   overflow: auto;
   height: calc(115vh - 223px);
   background-color: #fff;
-  width: 55%;
+  width: 57%;
   position: absolute;
-  margin-inline: 70px;
+  margin-inline: 100px;
   margin-top: 5px;
   .customer_info {
     cursor: pointer;
@@ -148,11 +145,27 @@
 
 ::ng-deep.mat-mdc-form-field-has-icon-suffix .mat-mdc-text-field-wrapper {
   padding-right: 0;
-  margin-top: 40px !important;
+  margin-top: 30px !important;
 }
 
 ::ng-deep.mat-datepicker-content {
   margin-inline: -32px;
+}
+
+.date-filter-btn{
+  display: flex;
+    gap: 8px;
+    margin-bottom: 15px;
+    margin-inline: -10px;
+    margin-top: -15px;
+}
+
+.date-start{
+margin-bottom:-20px ;
+}
+
+.date-end{
+margin-top: -20px;
 }
 
 .filter-buttons {
@@ -160,7 +173,7 @@
     gap: 5px;
     margin-bottom: 15px;
     flex-direction: column;
-    margin-inline: 10px;
+    margin-inline: 5px;
     align-items: flex-start;
     align-content: flex-start;
     flex-wrap: wrap;
@@ -169,6 +182,141 @@
   background-color: #007bff;
   color: white;
 }
+
+.filter-all-time{
+  margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.date-picker-range{
+  display: flex;
+  flex-direction: column;
+}
+
+// Nav Style
+
+.main-wrapper {
+  display: flex;
+  flex-direction: row;
+  min-height: 90vh;
+  margin: 0;
+  padding: 0;
+  font-family: "Koh Santepheap", serif;
+}
+
+.sidebar {
+  width: 265px;
+  background-color: #003764;
+  padding: 10px 0;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  height: 100%
+}
+
+.sidebar-title{
+  display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding-inline: 5px;
+  margin: 0;
+  width: 100%;
+}
+
+.sidebar ul li {
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.sidebar ul li a {
+  display: block;
+  color: white;
+  text-decoration: none;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.sidebar ul li a:hover {
+  background-color: #004d88;
+}
+
+.sidebar ul li:first-child a {
+  background-color: #007bff;
+}
+
+.content {
+  flex: 1;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.search-box {
+  font-family: "Koh Santepheap", serif;
+    width: 265px;
+    height: 35px;
+    border-radius: 4px;
+    border-color: #ffffff;
+    background-color: rgba(221, 221, 221, 0.631372549);
+    font-size: 15px;
+    border: solid 0px;
+    padding-inline: 15px;
+    margin-inline: -5px;
+    margin-top: 30px;
+  // width: 290px;
+  // height: 30px;
+  // border-radius: 15px;
+  // border-color: #1a73e8;
+  // font-size: 15px
+}
+
+.search-icon {
+  width: 30px;
+  height: 30px;
+  border: solid 0px;
+  font-size: 15px;
+  border-radius: 50px;
+  color: #757584;
+  background-color: #8ca0b1;
+  cursor: pointer;
+  top: 160px;
+  left: 225px;
+  position: absolute;
+}
+
+.search-icon:hover {
+  color: #1585f5;
+}
+.clear-icon {
+  width: 30px;
+  height: 30px;
+  border: solid 0px;
+  font-size: 15px;
+  border-radius: 50px;
+  color: #757584;
+  background-color: #eaeaea;
+  cursor: pointer;
+  top: 100px;
+  left: 300px;
+  position: absolute;
+}
+
+.clear-icon:hover {
+  color: #9b1616;
+}
+
+.filter-buttons button.active-filter {
+  background-color: #007bff;
+  color: white;
+}
+
 
 //       /* report.component.scss */
 // .date-picker-container {
