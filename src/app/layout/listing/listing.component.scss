@@ -6,6 +6,7 @@
     (
       active-indicator-color: orange,
       divider-color: red,
+      
     )
   );
 }
@@ -59,7 +60,7 @@
   font-size: 15px;
   border-radius: 50px;
   color: #757584;
-  background-color: #eaeaea;
+  background-color: #e8e8e9;
   cursor: pointer;
   top: 100px;
   left: 300px;
@@ -73,12 +74,12 @@
   width: 30px;
   height: 30px;
   border: solid 0px;
-  font-size: 15px;
+  font-size: 26x;
   border-radius: 50px;
   color: #757584;
-  background-color: #eaeaea;
+  background-color: #e8e8e9;
   cursor: pointer;
-  top: 100px;
+  top: 98px;
   left: 300px;
   position: absolute;
 }
@@ -106,6 +107,19 @@
 
 .list-tabs {
   font-family: "Koh Santepheap", serif;
+  display: flex;
+}
+
+.mat-tab-link {
+  &:hover {
+    background-image: linear-gradient(305deg, #FFFEFF 0%, rgb(201 211 201) 100%);
+    
+  }
+
+  &.active {
+    background: linear-gradient(305deg, #FFFEFF 0%, rgb(201 211 201) 100%);
+    color: rgb(255, 255, 255);
+  }
 }
 
 .example-container {
@@ -133,17 +147,19 @@
 
 .btn-create-form {
   display: flex;
-  margin: 0px auto;
-  border: solid 0px;
-  justify-content: space-around;
+    margin: 0px auto;
+    border: solid 0px;
+    justify-content: space-around;
+    margin-bottom: 10px;
+    margin-top: 10px;
 }
 
 .btn-add-more {
-  background-color: #007bff;
+  background-image: linear-gradient(-225deg, #00dcff 0%, #227dbfde 48%, #0553b94a 100%);
   width: 140px;
 }
 .btn-check-customer {
-  background-color: #36b38f;
+  background-image: linear-gradient(-225deg, #29eb95 0%, #005873 100%);
   color: #fff !important;
   width: 140px;
 }
@@ -199,17 +215,22 @@
   padding-bottom: 0px;
   flex-direction: column;
   overflow: auto;
-  height: calc(100vh - 235px);
+  height: calc(100vh - 255px);
   .customer_info {
     cursor: pointer;
     &.active {
-      color: #000000;
-      background-color: #bbddff;
+      background: linear-gradient(to right, #ced7ce 0%, #f2fcfe 51%, #ced7ce 100%);
+      transition: 0.5s;
+      background-size: 200% auto;
+      color: rgb(0, 0, 0);            
+      box-shadow: 0 0 20px #eee;
     }
-  }
-
-  .customer_info:hover {
-    background-color: #bbddff;
+    &.active:hover {
+      background-position: right center;
+      color: #000000;
+      text-decoration: none;
+      background-image: linear-gradient(to right, #ced7ce 0%, #f2fcfe 51%, #ced7ce 100%);
+    }
   }
 }
 
@@ -225,11 +246,22 @@
   border: solid 1px rgba(185, 185, 185, 0.6);
   padding-bottom: 25px;
   padding-top: 20px;
-  // background-image: url('https://i.pinimg.com/originals/7b/34/d3/7b34d33a578812832573513ae9909cba.png');
-  // background-size: cover;
-  // background-position: center;
-  // background-repeat: no-repeat;
+   transition: 0.5s;
+   background-size: 200% auto;
+   color: rgb(0, 0, 0);            
+   box-shadow: 0 0 20px #eee;
 }
+
+.customer_info:hover {
+   background-position: right center;
+   color: #000000;
+   text-decoration: none;
+   background-image: linear-gradient(to right, #ced7ce 0%, #f2fcfe 51%, #ced7ce 100%);
+ }
+
+
+
+
 .profile-image {
   width: 75px;
   height: 75px;
@@ -238,6 +270,7 @@
   margin-bottom: 10px;
   border: 2px solid #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  
 }
 
 .profile-image img {

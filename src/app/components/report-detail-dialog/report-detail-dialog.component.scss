@@ -1,0 +1,177 @@
+.image-preview-container {
+  display: flex;
+  justify-content: center;
+  max-width: 60%;
+  max-height: 60%;
+  padding-top: 30px;
+  margin: 0 auto;
+}
+
+.background-form{
+  border-radius: 5px;
+  border: 1px solid #bebebecc;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.image-preview-container img {
+  width: 60%;
+  height: 60%;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  margin-bottom: 10px;
+}
+
+.btn-close-dialog-report {
+  top: 0px;
+  right: 0px;
+}
+
+.click-name-dialog {
+  display: grid;
+  grid-template-columns: 350px auto;
+  row-gap: 20px;
+  font-size: 16px;
+  margin-inline: 25px;
+}
+
+.report-title-dialog {
+  width: 98%;
+  border-bottom: 1px ridge #000;
+  border-radius: 0;
+  border-top: none;
+  border-right: none;
+  border-left: none;
+  padding-inline: 25px;
+  margin-bottom: 25px;
+}
+
+.report-input {
+  width: 100%;
+  border-bottom: 1px dotted #000;
+  border-radius: 0;
+  border-top: none;
+  border-right: none;
+  border-left: none;
+  padding-inline: 10px;
+  margin-inline: 10px;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .mat-dialog-container {
+    position: relative;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    visibility: visible;
+    max-width: none !important;
+    max-height: none !important;
+    overflow: visible;
+    padding: 24px;
+    background-color: white;
+    display: block !important;
+  }
+
+  .mat-dialog-content {
+    visibility: visible;
+    overflow: visible;
+    width: 100%;
+    display: block !important;
+  }
+
+  .report-title-dialog {
+    visibility: visible;
+    width: 100%;
+    border-bottom: 1px ridge #000;
+    border-radius: 0;
+    border-top: none;
+    border-right: none;
+    border-left: none;
+    padding-inline: 0;
+    margin-bottom: 25px;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+  }
+
+  .click-name-dialog {
+    visibility: visible;
+    display: grid;
+    grid-template-columns: auto auto;
+    column-gap: 10px;
+    row-gap: 20px;
+    font-size: 16px;
+    margin-inline: 0;
+    margin-bottom: 20px;
+  }
+
+  .click-name-dialog > strong {
+    font-weight: bold;
+  }
+
+  .report-input {
+    visibility: visible;
+    width: auto;
+    border-bottom: 1px dotted #000;
+    border-radius: 0;
+    border-top: none;
+    border-right: none;
+    border-left: none;
+    padding-inline: 5px;
+    background-color: #ffffff;
+    font-size: 16px;
+    line-height: 1.3;
+    display: inline-block;
+    margin-left: 5px;
+  }
+
+  body,
+  .mat-dialog-content,
+  .click-name-dialog,
+  .click-name-dialog > strong,
+  .report-input,
+  .report-title-dialog {
+    font-family: "Koh Santepheap", serif;
+  }
+
+  .image-preview-container {
+    visibility: visible;
+    display: flex;
+    justify-content: center;
+    max-width: 60% !important;
+    max-height: none !important;
+    padding-top: 30px;
+    margin: 0 auto;
+  }
+
+  .image-preview-container img {
+    visibility: visible;
+    width: 60% !important;
+    height: auto !important;
+    max-width: none !important;
+    max-height: none !important;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    margin-bottom: 10px;
+  }
+
+  .mat-dialog-actions {
+    display: none;
+  }
+
+  .btn-close-dialog-report {
+    display: none;
+  }
+
+  .background-form {
+    visibility: visible;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    padding: 20px;
+    
+  }
+}

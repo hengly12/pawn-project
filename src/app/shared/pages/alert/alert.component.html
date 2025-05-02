@@ -1,6 +1,39 @@
-<h3>{{data?.title}}</h3>
-<p>{{data?.description}}</p>
-<div class="alert-signout">
-  <button class="cancel-btn" (click)="cancel()">Cancel</button>
-  <button class="yes-btn" (click)="yes()">Yes</button>
+@if (data?.modal_type==='A') {
+
+}@else if (data?.modal_type==="Default") {
+  <div class="alert-wrapper">
+    <div class="color-backgroud">
+    <div class="alert-icon">
+      <img src="assets/images/alert-image.png" alt="Image" style="width: 90px; height: 90px;">
+    </div>
+  </div>
+  <div>
+    <h3>{{ data?.title }}</h3>
+    <p>{{ data?.description }}</p>
+  </div>
+    <div class="alert-signout">
+      <button class="cancel-btn" (click)="cancel()">Cancel</button>
+      <button class="yes-btn" (click)="yes()">Yes</button>
+    </div>
+  </div>
+
+}
+
+
+<!-- <h2 mat-dialog-title>Need help? Please Contast Us!</h2>
+<mat-dialog-content>
+  <div class="alert-help">
+    <div >
+  <mat-icon> mail_outline</mat-icon>
+  <label class="alert-email">Email: <p>VisBear&#64;gmail.com</p></label>
+    </div>
+    <div>
+  <mat-icon> contact_phone</mat-icon>
+  <label class="alert-tel">Tel: <p> 096 999 666</p></label>
+    </div>
 </div>
+  </mat-dialog-content
+>
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close>Close</button>
+</mat-dialog-actions> -->

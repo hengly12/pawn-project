@@ -4,7 +4,7 @@
       <mat-tab-nav-panel>
         <div class="listing-monthly-picker">
           <div>
-            <h2 class="h2-style">ជ្រើសរើសថ្ងៃខែឆ្នាំ</h2>
+            <h2 class="h2-style">ជ្រើសរើសថ្ងៃខែឆ្នាំ : អ្នកផុតកំណត់</h2>
             <div class="date-picker-range">
               <div class="date-start">
                 <mat-form-field appearance="outline">
@@ -38,55 +38,55 @@
                   <mat-datepicker #endDatePicker></mat-datepicker>
                 </mat-form-field>
               </div>
-                
-              <div class="filter-all-time">
-                <button
-                  mat-button
-                  type="button"
-                  (click)="onFilterChange(null, 'all')"
-                  [ngClass]="{ 'active-filter': selectedFilter === 'all' }"
-                >
-                  All Time
-                </button>
-                <button
-                  mat-button
-                  type="button"
-                  (click)="onFilterChange(null, 'today')"
-                  [ngClass]="{ 'active-filter': selectedFilter === 'today' }"
-                >
-                  Today
-                </button>
-                <button
-                  mat-button
-                  type="button"
-                  (click)="onFilterChange(null, 'yesterday')"
-                  [ngClass]="{ 'active-filter': selectedFilter === 'yesterday' }"
-                >
-                  Yesterday
-                </button>
-                <button
-                  mat-button
-                  type="button"
-                  (click)="onFilterChange(null, 'thisMonth')"
-                  [ngClass]="{ 'active-filter': selectedFilter === 'thisMonth' }"
-                >
-                  This Month
-                </button>
-                <button
-                  mat-button
-                  type="button"
-                  (click)="onFilterChange(null, 'thisYear')"
-                  [ngClass]="{ 'active-filter': selectedFilter === 'thisYear' }"
-                >
-                  This Year
-                </button>
-              </div>
-              
-              
-              
+            </div>
+            <div class="filter-all-time">
+              <button
+                mat-button
+                type="button"
+                (click)="onFilterChange(null, 'all')"
+                [ngClass]="{ 'active-filter': selectedFilter === 'all' }"
+              >
+                All Time
+              </button>
+              <button
+                mat-button
+                type="button"
+                (click)="onFilterChange(null, 'today')"
+                [ngClass]="{ 'active-filter': selectedFilter === 'today' }"
+              >
+                Today
+              </button>
+              <button
+                mat-button
+                type="button"
+                (click)="onFilterChange(null, 'yesterday')"
+                [ngClass]="{
+                  'active-filter': selectedFilter === 'yesterday'
+                }"
+              >
+                Yesterday
+              </button>
+              <button
+                mat-button
+                type="button"
+                (click)="onFilterChange(null, 'thisMonth')"
+                [ngClass]="{
+                  'active-filter': selectedFilter === 'thisMonth'
+                }"
+              >
+                This Month
+              </button>
+              <button
+                mat-button
+                type="button"
+                (click)="onFilterChange(null, 'thisYear')"
+                [ngClass]="{ 'active-filter': selectedFilter === 'thisYear' }"
+              >
+                This Year
+              </button>
             </div>
           </div>
-          
+
           <div class="filter-container">
             <div class="filter-buttons">
               <div class="date-filter-btn">
@@ -104,9 +104,10 @@
                 <button mat-button type="button" (click)="resetFilters()">
                   Reset Filter
                 </button>
-                <button mat-button type="button" (click)="printReportData()"> <mat-icon> local_printshop</mat-icon> Print</button>
+                <button mat-button type="button" (click)="printReportExpiredData()">
+                  <mat-icon> local_printshop</mat-icon> Print
+                </button>
               </div>
-              
             </div>
           </div>
         </div>
@@ -148,6 +149,9 @@
                     </th>
                     <th>
                       <h3>ថ្ងៃបង្កើត</h3>
+                    </th>
+                     <th>
+                      <h3>ថ្ងៃផុតកំណត់</h3>
                     </th>
                     <th>
                       <h3>ចំនួនដង បញ្ចាំ</h3>
@@ -195,6 +199,9 @@
                     <td>
                       {{ formatDate(item.created_at) | date : "dd/MM/yy" }}
                     </td>
+                     <td>
+                      {{ formatDate(item.date_expired) | date : "dd/MM/yy" }}
+                    </td>
                     <td>
                       {{ item.pawnCount }}
                     </td>
@@ -218,20 +225,14 @@
                     </td>
                     <td></td>
                     <td></td>
+                    <td></td>
                   </tr>
                 </tfoot>
               </table>
             </div>
           </div>
         </div>
-        
       </mat-tab-nav-panel>
-      
     </div>
   </form>
 </div>
-
-
-
-
-

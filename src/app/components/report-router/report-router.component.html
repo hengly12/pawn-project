@@ -1,0 +1,28 @@
+<div class="dashboard-monthly-report">
+  <mat-tab-nav-panel>
+    <div class="listing-monthly-report">
+      <div class="sidebar">
+        <ul class="sidebar-title">
+          <div class="title-report-sidebar">
+            <h2 class="h2-style">របាយការណ៍​</h2>
+          </div>
+          <br />
+          <li>
+            <a routerLink="/home/report/data-customer" routerLinkActive="active">
+              <mat-icon>recent_actors</mat-icon>របាយការណ៍​ប្រចាំ​ថ្ងៃ
+            </a>
+          </li>
+          <li>
+            <a routerLink="/home/report/data-expired-customer" routerLinkActive="active">
+              <mat-icon> list_alt</mat-icon>​របាយការណ៍​អ្នក​ផុតកំណត់
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </mat-tab-nav-panel>
+
+  <div class="content">
+    <router-outlet></router-outlet>
+  </div>
+</div>

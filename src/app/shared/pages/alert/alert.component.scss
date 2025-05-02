@@ -1,53 +1,96 @@
-::ng-deep .custom-dialog .mdc-dialog--open .mat-mdc-dialog-surface, .mdc-dialog--closing .mat-mdc-dialog-surface{
-    gap: 15px;
-    border-radius: 8px;
-    font-size: 20px;
-    color: #1a73e8;
-    background-color: #ffffff;
-    padding: 40px;
-    height: 250px;
-    width: 400px;
-}
+// ::ng-deep .custom-dialog .mdc-dialog--open .mat-mdc-dialog-surface, .mdc-dialog--closing .mat-mdc-dialog-surface{
+//     gap: 15px;
+//     border-radius: 8px;
+//     font-size: 20px;
+//     color: #1a73e8;
+//     background-color: #ffffff;
+//     padding: 40px;
+//     height: 250px;
+//     width: 400px;
+// }
 
-.alert-signout{
-    padding-top: 15px;
-    gap: 15px;
-    display: flex;
-    justify-content: flex-end;
-    border-top: solid 1px;
+::ng-deep.cdk-overlay-backdrop {
+    position: fixed !important;
 }
+.alert-wrapper {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 520px;
+  display: flex;
+  height: 320px;
+  gap: 20px;
+  font-size: 18px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  
 
-.cancel-btn{
-    border-radius: 50px;
-    width: 80px;
-    font-size: 15px;
-    padding: 10px;
-    color: #000000;
-    background-color: #ededed;
-    border: solid 0px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    cursor: pointer;
-}
-
-.cancel-btn:hover{
-    background-color: #0000004f;
-}
-.yes-btn{
-    border-radius: 50px;
-    width: 80px;
-    font-size: 15px;
-    padding: 10px;
-    color: #ffffff;
-    background-color: #ed5858;
-    border: solid 0px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    cursor: pointer;
-}
-.yes-btn:hover{
-    background-color: #b53030d4
-}
-
-::ng-deep .cdk-overlay-backdrop-showing {
-    opacity: 1;
-    position: fixed;
-}
+    .color-backgroud{
+      border: 2px solid #e8b21a;
+    width: 100%;
+    height: 31%;
+    border-right: none;
+    border-top: none;
+    border-left: none
+    }
+    .alert-icon,
+    h3,
+    p {
+      margin-bottom: 10px; /* Add some spacing between elements */
+    }
+  
+    .alert-icon {
+      font-size: 2em;
+      color: #f9a825;
+    }
+  
+    h3 {
+      color: #e65100;
+      margin-top: 0;
+      font-size: 1.5em;
+    }
+  
+    p {
+      color: #333;
+      font-size: 1em;
+      flex-grow: 1; /* Take up remaining vertical space */
+      margin-bottom: 20px; /* Add more space before buttons */
+    }
+  
+    .alert-signout {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      font-size: 15px;
+  
+      button {
+        padding: 10px 15px;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+      font-size: 1em;
+      min-width: 80px; /* Ensure a minimum width for both */
+      width: 80px;     /* Set an equal width */
+      }
+  
+      .cancel-btn {
+        background-color: #ddd;
+        color: #333;
+  
+        &:hover {
+          background-color: #ccc;
+        }
+      }
+  
+      .yes-btn {
+        background-color: #e53935;
+        color: #fff;
+  
+        &:hover {
+          background-color: #d32f2f;
+        }
+      }
+    }
+  }

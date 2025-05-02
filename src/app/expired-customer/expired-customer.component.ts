@@ -6,25 +6,27 @@ import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule, } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
-import { GENDER_DATA, ITEM_DATA } from '../../shared/dummy/config';
 import { Timestamp } from 'firebase/firestore';
-import { PawnStore } from '../../shared/store/pawn.store';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Subscription, interval } from 'rxjs';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { provideMomentDateAdapter } from '@angular/material-moment-adapter';
 import { MatSelectModule } from '@angular/material/select';
-import { ReportDetailDialogComponent } from '../report-detail-dialog/report-detail-dialog.component';
-import { AlertComponent } from '../../shared/pages/alert/alert.component';
+import { GENDER_DATA, ITEM_DATA } from '../shared/dummy/config';
+import { PawnStore } from '../shared/store/pawn.store';
+import { ReportDetailDialogComponent } from '../components/report-detail-dialog/report-detail-dialog.component';
+import { AlertComponent } from '../shared/pages/alert/alert.component';
 import { RouterModule } from '@angular/router';
+
+
 export const MY_FORMATS = {
   parse: {
     dateInput: 'DD/MM/YYYY',
@@ -53,11 +55,10 @@ interface Customer {
 }
 
 @Component({
-  selector: 'app-report',
+  selector: 'app-expired-customer',
   imports: [
     MatGridListModule,
     MatTableModule,
-    CurrencyPipe,
     MatIconModule,
     MatButtonModule,
     MatMenuModule,
@@ -69,7 +70,6 @@ interface Customer {
     AngularFirestoreModule,
     ReactiveFormsModule,
     MatTooltipModule,
-    DatePipe,
     MatDatepickerModule,
     MatInputModule,
     MatSelectModule,
@@ -77,15 +77,16 @@ interface Customer {
     MatButtonModule,
     RouterModule,
   ],
-  templateUrl: './report.component.html',
-  styleUrl: './report.component.scss',
+  templateUrl: './expired-customer.component.html',
+  styleUrl: './expired-customer.component.scss',
   providers: [
-    DatePipe,
-    provideMomentDateAdapter(MY_FORMATS)
-  ],
-})
-export class ReportComponent implements OnInit, OnDestroy {
-  routeUnSubscribe = signal<any>(Subscription);
+      DatePipe,
+      provideMomentDateAdapter(MY_FORMATS)
+    ],
+  })
+
+export class ExpiredCustomerComponent implements OnInit, OnDestroy{
+routeUnSubscribe = signal<any>(Subscription);
   param = signal<any>(null);
   displayUSD = '';
   displayKHR = '';
@@ -105,14 +106,14 @@ export class ReportComponent implements OnInit, OnDestroy {
     'price_interest',
     'created_at',
     'pawnCount',
-    'date_expired',
+    'expired_date'
   ];
 
   dateRange: FormGroup<{ start: FormControl<Date | null>, end: FormControl<Date | null> }>;
   selectedDate = new FormControl<Date | null | null>(null);
   filteredData: Customer[] = [];
   nameFilter = new FormControl('');
-  reportTitle = 'របាយការណ៍​';
+  reportTitle = 'របាយការណ៍';
   reportDescription =
     'Displays a summary of transactions for the selected month.';
 
@@ -131,9 +132,9 @@ export class ReportComponent implements OnInit, OnDestroy {
   filterControl = new FormControl(this.selectedFilter);
   userPawnKeyCounts: { [user: string]: number } = {};
   private subscriptions = new Subscription();
+
   unreadNotificationCount: number = 0;
   expiredItems: Customer[] = [];
-
   constructor(
     private routes: Router,
     public dialog: MatDialog,
@@ -141,7 +142,7 @@ export class ReportComponent implements OnInit, OnDestroy {
     private snackbar: MatSnackBar,
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,
-    private datePipe: DatePipe,
+    private datePipe: DatePipe
   ) {
     this.dateRange = new FormGroup({
       start: new FormControl<Date | null>(new Date(), Validators.required),
@@ -151,26 +152,25 @@ export class ReportComponent implements OnInit, OnDestroy {
 
   
 
-  isDateMatch(createdAt: any): boolean {
-    if (!this.selectedDate.value || !createdAt) {
+  isDateMatch(dateToCheck: any, selectedDate: Date | null): boolean {
+    if (!selectedDate || !dateToCheck) {
       return true;
     }
-    let createdAtDate: Date;
-    if (createdAt && createdAt.toDate) {
-      createdAtDate = createdAt.toDate();
+    let checkDate: Date;
+     if (dateToCheck instanceof Timestamp) {
+      checkDate = dateToCheck.toDate();
     } else {
-      createdAtDate = new Date(createdAt);
+      checkDate = new Date(dateToCheck);
     }
 
-    const selectedDateOnly = this.selectedDate.value
-      ? new Date(
-        this.selectedDate.value.getFullYear(),
-        this.selectedDate.value.getMonth(),
-        this.selectedDate.value.getDate()
-      )
-      : new Date();
 
-    return createdAtDate.getTime() === selectedDateOnly.getTime();
+    const selectedDateOnly =  new Date(
+        selectedDate.getFullYear(),
+        selectedDate.getMonth(),
+        selectedDate.getDate()
+      );
+
+    return checkDate.getTime() === selectedDateOnly.getTime();
   }
 
   ngOnInit(): void {
@@ -236,8 +236,8 @@ export class ReportComponent implements OnInit, OnDestroy {
       const todayYear = today.getFullYear();
       const todayMonth = today.getMonth();
       const todayDay = today.getDate();
-      filtered = filtered.filter((item) => {
-        const itemDate = item.created_at ? (item.created_at.toDate ? item.created_at.toDate() : new Date(item.created_at)) : null;
+       filtered = filtered.filter((item) => {
+        const itemDate = item.date_expired ? (item.date_expired.toDate ? item.date_expired.toDate() : new Date(item.date_expired)) : null;
         return (
           itemDate &&
           itemDate.getFullYear() === todayYear &&
@@ -250,8 +250,8 @@ export class ReportComponent implements OnInit, OnDestroy {
       yesterday.setDate(yesterday.getDate() - 1);
       yesterday.setHours(0, 0, 0, 0);
       yesterday.setMinutes(0, 0, 0);
-      filtered = filtered.filter((item) => {
-        const itemDate = item.created_at ? (item.created_at.toDate ? item.created_at.toDate() : new Date(item.created_at)) : null;
+       filtered = filtered.filter((item) => {
+        const itemDate = item.date_expired ? (item.date_expired.toDate ? item.date_expired.toDate() : new Date(item.date_expired)) : null;
         const yesterdayStart = new Date(yesterday);
         yesterdayStart.setHours(0, 0, 0, 0);
         const yesterdayEnd = new Date(yesterday);
@@ -268,8 +268,8 @@ export class ReportComponent implements OnInit, OnDestroy {
         0
       );
       endOfMonth.setHours(23, 59, 59, 999);
-      filtered = filtered.filter((item) => {
-        const itemDate = item.created_at ? (item.created_at.toDate ? item.created_at.toDate() : new Date(item.created_at)) : null;
+       filtered = filtered.filter((item) => {
+        const itemDate = item.date_expired ? (item.date_expired.toDate ? item.date_expired.toDate() : new Date(item.date_expired)) : null;
         return itemDate && itemDate >= startOfMonth && itemDate <= endOfMonth;
       });
     } else if (this.selectedFilter === 'thisYear') {
@@ -277,8 +277,8 @@ export class ReportComponent implements OnInit, OnDestroy {
       startOfYear.setHours(0, 0, 0, 0);
       const endOfYear = new Date(new Date().getFullYear(), 11, 31);
       endOfYear.setHours(23, 59, 59, 999);
-      filtered = filtered.filter((item) => {
-        const itemDate = item.created_at ? (item.created_at.toDate ? item.created_at.toDate() : new Date(item.created_at)) : null;
+       filtered = filtered.filter((item) => {
+         const itemDate = item.date_expired ? (item.date_expired.toDate ? item.date_expired.toDate() : new Date(item.date_expired)) : null;
         return itemDate && itemDate >= startOfYear && itemDate <= endOfYear;
       });
     } else if (this.selectedFilter === 'dateRange') {
@@ -286,21 +286,21 @@ export class ReportComponent implements OnInit, OnDestroy {
       const endDate = this.dateRange.value.end;
       if (startDate && endDate) {
         if (startDate > endDate) {
-          this.snackbar.open('Start date cannot be greater than end date', 'Close', { duration: 3000 });
+          this.snackbar.open('Start date cannot be greater than end date', 'Close', { duration: 6000 });
           return;
         }
-        filtered = filtered.filter(item => {
-          const itemDate = item.created_at ? (item.created_at.toDate ? item.created_at.toDate() : new Date(item.created_at)) : null;
+         filtered = filtered.filter(item => {
+           const itemDate = item.date_expired ? (item.date_expired.toDate ? item.date_expired.toDate() : new Date(item.date_expired)) : null;
           return itemDate >= startDate && itemDate <= endDate;
         });
       } else if (startDate) {
-        filtered = filtered.filter(item => {
-          const itemDate = item.created_at ? (item.created_at.toDate ? item.created_at.toDate() : new Date(item.created_at)) : null;
+         filtered = filtered.filter(item => {
+           const itemDate = item.date_expired ? (item.date_expired.toDate ? item.date_expired.toDate() : new Date(item.date_expired)) : null;
           return itemDate >= startDate;
         });
       } else if (endDate) {
-        filtered = filtered.filter(item => {
-          const itemDate = item.created_at ? (item.created_at.toDate ? item.created_at.toDate() : new Date(item.created_at)) : null;
+         filtered = filtered.filter(item => {
+           const itemDate = item.date_expired ? (item.date_expired.toDate ? item.date_expired.toDate() : new Date(item.date_expired)) : null;
           return itemDate <= endDate;
         });
       }
@@ -308,7 +308,7 @@ export class ReportComponent implements OnInit, OnDestroy {
 
     if (this.selectedDate.value) {
       filtered = filtered.filter((item) =>
-        this.isDateMatch(item.created_at)
+        this.isDateMatch(item.date_expired, this.selectedDate.value)
       );
     }
 
@@ -336,7 +336,7 @@ export class ReportComponent implements OnInit, OnDestroy {
 
   showSnackBar(message: string, action: string = 'Close') {
     this.snackbar.open(message, action, {
-      duration: 3000,
+      duration: 6000,
     });
   }
 
@@ -417,26 +417,26 @@ export class ReportComponent implements OnInit, OnDestroy {
 
     if (startDate && endDate) {
       if (startDate > endDate) {
-        this.snackbar.open('Start date cannot be greater than end date', 'Close', { duration: 3000 });
+        this.snackbar.open('Start date cannot be greater than end date', 'Close', { duration: 6000 });
         return;
       }
       this.selectedFilter = 'dateRange';
       this.filteredData = this.data.filter(item => {
-        const itemDate = item.created_at ? (item.created_at.toDate ? item.created_at.toDate() : new Date(item.created_at)) : null;
+        const itemDate = item.date_expired ? (item.date_expired.toDate ? item.date_expired.toDate() : new Date(item.date_expired)) : null;
         return itemDate >= startDate && itemDate <= endDate;
       });
     }
     else if (startDate) {
       this.selectedFilter = 'dateRange';
       this.filteredData = this.data.filter(item => {
-        const itemDate = item.created_at ? (item.created_at.toDate ? item.created_at.toDate() : new Date(item.created_at)) : null;
+        const itemDate = item.date_expired ? (item.date_expired.toDate ? item.date_expired.toDate() : new Date(item.date_expired)) : null;
         return itemDate >= startDate;
       });
     }
     else if (endDate) {
       this.selectedFilter = 'dateRange';
       this.filteredData = this.data.filter(item => {
-        const itemDate = item.created_at ? (item.created_at.toDate ? item.created_at.toDate() : new Date(item.created_at)) : null;
+         const itemDate = item.date_expired ? (item.date_expired.toDate ? item.date_expired.toDate() : new Date(item.date_expired)) : null;
         return itemDate <= endDate;
       });
     }
@@ -448,6 +448,10 @@ export class ReportComponent implements OnInit, OnDestroy {
     this.calculateTotals();
     this.filteredData = this.updateUserPawnCounts(this.filteredData);
     this.cdr.detectChanges();
+  }
+
+  printReportExpiredData() {
+    window.print();
   }
 
   resetFilters() {
@@ -486,7 +490,6 @@ export class ReportComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }
-  
 
   openDialog() {
     this.dialog.open(AlertComponent, {
@@ -494,15 +497,12 @@ export class ReportComponent implements OnInit, OnDestroy {
     });
   }
 
-  printReportData() {
-    window.print();
-  }
-  
   // navigateToReport() {
-  //   this.router.navigate(['home/report']);
+  //  this.router.navigate(['home/report']);
   // }
 
   // navigateToExpired() {
-  //   this.router.navigate(['home/report/expired-customer']);
+  //  this.router.navigate(['home/report/expired-customer']);
   // }
 }
+

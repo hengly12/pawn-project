@@ -42,9 +42,9 @@
           [routerLink]="['/home/' + tab?.key + '/listing']"
           [active]="rla.isActive"
           #rla="routerLinkActive"
-          routerLinkActive="active"
+          routerLinkActive="active" class="mat-tab-link"
         >
-          {{ tab?.label }}
+          {{  tab?.label }}
         </a>
         }
       </nav>

@@ -5,13 +5,13 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTabsModule } from '@angular/material/tabs';
 import { RouterOutlet, RouterLink, RouterLinkActive, ActivatedRoute, } from '@angular/router';
-import { Observable, Subscription, Subject, from } from 'rxjs';
+import { Subscription, Subject, from } from 'rxjs';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AuthStore } from '../../auth/auth.store';
 import { PawnStore } from '../../shared/store/pawn.store';
 import { GetTimeAgoPipe, DatedPipe } from '../../shared/pipes/customs.pipe';
-import { CommonModule, DatePipe, NgIf } from '@angular/common';
+import { CommonModule, DatePipe, } from '@angular/common';
 import { CustomerInfoComponent } from '../../components/customer-info/customer-info.component';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { FormBuilder, FormGroup, FormControl, ReactiveFormsModule, } from '@angular/forms';
@@ -89,7 +89,7 @@ export class ListingComponent implements OnInit, OnDestroy {
         takeUntil(this.destroy$),
         switchMap((param) => {
           const currentParam = param['statusKey'];
-          // Clear input on tab change
+
           this.clearSearchInput();
           this.param.set(currentParam);
 
@@ -160,6 +160,7 @@ export class ListingComponent implements OnInit, OnDestroy {
         title: 'ជ្រើសរើសព័ត៌មានអតិថិជន',
         description: 'Select To Read More Information',
         param: this.param(),
+        readOnly:true
       },
       width: '800px',
       height: '900px',

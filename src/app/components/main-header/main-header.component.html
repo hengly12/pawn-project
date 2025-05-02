@@ -1,39 +1,43 @@
-@if (auth.loading) {
-  <mat-progress-bar mode="indeterminate" class="progress-bar"></mat-progress-bar>
-}
-
 <header class="header">
   <div class="header-title">
     <div>
-      <img
-        class="logo-header"
-        src="assets/images/pawn-logo.jpg"
-        alt="Profile Image"
-      />
+      <img class="logo-header" src="assets/images/pawn-logo.jpg" alt="Profile Image" />
     </div>
     <h3></h3>
   </div>
   <div class="link-header">
     <li>
-      <a routerLink="/home" routerLinkActive="active">
-        <mat-icon> import_contacts</mat-icon>
+      <a
+        routerLink="/home"
+        [ngClass]="{
+          active: isActive('/home') && !isActive('/home/report')
+        }"
+      >
+        <mat-icon>import_contacts</mat-icon>
         បញ្ជីបញ្ចាំ
         <div class="line"></div>
       </a>
     </li>
+  
     <li>
-      <a routerLink="/report" routerLinkActive="active">
-        <mat-icon> list_alt</mat-icon>របាយការណ៍
-        <div class="line"></div>
-        </a
+      <a
+        routerLink="/home/report/data-customer"
+        [ngClass]="{ active: isActive('/home/report') }"
       >
+        <mat-icon>list_alt</mat-icon>
+        របាយការណ៍
+        <div class="line"></div>
+      </a>
     </li>
   </div>
+  
+  
   <div>
-    <div class="profile-img"
-      [matMenuTriggerFor]="menu"
-      aria-label="Example icon-button with a menu">
-      <img [src]="auth.profile?.photoFile || 'assets/images/Admin-Pic.jpg'" alt="Profile Icon" />
+    <div class="notification-badge">
+      <!-- <mat-icon matBadge="{{ unreadNotificationCount() }}">notifications_active</mat-icon> -->
+      <div class="profile-img" [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+        <img [src]="auth.profile?.photoFile || 'assets/images/Admin-Pic.jpg'" alt="Profile Icon" />
+      </div>
     </div>
     <mat-menu #menu="matMenu">
       <div class="profile-container">
@@ -42,7 +46,7 @@
             <img [src]="auth.profile?.photoFile || 'assets/images/Admin-Pic.jpg'" alt="Profile Icon" />
           </div>
           <div class="profile-details">
-            <div class="profile-name">{{auth.profile?.displayName}}</div>
+            <div class="profile-name">{{ auth.profile?.displayName }}</div>
             <button class="button-signout" (click)="signOut()">Sign Out</button>
           </div>
         </div>

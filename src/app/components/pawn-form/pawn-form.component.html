@@ -15,11 +15,11 @@
         @if(data()?.status?.key == 1){
 
         <button mat-menu-item class="btn-end-pawn" (click)="endPawn(data())">
-          End Pawn <mat-icon>assignment_turned_in</mat-icon>
+          បញ្ចប់ការបញ្ចាំ <mat-icon>assignment_turned_in</mat-icon>
         </button>
         }@else {
         <button mat-menu-item class="btn-restore" (click)="restorePawn(data())">
-          Restore <mat-icon>restore</mat-icon>
+          ទាញយកឯកសារវិញ <mat-icon>restore</mat-icon>
         </button>
         }
         <button
@@ -27,20 +27,20 @@
           class="btn-delete"
           (click)="ShowDialogDeleteForm(data())"
         >
-          Delete <mat-icon>delete</mat-icon>
+          លុបឯកសារ <mat-icon>delete</mat-icon>
         </button>
 
         <button
           mat-menu-item
-          class="btn-edit"
+          class="btn-edit" 
           type="submit"
           (click)="onSubmit()"
         >
-          Save <mat-icon>edit</mat-icon>
+          រក្សាទុក <mat-icon>edit</mat-icon>
         </button>
 
         <button mat-menu-item class="btn-print-form" (click)="printForm()">
-          Print <mat-icon>print</mat-icon>
+          ព្រីនឯកសារ <mat-icon>print</mat-icon>
         </button>
       </mat-menu>
       }@else {
@@ -615,17 +615,6 @@
 
 
               <div class="date-picker">
-                <!-- <mat-form-field appearance="outline">
-          <mat-label>Date Created</mat-label>
-          <input class="custome-input" matInput [matDatepicker]="picker1" formControlName="dateCreated" placeholder="MM/DD/YYYY" >
-          <div class="input-error" *ngIf="
-          pawnForm.controls['dateCreated'].hasError('required') && 
-          pawnForm.controls['dateCreated'].touched">
-          Please pick date create.
-          </div>
-          <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
-          <mat-datepicker #picker1></mat-datepicker>
-        </mat-form-field> -->
 
                 <h4>ថ្ងៃផុតកំណត់ :</h4>
                 <div class="input-form">
@@ -693,6 +682,11 @@
                 >
               </div>
             </div>
+
+            <!-- <div class="signature-input-container">
+              <label for="signature">Signature:</label>
+              <input type="text" id="signature" name="signature" />
+            </div> -->
           </div>
         </form>
       </div>

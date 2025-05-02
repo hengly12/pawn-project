@@ -1,6 +1,6 @@
-import { arrayUnion, docData, serverTimestamp } from '@angular/fire/firestore';
-import { CurrencyPipe, NgClass, NgFor, NgIf } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnInit, signal, SimpleChanges, ViewChild, } from '@angular/core';
+import { arrayUnion, serverTimestamp } from '@angular/fire/firestore';
+import { CurrencyPipe, NgClass, NgIf } from '@angular/common';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, signal, ViewChild, } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators, } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -11,7 +11,6 @@ import { MatIcon } from '@angular/material/icon';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { GENDER_DATA, ITEM_DATA, STATUS_OBJ, Weight_Of_Gold } from '../../shared/dummy/config';
 import { DataService } from '../../shared/services/data.service';
-import { sign } from 'crypto';
 import { generateKeywords, toDateKey, } from '../../shared/services/convert.service';
 import { mapUser } from '../../shared/services/mapping.service';
 import { AuthStore } from '../../auth/auth.store';
@@ -25,7 +24,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AlertComponent } from '../../shared/pages/alert/alert.component';
 import { NgxPrintModule } from 'ngx-print';
-import {MatIconModule} from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
 
 
 
@@ -53,7 +52,7 @@ interface GenderOption {
     MatIconModule,
     MatDialogModule,
     NgxPrintModule,
-    
+
   ],
   providers: [provideNativeDateAdapter(), CurrencyPipe],
   templateUrl: './pawn-form.component.html',
@@ -75,7 +74,8 @@ export class PawnFormComponent {
   routeUnSubscribe = signal<any>(Subscription);
   data = signal<any>(null);
   param = signal<any>(null);
-  // info_customer = signal<any>(null);
+
+
   displayUSD: string = '';
   displayKHR: string = '';
   message: string = '';
@@ -101,15 +101,15 @@ export class PawnFormComponent {
     private storage: FireStorageService,
     private currencyPipe: CurrencyPipe,
     private cdr: ChangeDetectorRef,
-    private router: Router
-    
-  ) {}
+    private router: Router,
+
+  ) { }
 
   async getKHRExchangeRate(): Promise<number> {
-    return 4100;
+    const exchangeRate: number = 4000; // Define the exchange rate
+    return exchangeRate;
   }
 
-  
 
   readonly range = new FormGroup({
     start: new FormControl<Date | null>(null),
@@ -155,39 +155,39 @@ export class PawnFormComponent {
     file: new FormControl<any>(null),
   });
 
- updateFormValidators() {
+  updateFormValidators() {
     const selectedKey = this.seleted()?.key;
     const typePhoneIdControl = this.pawnForm.get('type_phone_id');
     const plateNumberControl = this.pawnForm.get('plate_number');
     const brandNameControl = this.pawnForm.get('brand_name');
     const goldWeightControl = this.pawnForm.get('gold_weight');
-  
+
     if (selectedKey === 1) {
       typePhoneIdControl?.setValidators(Validators.required);
       brandNameControl?.setValidators(Validators.required);
     } else {
       typePhoneIdControl?.clearValidators();
-      if(selectedKey !==0 && selectedKey !== 2){
+      if (selectedKey !== 0 && selectedKey !== 2) {
         brandNameControl?.clearValidators();
       }
     }
-  
+
     if (selectedKey === 0 || selectedKey === 2) {
       plateNumberControl?.setValidators(Validators.required);
       brandNameControl?.setValidators(Validators.required);
     } else {
       plateNumberControl?.clearValidators();
-      if(selectedKey !== 1){
+      if (selectedKey !== 1) {
         brandNameControl?.clearValidators();
       }
     }
-  
+
     if (selectedKey === 3) {
       goldWeightControl?.setValidators(Validators.required);
     } else {
       goldWeightControl?.clearValidators();
     }
-  
+
     typePhoneIdControl?.updateValueAndValidity();
     plateNumberControl?.updateValueAndValidity();
     brandNameControl?.updateValueAndValidity();
@@ -236,8 +236,8 @@ export class PawnFormComponent {
         if (this.data()?.photo) {
           const currentValidators = this.pawnForm.controls.file.validator
             ? this.pawnForm.controls.file.validator({} as AbstractControl)?.[
-                'validatorFn'
-              ] || []
+            'validatorFn'
+            ] || []
             : [];
           const filteredValidators = currentValidators.filter(
             (v: any) => v !== Validators.required
@@ -251,9 +251,6 @@ export class PawnFormComponent {
         this.upload = !this.image;
       })
     );
-    // this.pawnForm.get('date_expired')?.valueChanges.subscribe(() => {
-    //   this.calculateDays();
-    // });
   }
 
 
@@ -295,7 +292,7 @@ export class PawnFormComponent {
       this.pawnForm.get('others')?.enable();
       this.pawnForm.get('plate_number')?.enable();
       this.pawnForm.get('brand_name')?.enable();
-    } else if(this.datainfo()?.pawnKey){
+    } else if (this.datainfo()?.pawnKey) {
       this.pawnForm.get('pawn_type')?.enable();
       this.pawnForm.get('type_phone')?.enable();
       this.pawnForm.get('type_phone_id')?.enable();
@@ -306,7 +303,7 @@ export class PawnFormComponent {
       this.pawnForm.get('others')?.enable();
       this.pawnForm.get('plate_number')?.enable();
       this.pawnForm.get('brand_name')?.enable();
-    }else {
+    } else {
       this.pawnForm.get('full_name')?.disable();
       this.pawnForm.get('phone_number')?.disable();
       this.pawnForm.get('gender')?.disable();
@@ -345,43 +342,43 @@ export class PawnFormComponent {
 
 
   // formatCurrencyPricePawn(event: any) {
-  //   let value = event.target.value;
-  //   value = value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+  //  let value = event.target.value;
+  //  value = value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
 
-  //   if (value) {
-  //     const numericValue = parseFloat(value);
+  //  if (value) {
+  //    const numericValue = parseFloat(value);
 
-  //     const formattedValue = this.currencyPipe.transform(numericValue, 'USD');
-  //     if (formattedValue) {
-  //       this.pawnForm.get('price_pawn')?.setValue(numericValue, {
-  //         emitEvent: false,
-  //       });
+  //    const formattedValue = this.currencyPipe.transform(numericValue, 'USD');
+  //    if (formattedValue) {
+  //      this.pawnForm.get('price_pawn')?.setValue(numericValue, {
+  //        emitEvent: false,
+  //      });
 
-  //       event.target.value = formattedValue;
-  //     }
-  //   } else {
-  //     this.pawnForm.get('price_pawn')?.setValue(0, { emitEvent: false });
-  //   }
+  //      event.target.value = formattedValue;
+  //    }
+  //  } else {
+  //    this.pawnForm.get('price_pawn')?.setValue(0, { emitEvent: false });
+  //  }
   // }
 
   // formatCurrencyPriceInterest(event: any) {
-  //   let value = event.target.value;
-  //   value = value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+  //  let value = event.target.value;
+  //  value = value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
 
-  //   if (value) {
-  //     const numericValue = parseFloat(value);
+  //  if (value) {
+  //    const numericValue = parseFloat(value);
 
-  //     const formattedValue = this.currencyPipe.transform(numericValue, 'USD');
-  //     if (formattedValue) {
-  //       this.pawnForm.get('price_interest')?.setValue(numericValue, {
-  //         emitEvent: false,
-  //       });
+  //    const formattedValue = this.currencyPipe.transform(numericValue, 'USD');
+  //    if (formattedValue) {
+  //      this.pawnForm.get('price_interest')?.setValue(numericValue, {
+  //        emitEvent: false,
+  //      });
 
-  //       event.target.value = formattedValue;
-  //     }
-  //   } else {
-  //     this.pawnForm.get('price_interest')?.setValue(0, { emitEvent: false });
-  //   }
+  //      event.target.value = formattedValue;
+  //    }
+  //  } else {
+  //    this.pawnForm.get('price_interest')?.setValue(0, { emitEvent: false });
+  //  }
   // }
 
   async formatCurrencyPricePawn(event: any) {
@@ -395,13 +392,13 @@ export class PawnFormComponent {
         emitEvent: false,
       });
 
-     
+
       const formattedUSD = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD',
       }).format(numericValue);
 
-    
+
       const exchangeRate = await this.getKHRExchangeRate();
       const khrValue = numericValue * exchangeRate;
       const formattedKHR = new Intl.NumberFormat('km-KH', {
@@ -414,7 +411,7 @@ export class PawnFormComponent {
 
       event.target.value = `${formattedUSD} / ${formattedKHR}`;
 
-    
+
       this.displayUSD = formattedUSD;
       this.displayKHR = formattedKHR;
 
@@ -425,41 +422,41 @@ export class PawnFormComponent {
       this.displayKHR = '';
     }
   }
-  
-async formatCurrencyPriceInterest(event: any){
-  let value = event.target.value;
-  value = value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
-  if (value) {
-    const numericValue = parseFloat(value);
-    this.pawnForm.get('price_interest')?.setValue(numericValue,{
-      emitEvent: false,
-    });
-    
 
-  const formattedUSD = new Intl.NumberFormat('en-US',{
-    style: 'currency',
-    currency: 'USD',
-  }).format(numericValue);
+  async formatCurrencyPriceInterest(event: any) {
+    let value = event.target.value;
+    value = value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+    if (value) {
+      const numericValue = parseFloat(value);
+      this.pawnForm.get('price_interest')?.setValue(numericValue, {
+        emitEvent: false,
+      });
 
-const exchangeRate = await this.getKHRExchangeRate();
-const khrValue = numericValue * exchangeRate;
-const formattedKHR = new Intl.NumberFormat('km-KH',{
-  style: 'currency',
-  currency: 'KHR',
-  minimumFractionDigits: 0,
-  maximumFractionDigits: 0,
-}).format(khrValue);
 
-event.target.value = `${formattedUSD} / ${formattedKHR}`;
-this.displayUSD = formattedUSD;
-this.displayKHR = formattedKHR;
-} else{
-  this.pawnForm.get('price_interest')?.setValue(0,{ emitEvent: false});
-  event.target.value = '';
-  this.displayUSD = '';
-  this.displayKHR = '';
-}
-}
+      const formattedUSD = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+      }).format(numericValue);
+
+      const exchangeRate = await this.getKHRExchangeRate();
+      const khrValue = numericValue * exchangeRate;
+      const formattedKHR = new Intl.NumberFormat('km-KH', {
+        style: 'currency',
+        currency: 'KHR',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(khrValue);
+
+      event.target.value = `${formattedUSD} / ${formattedKHR}`;
+      this.displayUSD = formattedUSD;
+      this.displayKHR = formattedKHR;
+    } else {
+      this.pawnForm.get('price_interest')?.setValue(0, { emitEvent: false });
+      event.target.value = '';
+      this.displayUSD = '';
+      this.displayKHR = '';
+    }
+  }
 
   getFormattedPricePawn(): string | null {
     const value = this.pawnForm.get('price_pawn')?.value;
@@ -526,6 +523,21 @@ this.displayKHR = formattedKHR;
     }
   }
 
+  imagePreview: string[] = [];
+
+  onImageUpload(event: any) {
+    const files = event.target.files;
+    if (files && files.length) {
+      for (let file of files) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          this.imagePreview.push(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  }
+
   selectItem(item: any) {
     if (item) {
       this.seleted.set(item);
@@ -556,23 +568,8 @@ this.displayKHR = formattedKHR;
     return item?.text;
   };
 
-  displayWeightOfGold = (item: any) =>{
+  displayWeightOfGold = (item: any) => {
     return item?.text;
-  }
-
-  imagePreview: string[] = [];
-
-  onImageUpload(event: any) {
-    const files = event.target.files;
-    if (files && files.length) {
-      for (let file of files) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          this.imagePreview.push(reader.result as string);
-        };
-        reader.readAsDataURL(file);
-      }
-    }
   }
 
   clearPreviews() {
@@ -586,10 +583,10 @@ this.displayKHR = formattedKHR;
   ShowDialogDeleteForm(data: any) {
     const dialogRef = this.dialog.open(AlertComponent, {
       data: {
-        title: 'លុបទម្រង់ឯកសារ!',
-        description: 'តើអ្នកពិតជាចង់លុបទម្រង់ឯកសារមួយនេះ?',
+        title: 'លុបទិន្នន័យ!',
+        description: 'តើអ្នកពិតជាចង់លុបទិន្នន័យមួយនេះ?',
       },
-      width: '350px',
+
       role: 'dialog',
       panelClass: 'custom-dialog',
     });
@@ -599,10 +596,10 @@ this.displayKHR = formattedKHR;
         this.store
           .deleteCustomer(data?.key)
           // .then(() => {
-          //   this.router.navigate(['home/active/listing']);
+          //  this.router.navigate(['home/active/listing']);
           // })
           .catch((error) => {
-            console.error('Error deleting customer:', error);
+            console.error('លុបទិន្នន័យបានបរាជ័យ:', error);
           });
       }
     });
@@ -614,7 +611,6 @@ this.displayKHR = formattedKHR;
         title: 'បញ្ចប់ការបញ្ចាំ!',
         description: 'តើអ្នកពិតជាចង់បញ្ចប់ការបញ្ចាំមួយនេះ?',
       },
-      width: '350px',
       role: 'dialog',
       panelClass: 'custom-dialog',
     });
@@ -640,10 +636,9 @@ this.displayKHR = formattedKHR;
   restorePawn(data: any): void {
     const dialogRef = this.dialog.open(AlertComponent, {
       data: {
-        title: 'ទាញយកទម្រង់បញ្ចាំទៅវិញ!',
-        description: 'តើអ្នកពិតជាចង់ទាញយកទម្រង់បញ្ចាំមួយនេះទៅវិញ?',
+        title: 'ទាញយកឯកសារបញ្ចាំទៅវិញ!',
+        description: 'តើអ្នកពិតជាចង់ទាញយកឯកសារបញ្ចាំមួយនេះទៅវិញ?',
       },
-      width: '350px',
       role: 'dialog',
       panelClass: 'custom-dialog',
     });
@@ -652,13 +647,13 @@ this.displayKHR = formattedKHR;
       if (result && data?.key) {
         try {
           await this.store.restorePawn(data?.key);
-          this.snackBar.open(`ទាញយកទម្រង់បញ្ចាំវិញបានជោគជ័យ`, 'ជោគជ័យ', {
+          this.snackBar.open(`ទាញយកឯកសារបញ្ចាំវិញបានជោគជ័យ`, 'ជោគជ័យ', {
             duration: 6000,
           });
           // this.router.navigate(['home/active/listing']);
         } catch (error) {
           console.error('Error ending pawn:', error);
-          this.snackBar.open(`ទាញយកទម្រង់បញ្ចាំវិញបរាជ័យ`, 'បរាជ័យ', {
+          this.snackBar.open(`ទាញយកឯកសារបញ្ចាំវិញបរាជ័យ`, 'បរាជ័យ', {
             duration: 6000,
           });
         }
@@ -668,13 +663,15 @@ this.displayKHR = formattedKHR;
 
   updatePawnData(updatedData: any): void {
     console.log('Updating pawn data:', updatedData);
+    
   }
 
   PrinForm() {
     window.print();
   }
+  
   async onSubmit() {
-    if(this.pawnForm.invalid){
+    if (this.pawnForm.invalid) {
       alert('សូមបញ្ចូលព័ត៍មាន');
       return
     }
@@ -760,7 +757,7 @@ this.displayKHR = formattedKHR;
       price_pawn: price_pawn,
       price_interest: price_interest,
       description: description,
-      
+
       date_expired: date_expired,
       photo: photo,
       pawn_item_key: info_customer?.key,
@@ -790,19 +787,19 @@ this.displayKHR = formattedKHR;
       }),
     };
 
-    const info_update: any ={
+    const info_update: any = {
       key: this.datainfo()?.key,
       updated_at: serverTimestamp(),
       updated_by: mapUser(this.auth?.profile),
 
       pawnKey: arrayUnion(data?.key)
-      
+
     }
     this.router.navigate(['home/active/listing']);
 
     // console.log(data, 'data');
     // console.log(info_customer, 'info');
-    if (this.param() == 'na'){
+    if (this.param() == 'na') {
       try {
         await this.store.createCustomer(data, info_customer);
         this.snackBar.open(`ការរក្សាទុកទិន្នន័យបានជោគជ័យ`, 'ជោគជ័យ', {
@@ -815,7 +812,7 @@ this.displayKHR = formattedKHR;
         });
         this.loading.set(false);
       }
-    }else if (this.datainfo()?.pawnKey){
+    } else if (this.datainfo()?.pawnKey) {
       try {
         await this.store.createCustomerinfoNews(data, info_update);
         this.snackBar.open(`ការរក្សាទុកទិន្នន័យបានជោគជ័យ`, 'ជោគជ័យ', {
@@ -828,7 +825,7 @@ this.displayKHR = formattedKHR;
         });
         this.loading.set(false);
       }
-    }else{
+    } else {
       try {
         await this.store.createCustomerEdit(data);
         this.snackBar.open(`ការរក្សាទុកទិន្នន័យបានជោគជ័យ`, 'ជោគជ័យ', {
@@ -842,7 +839,7 @@ this.displayKHR = formattedKHR;
         this.loading.set(false);
       }
     }
- 
+
   }
 
   printForm() {
@@ -857,3 +854,4 @@ this.displayKHR = formattedKHR;
     }, 100);
   }
 }
+

@@ -1,15 +1,24 @@
 .header{
     display: flex;
     height: 80px;
-        width: 100%;
-        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
-        background-color: #fff;
-        align-items: center;
-        justify-content: space-between;
-        padding-inline: 30px;
-        font-family: "Koh Santepheap", serif;
+    width: 100%;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+    background-image: linear-gradient(to right, #abbaab 0%, #ffffff  51%, #abbaab  100%);
+    align-items: center;
+    justify-content: space-between;
+    padding-inline: 30px;
+    font-family: "Koh Santepheap", serif;
+    text-transform: uppercase;
+    transition: 0.5s;
+    background-size: 200% auto;
+    color: white;
 }
 
+ header:hover {
+   background-position: right center;
+   color: #fff;
+   text-decoration: none;
+ }
 
 .header-title{
     display: flex;
@@ -18,12 +27,14 @@
     
 }
 
-.link-header{
+.link-header {
   display: flex;
   gap: 35px;
-  li{
+
+  li {
     list-style: none;
-    a{
+
+    a {
       font-family: "Koh Santepheap", serif;
       display: flex;
       font-size: 15px;
@@ -32,20 +43,40 @@
       flex-direction: column;
       align-items: center;
       position: relative;
-      transition: all 0.3s;
-      &.active{
-        color: #1A73E8;
-        .line{
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: #1a73e8;
+
+        .line {
           width: 100%;
+          opacity: 1;
+        }
+      }
+      
+      &.active {
+        color: #1A73E8;
+
+        .line {
+          width: 100%;
+          opacity: 1;
           position: absolute;
           bottom: -18px;
           border-radius: 5px;
           border: 2px solid #1A73E8;
+          
         }
+      }
+
+      .line {
+        width: 0;
+        opacity: 0;
+       
       }
     }
   }
 }
+
 
 .profile-img{
   height: 50px;
@@ -57,6 +88,10 @@
     object-fit: cover;
     border-radius: 50%;
   }
+}
+
+.notification-badge{
+  display: flex;
 }
 
 .logo-header{
@@ -128,24 +163,24 @@
     font-size: 15px;
     width: 90px;
     padding: 6px;
-    color: #e81a1a;
-    background-color: white;
-    border: solid 1px #65656545;
+    color: #ffffff;
+    border: solid 0px rgba(101, 101, 101, 0.2705882353);
     cursor: pointer;
+    background-image: linear-gradient(to top, #ff3636 0%, #b17272 100%);
   }
 
-  ::ng-deep.cdk-overlay-pane {
-    position: absolute;
-    pointer-events: auto;
-    box-sizing: border-box;
-    display: flex;
-    max-width: 100%;
-    max-height: 100%;
-    width: 200px !important;
-    margin-inline: 25px !important;
-    margin-top: 4px !important;
-    justify-content: space-around;
-  }
+  // ::ng-deep.cdk-overlay-pane {
+  //   position: absolute;
+  //   pointer-events: auto;
+  //   box-sizing: border-box;
+  //   display: flex;
+  //   max-width: 100%;
+  //   max-height: 100%;
+  //   width: 200px !important;
+  //   margin-inline: 25px !important;
+  //   margin-top: 4px !important;
+  //   justify-content: space-around;
+  // }
   
   .button-signout:hover{
     color: white;
@@ -195,10 +230,11 @@
 ::ng-deep.mat-mdc-menu-panel {
   background: #fff !important;
 }
-::ng-deep .cdk-overlay-container{
-  pointer-events: none;
-    top: 16px !important;
-    left: 30px !important;
-    height: 100%;
-    width: 100% 
-}
+
+// ::ng-deep .cdk-overlay-container{
+//   pointer-events: none;
+//     top: 16px !important;
+//     left: 30px !important;
+//     height: 100%;
+//     width: 100% 
+// }

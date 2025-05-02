@@ -1,16 +1,15 @@
 import { Injectable, signal } from '@angular/core';
 import { DataService } from '../services/data.service';
 import { AuthStore } from '../../auth/auth.store';
-import { collection, deleteDoc, doc, getDoc, getDocs, limit, orderBy, query, startAfter, updateDoc, where, } from 'firebase/firestore';
+import { doc, getDoc, getDocs, limit, orderBy, query, updateDoc, where, } from 'firebase/firestore';
 import { collectionData } from '@angular/fire/firestore';
-import { interval, map, Observable, switchMap } from 'rxjs';
+import { Observable, } from 'rxjs';
 import { pushToArray, pushToObject, toUpperCaseTrim, } from '../services/mapping.service';
 import { STATUS_OBJ } from '../dummy/config';
 
 @Injectable({
   providedIn: 'root',
 })
-
 export class PawnStore {
   constructor(private ds: DataService, private auth: AuthStore) {}
 
@@ -89,36 +88,36 @@ export class PawnStore {
 
 
   // async createCustomerinfo(data: any, info_customer: any) {
-  //   try {
-  //     this.process.set(true);
-  //     const batch = this.ds.batchRef();
-  //     const ref = doc(this.ds.customerRef(), data?.key);
-  //     const ref_info_customer = doc(
-  //       this.ds.infoCustomerRef(),
-  //       info_customer?.key
-  //     );
+  //   try {
+  //     this.process.set(true);
+  //     const batch = this.ds.batchRef();
+  //     const ref = doc(this.ds.customerRef(), data?.key);
+  //     const ref_info_customer = doc(
+  //       this.ds.infoCustomerRef(),
+  //       info_customer?.key
+  //     );
 
-  //     batch.set(ref, data, { merge: true });
-  //     batch.set(ref_info_customer, info_customer, { merge: true });
-  //     await batch.commit();
-  //   } catch (error) {
-  //     console.error('Batch operation failed:', error);
-  //     throw error;
-  //   }
+  //     batch.set(ref, data, { merge: true });
+  //     batch.set(ref_info_customer, info_customer, { merge: true });
+  //     await batch.commit();
+  //   } catch (error) {
+  //     console.error('Batch operation failed:', error);
+  //     throw error;
+  //   }
   // }
 
   // async createCustomer(data: any) {
-  //   try {
-  //     this.process.set(true);
-  //     const batch = this.ds.batchRef();
-  //     const ref = doc(this.ds.customerRef(), data?.key);
+  //   try {
+  //     this.process.set(true);
+  //     const batch = this.ds.batchRef();
+  //     const ref = doc(this.ds.customerRef(), data?.key);
 
-  //     batch.set(ref, data, { merge: true });
-  //     await batch.commit();
-  //   } catch (error) {
-  //     console.error('Batch operation failed:', error);
-  //     throw error;
-  //   }
+  //     batch.set(ref, data, { merge: true });
+  //     await batch.commit();
+  //   } catch (error) {
+  //     console.error('Batch operation failed:', error);
+  //     throw error;
+  //   }
   // }
 
   fetchListing(statusKey: any) {
@@ -150,8 +149,8 @@ export class PawnStore {
     ) as Observable<any[]>;
   }
 
-  async getCustomerDemo() {
-    return collectionData(this.ds.customerRef())
+  getCustomerDemo(): Observable<any[]> {
+    return collectionData(this.ds.customerRef());
   }
 
   async getCustomer(key: string) {
@@ -222,6 +221,19 @@ export class PawnStore {
     } catch (error) {
       console.error('Error Restore Pawn:', error);
       throw error;
+    }
+  }
+
+  async updatePawnData(key: string, updatedData: any): Promise<void> {
+    try {
+      this.process.set(true);
+      await updateDoc(doc(this.ds.customerRef(), key), updatedData);
+      console.log(`Pawn data with key ${key} updated successfully.`);
+    } catch (error) {
+      console.error(`Error updating pawn data with key ${key}:`, error);
+      throw error;
+    } finally {
+      this.process.set(false);
     }
   }
 }

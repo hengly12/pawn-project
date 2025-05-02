@@ -3,10 +3,8 @@ import { MatButtonModule,} from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import { MatTabsModule } from '@angular/material/tabs';
-import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { PawncardComponent } from '../../shared/pawncard/pawncard.component';
-import { PawnFormComponent } from '../../components/pawn-form/pawn-form.component';
-import { MatIcon, MatIconModule } from '@angular/material/icon';
+import { RouterOutlet } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-layout-wrapper',

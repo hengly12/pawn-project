@@ -7,10 +7,21 @@
 
 }
 
+.report-title{
+  margin-top: 10px;
+  margin-bottom: 10px;
+  background-image: linear-gradient(305deg, #FFFEFF 0%, rgb(201, 211, 201) 100%);
+  width: fit-content;
+  height: 50px;
+  padding-inline: 12px;
+  padding-top: 2px
+}
+
 .pawn-table {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 1rem;
+  
   
 
   th,
@@ -21,7 +32,7 @@
   }
 
   thead {
-    background-color: #f8f9fa;
+    background-color: #ebebeb;
   }
 
   th {
@@ -30,13 +41,16 @@
   }
 
   tbody tr:nth-child(even) {
-    background-color: #f2f2f2;
+    background-color: #ffffff;
   }
   .table-hight{
     margin-top: 100px;
   }
 }
 
+.click-name{
+    cursor: pointer;
+}
 
 .pagination {
   display: flex;
@@ -65,20 +79,29 @@
 .report-table {
   display: flex;
   flex-direction: column;
-  background-color: lightblue;
+  background-color: #ffffff;
 }
 
 .dashboard-monthly-picker {
   font-family: "Koh Santepheap", serif;
   height: auto;
-  width: 100%;
+  width: 98%;
   max-width: 350px;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
   background-color: #fff;
   margin-top: 5px;
   border-radius: 8px;
+  margin-inline: 5px;
 }
 
+.h2-style {
+  background-image: linear-gradient(305deg, #FFFEFF 0%, rgb(201, 211, 201) 100%);
+    width: 350px;
+    height: 50px;
+    margin-inline: -8px;
+    padding-inline: 12px;
+    padding-top: 2px;
+}
 
 .listing-monthly-report {
   font-family: "Koh Santepheap", serif;
@@ -109,10 +132,14 @@
     height: calc(115vh - 223px);
     background-color: #fff;
     margin-top: 5px;
-    margin-inline: 0px;
-    width: 130%;
+    width: 100%;
     padding-inline: 5px;
     padding-top: 10px;
+    justify-content: space-between;
+    margin-inline: 6px;
+    border-radius: 8px;
+    flex-direction: column;
+    align-items: center;
   .customer_info {
     cursor: pointer;
     &.active {
@@ -130,10 +157,11 @@
   overflow: auto;
   height: calc(115vh - 223px);
   background-color: #fff;
-  width: 57%;
+  width: 58%;
   position: absolute;
-  margin-inline: 100px;
+  margin-inline: 10px;
   margin-top: 5px;
+  border-radius: 8px;
   .customer_info {
     cursor: pointer;
     &.active {
@@ -156,7 +184,7 @@
   display: flex;
     gap: 8px;
     margin-bottom: 15px;
-    margin-inline: -10px;
+    margin-inline: -5px;
     margin-top: -15px;
 }
 
@@ -165,7 +193,14 @@ margin-bottom:-20px ;
 }
 
 .date-end{
-margin-top: -20px;
+margin-top: -10px;
+}
+
+.input-error {
+  color: red;
+  font-size: 0.8em;
+  display: block;
+  margin-top: 5px;
 }
 
 .filter-buttons {
@@ -184,14 +219,15 @@ margin-top: -20px;
 }
 
 .filter-all-time{
-  margin-top: 20px;
+  margin-top: 10px;
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
 }
 
 .date-picker-range{
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 
 // Nav Style
@@ -205,18 +241,18 @@ margin-top: -20px;
   font-family: "Koh Santepheap", serif;
 }
 
-.sidebar {
-  width: 265px;
-  background-color: #003764;
-  padding: 10px 0;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  box-sizing: border-box;
-  height: 100%
-}
+// .sidebar {
+//   width: 265px;
+//   background-color: #003764;
+//   padding: 10px 0;
+//   color: white;
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+//   justify-content: space-between;
+//   box-sizing: border-box;
+//   height: 100%
+// }
 
 .sidebar-title{
   display: flex;
@@ -242,6 +278,9 @@ margin-top: -20px;
   text-decoration: none;
   padding: 10px;
   border-radius: 8px;
+  display: flex;
+    align-items: flex-end;
+    gap: 10px;
 }
 
 .sidebar ul li a:hover {
@@ -317,6 +356,63 @@ margin-top: -20px;
   color: white;
 }
 
+.sidebar-title li:has(a:contains("Print")) {
+  cursor: pointer;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  div.main-wrapper {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-48%, -50%);
+    visibility: visible;
+  }
+
+  div.dashboard-table,
+  div.listing-table,
+  div.report-table {
+    visibility: visible;
+  }
+
+  h2.report-title {
+    text-align: center;
+    margin-bottom: 1rem;
+    visibility: visible;
+  }
+
+  div.pawn-table-container {
+    overflow: visible !important;
+    visibility: visible;
+  }
+
+  table.pawn-table {
+    width: auto;
+    margin: 0 auto; 
+    border-collapse: collapse;
+    visibility: visible;
+  }
+
+  table.pawn-table thead tr.table-hight th,
+  table.pawn-table tbody tr td,
+  table.pawn-table tfoot tr td {
+    border: 1px solid black;
+    padding: 0.5rem;
+    text-align: left;
+    visibility: visible;
+  }
+
+  table.pawn-table thead tr.table-hight th h3,
+  table.pawn-table tfoot tr td h3 {
+    margin: 0;
+    font-size: 1em;
+    visibility: visible;
+  }
+}
 
 //       /* report.component.scss */
 // .date-picker-container {

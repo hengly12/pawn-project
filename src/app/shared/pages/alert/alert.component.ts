@@ -1,11 +1,23 @@
-import { Component, Inject } from '@angular/core';
+import { Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { AuthStore } from '../../../auth/auth.store';
+import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
+import {MatButtonModule} from '@angular/material/button';
+import {
+  MatDialogActions,
+  MatDialogClose,
+  MatDialogContent,
+  MatDialogTitle,
+} from '@angular/material/dialog';
+import { MatIcon, MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-alert',
-  imports: [],
+  imports: [
+    MatButtonModule,
+    MatIconModule,
+  ],
   templateUrl: './alert.component.html',
   styleUrl: './alert.component.scss'
 })
@@ -18,6 +30,9 @@ export class AlertComponent {
     @Inject(AuthStore) private authStore: AuthStore
   ) {
     console.log(data, 'data');
+    if(!data.modal_type){
+      data['modal_type']="Default"
+    }
   }
 
   ngOnInit() {}
@@ -28,6 +43,5 @@ export class AlertComponent {
 
   yes() {
     this.dialogRef.close(true);
-    this.authStore.signOut();
   }
 }

@@ -6,8 +6,8 @@ export interface IProfile {
   updated_at: any;
 
   passportNumber: any;
-  dateOfPassportExpiry: any;
-  dateOfPassportExpiryKey: any;
+  dateOfPassportExpired: any;
+  dateOfPassportExpiredKey: any;
   surname: any;
   givenName: any;
   gender: any;

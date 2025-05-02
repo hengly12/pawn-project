@@ -1,15 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import {
-  EmailAuthProvider,
-  OAuthProvider,
-  User,
-  createUserWithEmailAndPassword,
-  getAuth,
-  reauthenticateWithCredential,
-  signInWithEmailAndPassword,
-  signInWithPopup,
-  updatePassword,
+import { OAuthProvider, User, createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signInWithPopup,updatePassword,
 } from '@angular/fire/auth';
 import { TranslateStore } from '@ngx-translate/core';
 import { DataService } from '../shared/services/data.service';
@@ -144,9 +135,9 @@ export class AuthStore {
       this.profile = null;
       this.ownerHomeAccount = null;
       this.residence.set(null);
-      window.location.replace('/auth/login');
+      this.router.navigate(['/auth/login']);
     }).catch((error) => {
-      console.error("Sign out error", error)
+      console.error("Sign out error", error);
     });
   }
 
