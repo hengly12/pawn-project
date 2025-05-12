@@ -17,6 +17,13 @@ import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { FormBuilder, FormGroup, FormControl, ReactiveFormsModule, } from '@angular/forms';
 import { switchMap, takeUntil } from 'rxjs/operators';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { TranslateLoader, TranslateService, TranslateStore } from '@ngx-translate/core';
+import { HttpClient } from '@angular/common/http';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+
+export function HttpLoaderFactory(http: HttpClient) {
+  return new TranslateHttpLoader(http);
+}
 
 @Component({
   selector: 'app-listing',
@@ -41,6 +48,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 ],
   templateUrl: './listing.component.html',
   styleUrl: './listing.component.scss',
+  
 })
 export class ListingComponent implements OnInit, OnDestroy {
   pawnForm!: FormGroup;

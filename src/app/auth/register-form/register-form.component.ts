@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthStore } from '../auth.store';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
@@ -18,7 +18,8 @@ import { NgIf } from '@angular/common';
     MatCardModule,
     MatButtonModule,
     MatIconModule,
-    NgIf
+    NgIf,
+    RouterLink,
   ],
   templateUrl: './register-form.component.html',
   styleUrl: './register-form.component.scss'
@@ -49,6 +50,10 @@ export class RegisterFormComponent {
   }
   togglePasswordVisibility(): void {
     this.hide = !this.hide;
+  }
+
+  login(): void {
+    this.router.navigate(['/auth/login']);
   }
   // async loginWithGoogle(): Promise<void> {
   //   try {

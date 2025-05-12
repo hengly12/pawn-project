@@ -150,7 +150,7 @@ export class ReportDetailDialogComponent {
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
-  printReportData() {
+  printReportDataDetail() {
     window.print();
   }
 }

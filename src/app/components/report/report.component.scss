@@ -361,56 +361,73 @@ margin-top: -10px;
 }
 
 @media print {
-  body * {
-    visibility: hidden;
-  }
-
-  div.main-wrapper {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-48%, -50%);
-    visibility: visible;
-  }
-
-  div.dashboard-table,
-  div.listing-table,
-  div.report-table {
-    visibility: visible;
-  }
-
-  h2.report-title {
-    text-align: center;
-    margin-bottom: 1rem;
-    visibility: visible;
-  }
-
-  div.pawn-table-container {
-    overflow: visible !important;
-    visibility: visible;
-  }
-
-  table.pawn-table {
-    width: auto;
-    margin: 0 auto; 
-    border-collapse: collapse;
-    visibility: visible;
-  }
-
-  table.pawn-table thead tr.table-hight th,
-  table.pawn-table tbody tr td,
-  table.pawn-table tfoot tr td {
-    border: 1px solid black;
-    padding: 0.5rem;
-    text-align: left;
-    visibility: visible;
-  }
-
-  table.pawn-table thead tr.table-hight th h3,
-  table.pawn-table tfoot tr td h3 {
+  body {
     margin: 0;
+    padding: 0;
+    font-size: 12pt;
+    line-height: 1.2;
+  }
+
+  body > *:not(.main-wrapper) {
+    display: none !important;
+  }
+
+  .main-wrapper {
+    position: static !important;
+    transform: none !important;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 1in 0.5in;
+    visibility: visible !important;
+  }
+
+  .dashboard-table,
+  .listing-table,
+  .report-table {
+    visibility: visible !important;
+    display: block !important;
+    overflow: hidden !important;
+    width: 100% !important;
+    margin-inline: 0px !important;
+  }
+
+  .report-title {
+    display: block !important;
+    margin: 0 auto 1rem auto !important;
+    width: auto !important;
+    text-align: center !important;
+    font-size: 1.5em;
+  }
+
+  .pawn-table-container {
+    overflow: visible !important;
+    visibility: visible !important;
+  }
+
+  .pawn-table {
+    width: 100% !important;
+    margin: 0 auto !important;
+    border-collapse: collapse;
+    visibility: visible !important;
+  }
+
+  .pawn-table thead tr.table-hight th,
+  .pawn-table tbody tr td,
+  .pawn-table tfoot tr td {
+    border: 1px solid black;
+    padding: 0.3rem !important;
+    text-align: left;
+    font-size: 0.9em;
+    visibility: visible !important;
+  }
+
+  .pawn-table thead tr.table-hight th h3,
+  .pawn-table tfoot tr td h3 {
+    margin: 0 !important;
     font-size: 1em;
-    visibility: visible;
+    font-weight: bold;
+    visibility: visible !important;
   }
 }
 

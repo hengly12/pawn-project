@@ -3,7 +3,7 @@ import {
   importProvidersFrom,
   provideZoneChangeDetection,
 } from '@angular/core';
-import { provideRouter, withRouterConfig } from '@angular/router';
+import { PreloadAllModules, provideRouter, withComponentInputBinding, withPreloading, withRouterConfig } from '@angular/router';
 import { routes } from './app.routes';
 import { getApp, initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
@@ -12,7 +12,7 @@ import { getFunctions, provideFunctions } from '@angular/fire/functions';
 import { environment } from '../environments/environment';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { HttpClient, provideHttpClient, withFetch } from '@angular/common/http';
-import { provideClientHydration } from '@angular/platform-browser';
+import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import {
   TranslateLoader,
   TranslateModule,
@@ -49,21 +49,45 @@ export const createCustomPrefixRoutes = (translate: TranslateService) => {
 
 export const appConfig: ApplicationConfig = {
   providers: [
+
+    // provideZoneChangeDetection({ eventCoalescing: true }),
+    // provideRouter(
+    //   routes,
+    //   withPreloading(PreloadAllModules),
+    //   withRouterConfig({ paramsInheritanceStrategy: 'always' }),
+    //   withComponentInputBinding(),
+    // ),
+
+
+    // // {
+    // //   provide: APP_BASE_HREF,
+    // //   // useValue: '/km',
+    // //   useFactory: createCustomPrefixRoutes,
+    // //   deps: [TranslateService],
+    // // },
+    // provideFirebaseApp(() => initializeApp(environment.firebase)),
+    // provideAuth(() => getAuth()),
+    // provideFirestore(() => getFirestore()),
+    // provideAnimationsAsync(),
+    // provideClientHydration(),
+
+    provideZoneChangeDetection({ eventCoalescing: true }),
+    provideRouter(
+      routes,
+      withPreloading(PreloadAllModules),
+      withRouterConfig({ paramsInheritanceStrategy: 'always' }),
+      withComponentInputBinding(),
+    ),
     provideHttpClient(withFetch()),
     importProvidersFrom([TranslateModule.forRoot(provideTranslation())]),
-    // {
-    //   provide: APP_BASE_HREF,
-    //   // useValue: '/km',
-    //   useFactory: createCustomPrefixRoutes,
-    //   deps: [TranslateService],
-    // },
-    provideRouter(routes),
-    provideZoneChangeDetection({ eventCoalescing: true }),
+    // ScreenTrackingService,
+    // UserTrackingService,
+    provideClientHydration(withEventReplay()),
+    provideAnimationsAsync(),
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideAuth(() => getAuth()),
-    provideFirestore(() => getFirestore()),
-    provideAnimationsAsync(),
-    provideClientHydration(),
+
+
     provideLottieOptions({
       player: () => import('lottie-web'),
     }),

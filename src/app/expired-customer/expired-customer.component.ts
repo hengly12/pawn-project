@@ -25,6 +25,7 @@ import { PawnStore } from '../shared/store/pawn.store';
 import { ReportDetailDialogComponent } from '../components/report-detail-dialog/report-detail-dialog.component';
 import { AlertComponent } from '../shared/pages/alert/alert.component';
 import { RouterModule } from '@angular/router';
+import { NgxPrintModule } from 'ngx-print';
 
 
 export const MY_FORMATS = {
@@ -76,6 +77,7 @@ interface Customer {
     MatSnackBarModule,
     MatButtonModule,
     RouterModule,
+    NgxPrintModule,
   ],
   templateUrl: './expired-customer.component.html',
   styleUrl: './expired-customer.component.scss',
@@ -114,8 +116,7 @@ routeUnSubscribe = signal<any>(Subscription);
   filteredData: Customer[] = [];
   nameFilter = new FormControl('');
   reportTitle = 'របាយការណ៍';
-  reportDescription =
-    'Displays a summary of transactions for the selected month.';
+  reportDescription = 'Displays a summary of transactions for the selected date.';
 
   totalPawnPrice = 0;
   totalInterestPrice = 0;
@@ -228,6 +229,8 @@ routeUnSubscribe = signal<any>(Subscription);
 
   ngOnChanges(): void { }
 
+  // Filter Expired Customer Data.
+
   updateFilteredData(): void {
     let filtered: Customer[] = [...this.data];
 
@@ -321,23 +324,8 @@ routeUnSubscribe = signal<any>(Subscription);
     this.filteredData = this.updateUserPawnCounts(filtered);
     this.calculateTotals();
     this.cdr.detectChanges();
-  }
 
-  calculateTotals(): void {
-    this.totalPawnPrice = this.filteredData.reduce(
-      (sum, item) => sum + (item.price_pawn || 0),
-      0
-    );
-    this.totalInterestPrice = this.filteredData.reduce(
-      (sum, item) => sum + (item.price_interest || 0),
-      0
-    );
-  }
-
-  showSnackBar(message: string, action: string = 'Close') {
-    this.snackbar.open(message, action, {
-      duration: 6000,
-    });
+    this.filteredData = this.filteredData.slice(0, 25);
   }
 
   onFilterChange(event: any, value: string): void {
@@ -345,6 +333,8 @@ routeUnSubscribe = signal<any>(Subscription);
     this.updateTitle();
     this.updateFilteredData();
   }
+
+  // Get Filtered Data by Date.
 
   updateTitle(): void {
     const todayDate = this.datePipe.transform(new Date(), 'dd-MM-yyyy');
@@ -358,16 +348,16 @@ routeUnSubscribe = signal<any>(Subscription);
         this.reportTitle = 'របាយការណ៍ -  ទាំងអស់';
         break;
       case 'today':
-        this.reportTitle = `របាយការណ៍ - ថ្ងៃនេះ (${todayDate})`;
+        this.reportTitle = `របាយការណ៍ - ថ្ងៃ (${todayDate})`;
         break;
       case 'yesterday':
         this.reportTitle = `របាយការណ៍ - ម្សិលមិញ (${yesterdayDate})`;
         break;
       case 'thisMonth':
-        this.reportTitle = `របាយការណ៍ -  ខែនេះ (${firstDayOfMonth})`;
+        this.reportTitle = `របាយការណ៍ -  ខែ (${firstDayOfMonth})`;
         break;
       case 'thisYear':
-        this.reportTitle = `របាយការណ៍ -  ឆ្នាំនេះ (${currentYear})`;
+        this.reportTitle = `របាយការណ៍ -  ឆ្នាំ (${currentYear})`;
         break;
       case 'dateRange':
         const startDate = this.dateRange.value.start ? this.datePipe.transform(this.dateRange.value.start, 'dd/MM/yyyy') : '';
@@ -377,38 +367,9 @@ routeUnSubscribe = signal<any>(Subscription);
           : 'Report - Date Range';
         break;
       default:
-        this.reportTitle = `របាយការណ៍ -  ថ្ងៃនេះ (${todayDate})`;
+        this.reportTitle = `របាយការណ៍ -  ថ្ងៃ (${todayDate})`;
         break;
     }
-  }
-
-  updateUserPawnCounts(data: Customer[]): Customer[] {
-    const counts: { [key: string]: number } = {};
-    data.forEach(item => {
-      const user = item.full_name;
-      counts[user] = (counts[user] || 0) + 1;
-    });
-
-    const updatedData = data.map(item => ({
-      ...item,
-      pawnCount: counts[item.full_name] || 0
-    }));
-    return updatedData;
-  }
-
-  getUserPawnKeyCount(user: string): number {
-    return this.userPawnKeyCounts[user] || 0;
-  }
-
-  applyNameFilter(event: any) {
-    const filterValue = (event.target as HTMLInputElement).value.toLowerCase();
-    this.filteredData = this.data.filter(item => {
-      const fullName = item.full_name?.toLowerCase() || '';
-      return fullName.includes(filterValue);
-    });
-    this.calculateTotals();
-    this.filteredData = this.updateUserPawnCounts(this.filteredData);
-    this.cdr.detectChanges();
   }
 
   applyDateFilter() {
@@ -450,8 +411,15 @@ routeUnSubscribe = signal<any>(Subscription);
     this.cdr.detectChanges();
   }
 
-  printReportExpiredData() {
-    window.print();
+  applyNameFilter(event: any) {
+    const filterValue = (event.target as HTMLInputElement).value.toLowerCase();
+    this.filteredData = this.data.filter(item => {
+      const fullName = item.full_name?.toLowerCase() || '';
+      return fullName.includes(filterValue);
+    });
+    this.calculateTotals();
+    this.filteredData = this.updateUserPawnCounts(this.filteredData);
+    this.cdr.detectChanges();
   }
 
   resetFilters() {
@@ -462,11 +430,67 @@ routeUnSubscribe = signal<any>(Subscription);
     this.updateFilteredData();
   }
 
+  // Calculate Total Pawn and Interest Price.
+
+  calculateTotals(): void {
+    this.totalPawnPrice = this.filteredData.reduce(
+      (sum, item) => sum + (item.price_pawn || 0),
+      0
+    );
+    this.totalInterestPrice = this.filteredData.reduce(
+      (sum, item) => sum + (item.price_interest || 0),
+      0
+    );
+  }
+
+  showSnackBar(message: string, action: string = 'Close') {
+    this.snackbar.open(message, action, {
+      duration: 6000,
+    });
+  }
+
+  // Update User Pawn Counts.
+
+  updateUserPawnCounts(data: Customer[]): Customer[] {
+    const counts: { [key: string]: number } = {};
+    data.forEach(item => {
+      const user = item.full_name;
+      counts[user] = (counts[user] || 0) + 1;
+    });
+
+    const updatedData = data.map(item => ({
+      ...item,
+      pawnCount: counts[item.full_name] || 0
+    }));
+    return updatedData;
+  }
+
+  getUserPawnKeyCount(user: string): number {
+    return this.userPawnKeyCounts[user] || 0;
+  }
+
+// Print And Dialog.
+
+  
+  printReportExpiredData() {
+    window.print();
+  }
+
   openModal(item: any): void {
     this.dialog.open(ReportDetailDialogComponent, {
       width: '80%',
       maxWidth: '800px',
       data: item,
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
+  }
+
+  openDialog() {
+    this.dialog.open(AlertComponent, {
+      data: { "modal_type": "A" }
     });
   }
 
@@ -486,16 +510,6 @@ routeUnSubscribe = signal<any>(Subscription);
   //     );
   //   }
   // }
-
-  ngOnDestroy(): void {
-    this.subscriptions.unsubscribe();
-  }
-
-  openDialog() {
-    this.dialog.open(AlertComponent, {
-      data: { "modal_type": "A" }
-    });
-  }
 
   // navigateToReport() {
   //  this.router.navigate(['home/report']);

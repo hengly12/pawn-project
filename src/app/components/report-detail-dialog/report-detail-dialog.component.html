@@ -2,9 +2,10 @@
 <mat-dialog-actions class="btn-close-dialog-report">
     <button mat-button mat-dialog-close>បិទ<mat-icon>close</mat-icon></button>
 </mat-dialog-actions>
-
-<mat-dialog-content>
+<div id="print-section">
     <div class="background-form">
+<mat-dialog-content>
+
   <h2 class="report-title-dialog" mat-dialog-title>ព័ត៌មានលំអិត</h2>
     <div class="click-name-dialog">
         <strong >ឈ្មោះអតិថិជន:</strong>
@@ -56,11 +57,13 @@
     <div class="image-preview-container">
         <img [src]="data?.photo?.downloadUrl" alt="Pawned Item">
     </div>
-</div>
 </mat-dialog-content>
+</div>
+
+</div>
 
 <mat-dialog-actions align="end">
-    <button mat-button color="primary" (click)="printReportData()">
-        <mat-icon>print</mat-icon> ព្រីនឯកសារ
+    <button [useExistingCss]="true"  mat-button color="primary" printSectionId="print-section" ngxPrint >
+        <mat-icon > print</mat-icon > ព្រីនឯកសារ
     </button>
 </mat-dialog-actions>

@@ -1,25 +1,47 @@
-<div class="login-container">
+<!-- @if (authStore.loading()) {
+  <div class="loading-container">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  </div>
+} @else { -->
+  <div class="login-container">
+  
+  <div class="welcome" >
+    <h1>Welcome To Our App.</h1>
+    <p>Please Log In Or Register To Start Using Our App.</p>
+  </div>
+  
   <mat-card>
-    <img src="assets/images/pawn-logo.jpg" alt="Logo" class="logo">
-    <mat-card-header>
-      <!-- <mat-card-title>Login</mat-card-title> -->
-    </mat-card-header>
-    <form [formGroup]="loginForm" (ngSubmit)="login()">
-      <mat-form-field appearance="outline">
+    
+    <img src="assets/images/pawn-logo.jpg" alt="Logo" class="logo" />
+    <form class="form-login" [formGroup]="loginForm" (ngSubmit)="login()">
+      <mat-form-field appearance="outline" >
+        
         <mat-label>Email</mat-label>
-        <input matInput type="email" formControlName="email">
+        <input matInput type="email" formControlName="email" />
       </mat-form-field>
-      <mat-form-field appearance="outline">
+      
+      <mat-form-field appearance="outline" >
         <mat-label>Password</mat-label>
-        <input matInput [type]="hide ? 'password' : 'text'" formControlName="password">
-        <button mat-icon-button matSuffix (click)="togglePasswordVisibility()" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
-          <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
-        </button>
+        <input matInput [type]="hide ? 'password' : 'text'" formControlName="password" />
+        <button
+          mat-icon-button
+          matSuffix
+          (click)="togglePasswordVisibility()"
+          type="button"
+          [attr.aria-label]="'Hide password'"
+          [attr.aria-pressed]="hide"
+        >
+          <mat-icon>{{ hide ? 'visibility_off' : 'visibility' }}</mat-icon>
+      </button>
+      
       </mat-form-field>
-      <div class="button">
-        <button mat-raised-button color="primary" type="submit">Login</button>
-        <button mat-raised-button color="accent"  type="register" (click)="register()" >register</button>
+      
+      <div class="button-login-register">
+        <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid">Login</button>
+        <button mat-raised-button color="primary" type="button" (click)="register()">register</button>
       </div>
     </form>
   </mat-card>
 </div>
+
+

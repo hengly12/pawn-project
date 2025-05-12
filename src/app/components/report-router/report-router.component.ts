@@ -17,6 +17,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router, RouterModule, RouterOutlet } from '@angular/router';
+import {NgxPrintModule} from 'ngx-print';
 
 @Component({
   selector: 'app-report-router',
@@ -39,7 +40,9 @@ import { Router, RouterModule, RouterOutlet } from '@angular/router';
     MatSelectModule,
     MatSnackBarModule,
     MatButtonModule,
-    RouterModule],
+    RouterModule,
+    NgxPrintModule,
+  ],
   templateUrl: './report-router.component.html',
   styleUrl: './report-router.component.scss'
 })

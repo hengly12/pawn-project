@@ -1,37 +1,85 @@
-import { Injectable, signal } from '@angular/core';
-import { Router } from '@angular/router';
-import { OAuthProvider, User, createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signInWithPopup,updatePassword,
-} from '@angular/fire/auth';
+import { Injectable, NgZone, signal } from '@angular/core';
+import { Auth, createUserWithEmailAndPassword, getAuth, OAuthProvider, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, updatePassword, User } from '@angular/fire/auth';
 import { TranslateStore } from '@ngx-translate/core';
 import { DataService } from '../shared/services/data.service';
-import { doc, getDoc, serverTimestamp, setDoc, updateDoc } from '@angular/fire/firestore';
-import { docsToObject, mapUser, UserMap } from '../shared/services/mapping.service';
+import {
+  doc,
+  getDoc,
+  serverTimestamp,
+  setDoc,
+  updateDoc,
+} from '@angular/fire/firestore';
+import {
+  docsToObject,
+  mapUser,
+  UserMap,
+} from '../shared/services/mapping.service';
 import { IProfile } from '../shared/interfaces/profile.interface';
 import { ROLE_OBJ } from '../shared/dummy/config';
 import { ResidenceChangeService } from '../shared/services/resident.service';
+import { Router } from '@angular/router';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root',
+})
 export class AuthStore {
-  auth = getAuth();
   user: User | null = null;
   profile: IProfile | null = null;
   ownerHomeAccount: any | null = null;
   readonly residence = signal<any | null>(null);
-  loading: boolean = false;
+  loading = signal(true);
 
   constructor(
+    private auth: Auth,
     public lang: TranslateStore,
     private readonly ds: DataService,
     private residenceChangeService: ResidenceChangeService,
-    private router: Router
+    private router: Router,
+    private ngZone: NgZone
   ) {
-    this.auth.onAuthStateChanged(async (user) => {
-      this.loading = true;
-      this.user = user;
-      if (user) {
-        this.profile = await this.fetchUser(user);
+    // Initialize auth state listener
+    this.initAuthStateListener();
+  }
+
+  private initAuthStateListener() {
+    onAuthStateChanged(
+      this.auth,
+      (user) => {
+        this.ngZone.run(async () => {
+          if (user) {
+            this.user = user;
+            this.profile = await this.fetchUser(user);
+          }
+          this.loading.set(false);
+        });
+      },
+      (error) => {
+        this.ngZone.run(() => {
+          console.error('Auth state error:', error);
+          this.loading.set(false);
+        });
       }
-      this.loading = false;
+    );
+  }
+
+  canActive(): Promise<boolean> {
+    return new Promise((resolve) => {
+      const unsubscribe = onAuthStateChanged(
+        this.auth,
+        (user) => {
+          unsubscribe();
+          this.ngZone.run(() => {
+            resolve(!!user);
+          });
+        },
+        (error) => {
+          unsubscribe();
+          console.error('Auth state error:', error);
+          this.ngZone.run(() => {
+            resolve(false);
+          });
+        }
+      );
     });
   }
 
@@ -128,17 +176,20 @@ export class AuthStore {
   }
 
   signOut() {
-    return this.auth.signOut().then(() => {
-      localStorage.removeItem('authToken');
-      sessionStorage.removeItem('user');
-      this.user = null;
-      this.profile = null;
-      this.ownerHomeAccount = null;
-      this.residence.set(null);
-      this.router.navigate(['/auth/login']);
-    }).catch((error) => {
-      console.error("Sign out error", error);
-    });
+    return this.auth
+      .signOut()
+      .then(() => {
+        localStorage.removeItem('authToken');
+        sessionStorage.removeItem('user');
+        this.user = null;
+        this.profile = null;
+        this.ownerHomeAccount = null;
+        this.residence.set(null);
+        this.router.navigate(['/auth/login']);
+      })
+      .catch((error) => {
+        console.error('Sign out error', error);
+      });
   }
 
   changePassword(

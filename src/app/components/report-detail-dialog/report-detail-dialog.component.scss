@@ -11,7 +11,13 @@
   border-radius: 5px;
   border: 1px solid #bebebecc;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+  height: fit-content;
+  .mat-mdc-dialog-content {
+    max-height: 65vh!important;
+  }
 }
+
+
 
 .image-preview-container img {
   width: 60%;
@@ -172,6 +178,13 @@
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
     padding: 20px;
+    height: fit-content;
+    .mat-mdc-dialog-content {
+      max-height: 100vh!important;
+      overflow: hidden!important;
+      margin-bottom: 10px!important;
+    }
+  }
     
   }
-}
+

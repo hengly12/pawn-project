@@ -1,9 +1,31 @@
+.welcome{
+  display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 25px;
+    gap: 10px;
+}
+
+.loading-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  
+  .mat-progress-bar {
+    height: 4px;
+  }
+}
+
 .login-container {
     display: flex;
     justify-content: center;
+    flex-direction: column;
     align-items: center;
     height: 100vh;
     background-color: #ffff;
+
     
   
     mat-card {
@@ -34,6 +56,7 @@
         right: 0;
         top: 50%;
         transform: translateY(-50%);
+        
       }
   
       .button{
@@ -44,12 +67,33 @@
         flex-direction: column;
         gap: 10px;
       }
-      button[type="submit"], button[type="register"]{
-        width: 80%;
+   
       }
     }
+
+  .form-login{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    align-items: center;
+  }
     
+
+  .button-login-register{
+    display: flex;
+    width: 55%;
+    flex-direction: column;
+    gap: 20px;
   }
 
-  
-  
+  .full-cover-spinner {
+    position: absolute;
+    align-items: center;
+    top: -20%;
+    z-index: 9999;
+    background-color: rgb(255 255 255);
+    width: 110% !important;
+    height: 125% !important;
+  }
+

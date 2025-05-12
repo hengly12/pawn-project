@@ -104,7 +104,8 @@
                 <button mat-button type="button" (click)="resetFilters()">
                   Reset Filter
                 </button>
-                <button mat-button type="button" (click)="printReportData()"> <mat-icon> local_printshop</mat-icon> Print</button>
+                <button  mat-button type="button" [useExistingCss]="true"  mat-button color="primary" printSectionId="print-report" ngxPrint> <mat-icon> local_printshop</mat-icon> Print</button>
+                
               </div>
               
             </div>
@@ -113,7 +114,8 @@
       </mat-tab-nav-panel>
     </div>
   </form>
-
+  
+  <div id="print-report">
   <form>
     <div class=".dashboard-table">
       <mat-tab-nav-panel>
@@ -229,6 +231,7 @@
       
     </div>
   </form>
+  </div>
 </div>
 
 
