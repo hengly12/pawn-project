@@ -21,8 +21,6 @@
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 1rem;
-  
-  
 
   th,
   td {
@@ -37,13 +35,23 @@
 
   th {
     font-weight: bold;
-    
   }
 
   tbody tr:nth-child(even) {
     background-color: #ffffff;
   }
-  .table-hight{
+
+ 
+  tbody tr {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  tbody tr:hover {
+    background-color: #deecf8;
+  }
+
+  .table-hight {
     margin-top: 100px;
   }
 }

@@ -382,7 +382,10 @@ export class PawnFormComponent {
   // }
 
   async formatCurrencyPricePawn(event: any) {
-    let value = event.target.value;
+  let value = event.target.value;
+
+  // Check if the value is already formatted (contains 'USD' and 'KHR')
+  if (!value.includes('USD') && !value.includes('KHR')) {
     value = value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
 
     if (value) {
@@ -392,12 +395,10 @@ export class PawnFormComponent {
         emitEvent: false,
       });
 
-
       const formattedUSD = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD',
       }).format(numericValue);
-
 
       const exchangeRate = await this.getKHRExchangeRate();
       const khrValue = numericValue * exchangeRate;
@@ -408,13 +409,9 @@ export class PawnFormComponent {
         maximumFractionDigits: 0,
       }).format(khrValue);
 
-
       event.target.value = `${formattedUSD} / ${formattedKHR}`;
-
-
       this.displayUSD = formattedUSD;
       this.displayKHR = formattedKHR;
-
     } else {
       this.pawnForm.get('price_pawn')?.setValue(0, { emitEvent: false });
       event.target.value = '';
@@ -422,16 +419,19 @@ export class PawnFormComponent {
       this.displayKHR = '';
     }
   }
+}
 
-  async formatCurrencyPriceInterest(event: any) {
-    let value = event.target.value;
+async formatCurrencyPriceInterest(event: any) {
+  let value = event.target.value;
+
+  // Check if the value is already formatted (contains 'USD' and 'KHR')
+  if (!value.includes('USD') && !value.includes('KHR')) {
     value = value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
     if (value) {
       const numericValue = parseFloat(value);
       this.pawnForm.get('price_interest')?.setValue(numericValue, {
         emitEvent: false,
       });
-
 
       const formattedUSD = new Intl.NumberFormat('en-US', {
         style: 'currency',
@@ -457,16 +457,17 @@ export class PawnFormComponent {
       this.displayKHR = '';
     }
   }
+}
 
-  getFormattedPricePawn(): string | null {
-    const value = this.pawnForm.get('price_pawn')?.value;
-    return this.currencyPipe.transform(value, 'USD');
-  }
+getFormattedPricePawn(): string | null {
+  const value = this.pawnForm.get('price_pawn')?.value;
+  return value != null && value !== undefined ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(value)) : null;
+}
 
-  getFormattedPriceInterest(): string | null {
-    const value = this.pawnForm.get('price_interest')?.value;
-    return this.currencyPipe.transform(value, 'USD');
-  }
+getFormattedPriceInterest(): string | null {
+  const value = this.pawnForm.get('price_interest')?.value;
+  return value != null && value !== undefined ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(value)) : null;
+}
 
   onFileDrop(event: any): void {
     event.preventDefSault();

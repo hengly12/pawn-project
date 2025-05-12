@@ -249,19 +249,19 @@ export class ReportComponent implements OnInit, OnDestroy {
           itemDate.getDate() === todayDay
         );
       });
-    } else if (this.selectedFilter === 'yesterday') {
-      const yesterday = new Date();
-      yesterday.setDate(yesterday.getDate() - 1);
-      yesterday.setHours(0, 0, 0, 0);
-      yesterday.setMinutes(0, 0, 0);
-      filtered = filtered.filter((item) => {
-        const itemDate = item.created_at ? (item.created_at.toDate ? item.created_at.toDate() : new Date(item.created_at)) : null;
-        const yesterdayStart = new Date(yesterday);
-        yesterdayStart.setHours(0, 0, 0, 0);
-        const yesterdayEnd = new Date(yesterday);
-        yesterdayEnd.setHours(23, 59, 59, 999);
-        return itemDate && itemDate >= yesterdayStart && itemDate <= yesterdayEnd;
-      });
+    // } else if (this.selectedFilter === 'yesterday') {
+    //   const yesterday = new Date();
+    //   yesterday.setDate(yesterday.getDate() - 1);
+    //   yesterday.setHours(0, 0, 0, 0);
+    //   yesterday.setMinutes(0, 0, 0);
+    //   filtered = filtered.filter((item) => {
+    //     const itemDate = item.created_at ? (item.created_at.toDate ? item.created_at.toDate() : new Date(item.created_at)) : null;
+    //     const yesterdayStart = new Date(yesterday);
+    //     yesterdayStart.setHours(0, 0, 0, 0);
+    //     const yesterdayEnd = new Date(yesterday);
+    //     yesterdayEnd.setHours(23, 59, 59, 999);
+    //     return itemDate && itemDate >= yesterdayStart && itemDate <= yesterdayEnd;
+    //   });
     } else if (this.selectedFilter === 'thisMonth') {
       const startOfMonth = new Date();
       startOfMonth.setDate(1);
@@ -351,9 +351,9 @@ export class ReportComponent implements OnInit, OnDestroy {
       case 'today':
         this.reportTitle = `របាយការណ៍ - ថ្ងៃ (${todayDate})`;
         break;
-      case 'yesterday':
-        this.reportTitle = `របាយការណ៍ - ម្សិលមិញ (${yesterdayDate})`;
-        break;
+      // case 'yesterday':
+      //   this.reportTitle = `របាយការណ៍ - ម្សិលមិញ (${yesterdayDate})`;
+      //   break;
       case 'thisMonth':
         this.reportTitle = `របាយការណ៍ -  ខែ (${firstDayOfMonth})`;
         break;

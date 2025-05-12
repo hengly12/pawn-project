@@ -38,7 +38,7 @@
                   <mat-datepicker #endDatePicker></mat-datepicker>
                 </mat-form-field>
               </div>
-                
+              
               <div class="filter-all-time">
                 <button
                   mat-button
@@ -56,14 +56,14 @@
                 >
                   Today
                 </button>
-                <button
+                <!-- <button
                   mat-button
                   type="button"
                   (click)="onFilterChange(null, 'yesterday')"
                   [ngClass]="{ 'active-filter': selectedFilter === 'yesterday' }"
                 >
                   Yesterday
-                </button>
+                </button> -->
                 <button
                   mat-button
                   type="button"
@@ -104,7 +104,7 @@
                 <button mat-button type="button" (click)="resetFilters()">
                   Reset Filter
                 </button>
-                <button  mat-button type="button" [useExistingCss]="true"  mat-button color="primary" printSectionId="print-report" ngxPrint> <mat-icon> local_printshop</mat-icon> Print</button>
+                 <button mat-button type="button" [useExistingCss]="true" mat-button color="primary" printSectionId="print-report" ngxPrint> <mat-icon> local_printshop</mat-icon> Print</button>
                 
               </div>
               
@@ -157,10 +157,10 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let item of filteredData">
+                  <tr *ngFor="let item of filteredData" (click)="openModal(item)">
                     <td>
-                      <span class="click-name" (click)="openModal(item)">
-                        {{ item.full_name }}</span
+                      <span class="click-name">
+                         {{ item.full_name }}</span
                       >
                     </td>
                     <td>
@@ -233,8 +233,3 @@
   </form>
   </div>
 </div>
-
-
-
-
-
