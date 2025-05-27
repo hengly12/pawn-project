@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import { AuthStore } from '../auth.store';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-login',
@@ -22,16 +23,15 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     MatInputModule,
     MatButtonModule,
     MatIconModule,
-
-
+    CommonModule,
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
 export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
-  showSpinner = false;
   hide = true;
+  loginSuccess = false;
 
   constructor(private fb: FormBuilder, public authStore: AuthStore, private router: Router) {
   }
@@ -41,19 +41,28 @@ export class LoginComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]]
     });
+    this.loginSuccess = false;
   }
 
   login(): void {
     if (this.loginForm.valid) {
       this.authStore.loading.set(true);
+
       const { email, password } = this.loginForm.value;
+
       this.authStore.signIn(email, password)
         .then(() => {
           console.log('Login successful');
-          this.router.navigate(['home']);
+          this.loginSuccess = true;
+          setTimeout(() => {
+            this.router.navigate(['home']);
+          }, 1500);
         })
         .catch((error) => {
           console.error('Login failed', error);
+          this.loginSuccess = false;
+        })
+        .finally(() => {
           this.authStore.loading.set(false);
         });
     }

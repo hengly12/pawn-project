@@ -1,8 +1,9 @@
-<!-- @if (authStore.loading()) {
-  <div class="loading-container">
-    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+@if (authStore.loading()) {
+  <div class="loading-container" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; width: 100%; background-color: #f0f0f0;">
+    <mat-progress-bar mode="indeterminate" style="width: 200px; margin-bottom: 20px;"></mat-progress-bar>
+    <p style="color: #555; font-size: 1.2em;">Loading...</p>
   </div>
-} @else { -->
+} @else {
   <div class="login-container">
   
   <div class="welcome" >
@@ -12,7 +13,7 @@
   
   <mat-card>
     
-    <img src="assets/images/pawn-logo.jpg" alt="Logo" class="logo" />
+    <img src="assets/images/fast-cash-image.jpg" alt="Logo" class="logo" />
     <form class="form-login" [formGroup]="loginForm" (ngSubmit)="login()">
       <mat-form-field appearance="outline" >
         
@@ -43,5 +44,7 @@
     </form>
   </mat-card>
 </div>
+}
+
 
 
