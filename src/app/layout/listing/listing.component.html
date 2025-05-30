@@ -21,6 +21,7 @@
         </button>
         }
       </nav>
+
       <div class="btn-create-form">
         <button class="btn-check-customer" mat-button (click)="ShowDialog()">
           ព័ត៌មានអតិថិជន <mat-icon> contacts</mat-icon>
@@ -42,14 +43,16 @@
           [routerLink]="['/home/' + tab?.key + '/listing']"
           [active]="rla.isActive"
           #rla="routerLinkActive"
-          routerLinkActive="active" class="mat-tab-link"
+          routerLinkActive="active"
+          class="mat-tab-link"
         >
-          {{  tab?.label }}
+          {{ tab?.label }}
         </a>
         }
       </nav>
+
       <mat-tab-nav-panel #tabPanel>
-        <div class="listing">
+        <div class="listing" (scroll)="onScroll($event)">
           @for(item of data(); track item?.key){
           <div
             class="customer_info"
@@ -85,8 +88,13 @@
 
               <div class="created_at">
                 <mat-icon>query_builder</mat-icon>
-                <h5 matTooltip=" ថ្ងៃបង្កើតៈ {{ item?.created_at | Date:'fullDate' }}" >រយៈពេលបានបង្កើត: {{ item?.created_at | getTimeAgo }}</h5>
+                <h5
+                  matTooltip=" ថ្ងៃបង្កើតៈ {{ item?.created_at | Date:'fullDate' }}"
+                >
+                  រយៈពេលបានបង្កើត: {{ item?.created_at | getTimeAgo }}
+                </h5>
               </div>
+
               <div class="date_expired">
                 <mat-icon>date_range</mat-icon>
                 <h5>
@@ -102,14 +110,16 @@
             </div>
           </div>
           }
+
+          <div class="infinite-scroll-trigger" *ngIf="!endOfData">
+            <div class="spinner-wrapper">
+              <mat-spinner diameter="400" *ngIf="isLoading"></mat-spinner>
+            </div>
+          </div>
         </div>
       </mat-tab-nav-panel>
     </div>
   </form>
-
-  <!-- <div class="create-form"> 
-    <app-pawn-form></app-pawn-form>
-  </div> -->
 
   <div class="content">
     <router-outlet></router-outlet>

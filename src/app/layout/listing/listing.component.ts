@@ -1,25 +1,27 @@
-import { Component, signal, ViewChild, ElementRef, OnInit, OnDestroy, } from '@angular/core';
+import { Component, signal, ViewChild, ElementRef, OnInit, OnDestroy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTabsModule } from '@angular/material/tabs';
-import { RouterOutlet, RouterLink, RouterLinkActive, ActivatedRoute, } from '@angular/router';
+import { RouterOutlet, RouterLink, RouterLinkActive, ActivatedRoute } from '@angular/router';
 import { Subscription, Subject, from } from 'rxjs';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AuthStore } from '../../auth/auth.store';
 import { PawnStore } from '../../shared/store/pawn.store';
 import { GetTimeAgoPipe, DatedPipe } from '../../shared/pipes/customs.pipe';
-import { CommonModule, DatePipe, } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { CustomerInfoComponent } from '../../components/customer-info/customer-info.component';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
-import { FormBuilder, FormGroup, FormControl, ReactiveFormsModule, } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { switchMap, takeUntil } from 'rxjs/operators';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateLoader, TranslateService, TranslateStore } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -27,6 +29,7 @@ export function HttpLoaderFactory(http: HttpClient) {
 
 @Component({
   selector: 'app-listing',
+  standalone: true,
   imports: [
     MatIconModule,
     MatButtonModule,
@@ -45,14 +48,19 @@ export function HttpLoaderFactory(http: HttpClient) {
     ReactiveFormsModule,
     MatTooltipModule,
     DatedPipe,
-],
+    MatProgressSpinnerModule,
+    
+  ],
   templateUrl: './listing.component.html',
   styleUrl: './listing.component.scss',
-  
 })
 export class ListingComponent implements OnInit, OnDestroy {
   pawnForm!: FormGroup;
   private routeSub!: Subscription;
+  endOfData = false;
+  isLoading = false;
+
+  
 
   showFiller = false;
   tabs = signal<any>([
@@ -70,6 +78,9 @@ export class ListingComponent implements OnInit, OnDestroy {
   showClearIcon = false;
 
   originalData = signal<any>([]);
+  lastVisibleDoc: any = null;
+  loadingMore = false;
+  pageLimit = 10; 
 
   @ViewChild('searchInput') searchInput: ElementRef | undefined;
 
@@ -101,19 +112,15 @@ export class ListingComponent implements OnInit, OnDestroy {
           this.clearSearchInput();
           this.param.set(currentParam);
 
-          let statusKey = null;
-          if (currentParam == 'active') {
-            statusKey = 1;
-          } else {
-            statusKey = -2;
-          }
+          let statusKey = currentParam == 'active' ? 1 : -2;
 
-          return this.store.fetchListing(statusKey);
+          return this.store.fetchListingPaginated(statusKey, this.pageLimit, null);
         })
       )
-      .subscribe((res) => {
-        this.originalData.set(res);
-        this.data.set(res);
+      .subscribe(({ data, last }) => {
+        this.originalData.set(data);
+        this.data.set(data);
+        this.lastVisibleDoc = last;
       });
 
     this.form
@@ -126,12 +133,7 @@ export class ListingComponent implements OnInit, OnDestroy {
               switchMap((param) => {
                 let paramKey = param['statusKey'];
                 this.param.set(paramKey);
-                let statusKey = null;
-                if (paramKey == 'active') {
-                  statusKey = 1;
-                } else {
-                  statusKey = -2;
-                }
+                let statusKey = paramKey == 'active' ? 1 : -2;
                 return from(this.store.searchListing(value, statusKey));
               })
             );
@@ -140,22 +142,65 @@ export class ListingComponent implements OnInit, OnDestroy {
               switchMap((param) => {
                 let paramKey = param['statusKey'];
                 this.param.set(paramKey);
-                let statusKey = null;
-                if (paramKey == 'active') {
-                  statusKey = 1;
-                } else {
-                  statusKey = -2;
-                }
-                return this.store.fetchListing(statusKey);
+                let statusKey = paramKey == 'active' ? 1 : -2;
+                return this.store.fetchListingPaginated(statusKey, this.pageLimit, null);
               })
             );
           }
         })
       )
-      .subscribe((data) => {
-        this.data.set(data);
+      .subscribe((res: any) => {
+        if (Array.isArray(res.data)) {
+          this.data.set(res.data);
+        } else {
+          this.data.set(res);
+        }
       });
   }
+
+  loadMore() {
+  if (this.loadingMore || this.endOfData) return;
+  this.loadingMore = true;
+
+  const statusKey = this.param() === 'active' ? 1 : -2;
+
+  this.store.fetchListingPaginated(statusKey, this.pageLimit, this.lastVisibleDoc)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(({ data, last }) => {
+      if (!data || data.length === 0) {
+        this.endOfData = true;
+        this.loadingMore = false;
+        return;
+      }
+
+      const currentKeys = new Set(this.data().map((item: any) => item.key));
+      const newItems = data.filter((item: any) => !currentKeys.has(item.key));
+
+      if (newItems.length === 0) {
+        this.endOfData = true;
+      } else {
+        const updated = [...this.data(), ...newItems];
+        this.data.set(updated);
+        this.originalData.set(updated);
+        this.lastVisibleDoc = last;
+      }
+
+      this.loadingMore = false;
+    });
+}
+
+  onScroll(event: any) {
+  const element = event.target;
+
+  const threshold = 150; // Adjust this value to control when to trigger loading more data
+
+  const position = element.scrollTop + element.clientHeight;
+  const height = element.scrollHeight;
+
+  if (position > height - threshold) {
+    this.loadMore();
+  }
+}
 
   ngOnDestroy() {
     this.destroy$.next();
@@ -168,7 +213,7 @@ export class ListingComponent implements OnInit, OnDestroy {
         title: 'ជ្រើសរើសព័ត៌មានអតិថិជន',
         description: 'Select To Read More Information',
         param: this.param(),
-        readOnly:true
+        readOnly: true,
       },
       width: '800px',
       height: '900px',

@@ -5,41 +5,54 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTabsModule } from '@angular/material/tabs';
 import { RouterLink, RouterLinkActive, ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { MatCardModule } from '@angular/material/card';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { AuthStore } from '../../auth/auth.store';
 import { PawnStore } from '../../shared/store/pawn.store';
 import { FormBuilder, FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { CommonModule } from '@angular/common';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @Component({
     selector: 'app-listing',
     standalone: true,
     imports: [
+        CommonModule,
         MatIconModule,
         MatButtonModule,
         MatMenuModule,
         MatSidenavModule,
-        MatButtonModule,
         MatTabsModule,
         RouterLink,
         RouterLinkActive,
         MatCardModule,
         MatDialogModule,
-        MatButtonModule,
         ReactiveFormsModule,
+        MatProgressSpinnerModule,
+        MatProgressBarModule,
     ],
     templateUrl: './customer-info.component.html',
     styleUrl: './customer-info.component.scss',
 })
 export class CustomerInfoComponent implements OnInit, OnDestroy {
     routeUnSubscribe = signal<any>(Subscription);
-    data = signal<any>(null);
+    data = signal<any>([]);
     param = signal<any>(null);
     form!: FormGroup;
     showClearIcon = false;
     originalData = signal<any>([]);
-   
+
+    lastVisibleDoc: any = null;
+    loadingMore = false;
+    pageLimit = 10;
+    endOfData = false;
+    isLoading = false;
+
+    
+
+    private destroy$ = new Subject<void>();
     private searchSubscription: Subscription | undefined;
 
     @ViewChild('searchInput') searchInput: ElementRef | undefined;
@@ -67,7 +80,6 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
             })
         );
 
-
         this.searchSubscription = this.form.get('search')?.valueChanges.subscribe((value: string) => {
             if (value && value.trim() !== '') {
                 this.searchListing(value);
@@ -78,7 +90,55 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
         });
     }
 
+    loadMore() {
+        if (this.loadingMore || this.endOfData) return;
+        this.loadingMore = true;
+        this.isLoading = true;
+
+        const statusKey = this.info_customer?.param === 'active' ? 1 : -2;
+
+        this.store.fetchListingPaginated(statusKey, this.pageLimit, this.lastVisibleDoc)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(({ data, last }) => {
+                if (!data || data.length === 0) {
+                    this.endOfData = true;
+                    this.loadingMore = false;
+                    this.isLoading = false;
+                    return;
+                }
+
+                const currentIds = new Set(this.data().map((item: any) => item.id));
+                const newItems = data.filter((item: any) => !currentIds.has(item.id));
+
+                if (newItems.length === 0) {
+                    this.endOfData = true;
+                } else {
+                    const updated = [...this.data(), ...newItems];
+                    this.data.set(updated);
+                    this.originalData.set(updated);
+                    this.lastVisibleDoc = last;
+                }
+
+                this.loadingMore = false;
+                this.isLoading = false;
+            });
+    }
+
+    onScroll(event: any) {
+        const element = event.target;
+        const threshold = 150;
+        const position = element.scrollTop + element.clientHeight;
+        const height = element.scrollHeight;
+
+        if (position > height - threshold) {
+            this.loadMore();
+        }
+    }
+
     ngOnDestroy() {
+        this.destroy$.next();
+        this.destroy$.complete();
+
         this.routeUnSubscribe().unsubscribe();
         if (this.searchSubscription) {
             this.searchSubscription.unsubscribe();
