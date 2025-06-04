@@ -30,7 +30,7 @@
   </nav>
 </form>
 
-<div class="listing" >
+<div class="listing" (scroll)="onScroll($event)">
   @for (item of data(); track item?.key) {
   <div (click)="close()"
       class="customer_info"
@@ -44,8 +44,6 @@
               alt="Profile Icon"
           />
       </div>
-
-      
 
       <div class="listing_info">
           <div class="full_name">
@@ -69,5 +67,15 @@
           </div>
       </div>
   </div>
+  }
+  @if (!endOfData) {
+    <div class="infinite-scroll-trigger">
+      <div class="spinner-wrapper">
+        @if (isLoading) {
+          <mat-spinner diameter="400"></mat-spinner>
+        }
+      </div>
+    </div>
+    
   }
 </div>

@@ -1,10 +1,10 @@
 import { Injectable, signal } from '@angular/core';
 import { DataService } from '../services/data.service';
 import { AuthStore } from '../../auth/auth.store';
-import { doc, getDoc, getDocs, limit, orderBy, query, updateDoc, where, } from 'firebase/firestore';
-import { collectionData } from '@angular/fire/firestore';
+import { doc, getDoc, getDocs, limit, orderBy, query, startAfter, updateDoc, where } from 'firebase/firestore';
+import { collectionData, QueryDocumentSnapshot } from '@angular/fire/firestore';
 import { Observable, } from 'rxjs';
-import { pushToArray, pushToObject, toUpperCaseTrim, } from '../services/mapping.service';
+import { pushToArray, pushToObject, toUpperCaseTrim } from '../services/mapping.service';
 import { STATUS_OBJ } from '../dummy/config';
 
 @Injectable({
@@ -14,16 +14,15 @@ export class PawnStore {
   constructor(private ds: DataService, private auth: AuthStore) {}
 
   process = signal<boolean>(false);
+
+  
+
   async createCustomerinfo(data: any, info_customer: any) {
     try {
       this.process.set(true);
       const batch = this.ds.batchRef();
       const ref = doc(this.ds.customerRef(), data?.key);
-      const ref_info_customer = doc(
-        this.ds.infoCustomerRef(),
-        info_customer?.key
-      );
-
+      const ref_info_customer = doc(this.ds.infoCustomerRef(), info_customer?.key);
       batch.set(ref, data, { merge: true });
       batch.set(ref_info_customer, info_customer, { merge: true });
       await batch.commit();
@@ -38,11 +37,7 @@ export class PawnStore {
       this.process.set(true);
       const batch = this.ds.batchRef();
       const ref = doc(this.ds.customerRef(), data?.key);
-      const ref_info_customer = doc(
-        this.ds.infoCustomerRef(),
-        info_customer?.key
-      );
-
+      const ref_info_customer = doc(this.ds.infoCustomerRef(), info_customer?.key);
       batch.set(ref, data, { merge: true });
       batch.set(ref_info_customer, info_customer, { merge: true });
       await batch.commit();
@@ -57,11 +52,7 @@ export class PawnStore {
       this.process.set(true);
       const batch = this.ds.batchRef();
       const ref = doc(this.ds.customerRef(), data?.key);
-      const ref_info_customer = doc(
-        this.ds.infoCustomerRef(),
-        info_update?.key
-      );
-
+      const ref_info_customer = doc(this.ds.infoCustomerRef(), info_update?.key);
       batch.set(ref, data, { merge: true });
       batch.set(ref_info_customer, info_update, { merge: true });
       await batch.commit();
@@ -71,13 +62,11 @@ export class PawnStore {
     }
   }
 
-
   async createCustomerEdit(data: any) {
     try {
       this.process.set(true);
       const batch = this.ds.batchRef();
       const ref = doc(this.ds.customerRef(), data?.key);
-
       batch.set(ref, data, { merge: true });
       await batch.commit();
     } catch (error) {
@@ -86,49 +75,35 @@ export class PawnStore {
     }
   }
 
-
-  // async createCustomerinfo(data: any, info_customer: any) {
-  //   try {
-  //     this.process.set(true);
-  //     const batch = this.ds.batchRef();
-  //     const ref = doc(this.ds.customerRef(), data?.key);
-  //     const ref_info_customer = doc(
-  //       this.ds.infoCustomerRef(),
-  //       info_customer?.key
-  //     );
-
-  //     batch.set(ref, data, { merge: true });
-  //     batch.set(ref_info_customer, info_customer, { merge: true });
-  //     await batch.commit();
-  //   } catch (error) {
-  //     console.error('Batch operation failed:', error);
-  //     throw error;
-  //   }
-  // }
-
-  // async createCustomer(data: any) {
-  //   try {
-  //     this.process.set(true);
-  //     const batch = this.ds.batchRef();
-  //     const ref = doc(this.ds.customerRef(), data?.key);
-
-  //     batch.set(ref, data, { merge: true });
-  //     await batch.commit();
-  //   } catch (error) {
-  //     console.error('Batch operation failed:', error);
-  //     throw error;
-  //   }
-  // }
-
   fetchListing(statusKey: any) {
     const queryRef = [
       where('status.key', '==', statusKey),
       orderBy('created_at', 'desc'),
       limit(20),
     ];
-    return collectionData(
-      query(this.ds.customerRef(), ...queryRef)
-    ) as Observable<any[]>;
+    return collectionData(query(this.ds.customerRef(), ...queryRef)) as Observable<any[]>;
+  }
+
+  fetchListingPaginated(statusKey: number, pageLimit: number, startAfterDoc: QueryDocumentSnapshot<any> | null) {
+    const constraints: any[] = [
+      where('status.key', '==', statusKey),
+      orderBy('created_at', 'desc'),
+      limit(pageLimit),
+    ];
+    if (startAfterDoc) {
+      constraints.splice(2, 0, startAfter(startAfterDoc));
+    }
+    const q = query(this.ds.customerRef(), ...constraints);
+    return new Observable<{ data: any[], last: QueryDocumentSnapshot<any> | null }>((observer) => {
+      getDocs(q).then((snapshot) => {
+        const docs = snapshot.docs.map((doc) => ({ key: doc.id, ...doc.data() }));
+        const last = snapshot.docs.length > 0 ? snapshot.docs[snapshot.docs.length - 1] : null;
+        observer.next({ data: docs, last });
+        observer.complete();
+      }).catch((error) => {
+        observer.error(error);
+      });
+    });
   }
 
   fetchListingExpiredDate(dateExpired: any) {
@@ -137,16 +112,12 @@ export class PawnStore {
       orderBy('created_at', 'desc'),
       limit(30),
     ];
-    return collectionData(
-      query(this.ds.customerRef(), ...queryRef)
-    ) as Observable<any[]>;
+    return collectionData(query(this.ds.customerRef(), ...queryRef)) as Observable<any[]>;
   }
 
   fetchInfoListing() {
     const queryRef = [orderBy('created_at', 'desc'), limit(50)];
-    return collectionData(
-      query(this.ds.infoCustomerRef(), ...queryRef)
-    ) as Observable<any[]>;
+    return collectionData(query(this.ds.infoCustomerRef(), ...queryRef)) as Observable<any[]>;
   }
 
   getCustomerDemo(): Observable<any[]> {

@@ -153,6 +153,13 @@
   gap: 7px;
 }
 
+.main-wrapper {
+  height: 100vh; // Or any appropriate value
+  overflow-y: auto;
+}
+
+
+
 .customer_info {
   display: flex;
   gap: 10px;
