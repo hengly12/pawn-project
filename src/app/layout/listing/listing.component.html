@@ -70,12 +70,11 @@
           </div>
           } } @if (!isLoading) { @for(item of data(); track item?.key) {
           <div
-            class="customer_info"
-            [routerLink]="[
-              '/home/' + param() + '/listing/create-form/' + item?.key
-            ]"
-            routerLinkActive="active"
-          >
+  class="customer_info"
+  (click)="onCustomerSelect(item?.key)"
+  [class.active]="selectedKey === item?.key"
+>
+
             <div class="profile-image">
               <img
                 [src]="auth.profile?.photoFile || 'assets/images/Admin-Pic.jpg'"
@@ -138,6 +137,11 @@
   </form>
 
   <div class="content">
+  @if (formLoading) {
+    <app-skeleton-form-loader></app-skeleton-form-loader>
+  } @else {
     <router-outlet></router-outlet>
-  </div>
+  }
+</div>
+
 </div>

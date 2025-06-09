@@ -4,7 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTabsModule } from '@angular/material/tabs';
-import { RouterOutlet, RouterLink, RouterLinkActive, ActivatedRoute } from '@angular/router';
+import { RouterOutlet, RouterLink, RouterLinkActive, ActivatedRoute, Router } from '@angular/router';
 import { Subscription, Subject, from } from 'rxjs';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -22,6 +22,8 @@ import { HttpClient } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { SkeletonFormLoaderComponent } from "../../shared/skeleton-form-loader/skeleton-form-loader.component";
+
 
 
 export function HttpLoaderFactory(http: HttpClient) {
@@ -51,8 +53,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     DatedPipe,
     MatProgressSpinnerModule,
     MatProgressBarModule,
-    
-  ],
+    SkeletonFormLoaderComponent
+],
   templateUrl: './listing.component.html',
   styleUrl: './listing.component.scss',
 })
@@ -93,7 +95,8 @@ export class ListingComponent implements OnInit, OnDestroy {
     public auth: AuthStore,
     private readonly route: ActivatedRoute,
     private readonly store: PawnStore,
-    private readonly fb: FormBuilder
+    private readonly fb: FormBuilder,
+    private readonly router: Router
   ) {}
 
   ngOnInit() {
@@ -247,4 +250,21 @@ export class ListingComponent implements OnInit, OnDestroy {
   clearFormInputs() {
     this.form.reset();
   }
+
+  formLoading = false;
+selectedKey: string | null = null;
+
+onCustomerSelect(key: string) {
+  this.formLoading = true;
+  this.selectedKey = key;
+
+  this.router.navigate([`/home/${this.param()}/listing/create-form/${key}`]);
+
+  setTimeout(() => {
+    this.formLoading = false;
+  }, 1000);
 }
+
+}
+
+
