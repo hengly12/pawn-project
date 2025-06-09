@@ -31,51 +31,61 @@
 </form>
 
 <div class="listing" (scroll)="onScroll($event)">
-  @for (item of data(); track item?.key) {
-  <div (click)="close()"
-      class="customer_info"
-      [routerLink]="['/home/' + info_customer?.param + '/listing/create-form/'+ item?.key]"
-
-      routerLinkActive="active"
-  >
-      <div class="profile-image">
-          <img
-              [src]="auth.profile?.photoFile || 'assets/images/Admin-Pic.jpg'"
-              alt="Profile Icon"
-          />
+  @if (isLoading && data().length === 0) {
+    @for (i of [1, 2, 3, 4, 5, 6, 7]; track i) {
+      <div class="skeleton-card">
+        <div class="skeleton-image"></div>
+        <div class="skeleton-lines">
+          <div class="line short"></div>
+          <div class="line medium"></div>
+          <div class="line long"></div>
+          <div class="line medium"></div>
+        </div>
       </div>
+    }
+  } @else {
+    @for (item of data(); track item?.key) {
+      <div (click)="close()"
+        class="customer_info"
+        [routerLink]="['/home/' + info_customer?.param + '/listing/create-form/'+ item?.key]"
+        routerLinkActive="active"
+      >
+        <div class="profile-image">
+          <img [src]="auth.profile?.photoFile || 'assets/images/Admin-Pic.jpg'" alt="Profile Icon" />
+        </div>
 
-      <div class="listing_info">
+        <div class="listing_info">
           <div class="full_name">
-              <mat-icon>perm_identity</mat-icon>
-              <h4>ឈ្មោះ: {{ item?.full_name }}</h4>
+            <mat-icon>perm_identity</mat-icon>
+            <h4>ឈ្មោះ: {{ item?.full_name }}</h4>
           </div>
-
           <div class="gender">
-              <mat-icon>supervisor_account</mat-icon>
-              <h5>ភេទ: {{ item?.gender?.text }}</h5>
+            <mat-icon>supervisor_account</mat-icon>
+            <h5>ភេទ: {{ item?.gender?.text }}</h5>
           </div>
-
           <div class="phone_number">
-              <mat-icon>ring_volume</mat-icon>
-              <h5>លេខទូរសព្ទ: {{ item?.phone_number }}</h5>
+            <mat-icon>ring_volume</mat-icon>
+            <h5>លេខទូរសព្ទ: {{ item?.phone_number }}</h5>
           </div>
-
           <div class="id_card">
-              <mat-icon>chrome_reader_mode</mat-icon>
-              <h5>លេខអត្តសញ្ញាណប័ណ្ណ: {{ item?.id_card }}</h5>
+            <mat-icon>chrome_reader_mode</mat-icon>
+            <h5>លេខអត្តសញ្ញាណប័ណ្ណ: {{ item?.id_card }}</h5>
           </div>
+        </div>
       </div>
-  </div>
+    }
   }
-  @if (!endOfData) {
+
+  @if (!endOfData && data().length > 0) {
     <div class="infinite-scroll-trigger">
       <div class="spinner-wrapper">
         @if (isLoading) {
-          <mat-spinner diameter="400"></mat-spinner>
+          <div class="loading-container">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <p>Loading...</p>
+          </div>
         }
       </div>
     </div>
-    
   }
 </div>

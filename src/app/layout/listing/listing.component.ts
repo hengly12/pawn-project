@@ -21,6 +21,7 @@ import { TranslateLoader, TranslateService, TranslateStore } from '@ngx-translat
 import { HttpClient } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 
 export function HttpLoaderFactory(http: HttpClient) {
@@ -49,6 +50,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatTooltipModule,
     DatedPipe,
     MatProgressSpinnerModule,
+    MatProgressBarModule,
     
   ],
   templateUrl: './listing.component.html',
@@ -160,39 +162,39 @@ export class ListingComponent implements OnInit, OnDestroy {
 
   loadMore() {
   if (this.loadingMore || this.endOfData) return;
+
   this.loadingMore = true;
+  this.isLoading = true;
 
-  const statusKey = this.param() === 'active' ? 1 : -2;
+  setTimeout(() => {
+    const statusKey = this.param() === 'active' ? 1 : -2;
 
-  this.store.fetchListingPaginated(statusKey, this.pageLimit, this.lastVisibleDoc)
-    .pipe(takeUntil(this.destroy$))
-    .subscribe(({ data, last }) => {
-      if (!data || data.length === 0) {
-        this.endOfData = true;
+    this.store.fetchListingPaginated(statusKey, this.pageLimit, this.lastVisibleDoc)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(({ data, last }) => {
+        if (!data || data.length === 0) {
+          this.endOfData = true;
+        } else {
+          const currentKeys = new Set(this.data().map((item: any) => item.key));
+          const newItems = data.filter((item: any) => !currentKeys.has(item.key));
+
+          const updated = [...this.data(), ...newItems];
+          this.data.set(updated);
+          this.originalData.set(updated);
+          this.lastVisibleDoc = last;
+        }
+
         this.loadingMore = false;
-        return;
-      }
-
-      const currentKeys = new Set(this.data().map((item: any) => item.key));
-      const newItems = data.filter((item: any) => !currentKeys.has(item.key));
-
-      if (newItems.length === 0) {
-        this.endOfData = true;
-      } else {
-        const updated = [...this.data(), ...newItems];
-        this.data.set(updated);
-        this.originalData.set(updated);
-        this.lastVisibleDoc = last;
-      }
-
-      this.loadingMore = false;
-    });
+        this.isLoading = false;
+      });
+  }, 1000);
 }
+
 
   onScroll(event: any) {
   const element = event.target;
 
-  const threshold = 150; // Adjust this value to control when to trigger loading more data
+  const threshold = 150;
 
   const position = element.scrollTop + element.clientHeight;
   const height = element.scrollHeight;

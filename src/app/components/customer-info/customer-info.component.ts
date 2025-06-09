@@ -50,8 +50,6 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
     endOfData = false;
     isLoading = false;
 
-    
-
     private destroy$ = new Subject<void>();
     private searchSubscription: Subscription | undefined;
 
@@ -73,12 +71,17 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
             search: new FormControl(''),
         });
 
-        this.routeUnSubscribe.set(
-            this.store.fetchInfoListing().subscribe((res) => {
-                this.data.set(res);
-                this.originalData.set(res);
-            })
-        );
+         this.isLoading = true;
+
+  this.routeUnSubscribe.set(
+    this.store.fetchInfoListing().subscribe((res) => {
+      setTimeout(() => {
+        this.data.set(res);
+        this.originalData.set(res);
+        this.isLoading = false;
+      }, 1000);
+    })
+  );
 
         this.searchSubscription = this.form.get('search')?.valueChanges.subscribe((value: string) => {
             if (value && value.trim() !== '') {
@@ -90,39 +93,45 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
         });
     }
 
-    loadMore() {
-        if (this.loadingMore || this.endOfData) return;
-        this.loadingMore = true;
-        this.isLoading = true;
+   loadMore() {
+  if (this.loadingMore || this.endOfData) return;
 
-        const statusKey = this.info_customer?.param === 'active' ? 1 : -2;
+  this.loadingMore = true;
+  this.isLoading = true;
 
-        this.store.fetchListingPaginated(statusKey, this.pageLimit, this.lastVisibleDoc)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe(({ data, last }) => {
-                if (!data || data.length === 0) {
-                    this.endOfData = true;
-                    this.loadingMore = false;
-                    this.isLoading = false;
-                    return;
-                }
+  const statusKey = this.info_customer?.param === 'active' ? 1 : -2;
 
-                const currentIds = new Set(this.data().map((item: any) => item.id));
-                const newItems = data.filter((item: any) => !currentIds.has(item.id));
+  this.store.fetchListingPaginated(statusKey, this.pageLimit, this.lastVisibleDoc)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(({ data, last }) => {
 
-                if (newItems.length === 0) {
-                    this.endOfData = true;
-                } else {
-                    const updated = [...this.data(), ...newItems];
-                    this.data.set(updated);
-                    this.originalData.set(updated);
-                    this.lastVisibleDoc = last;
-                }
+      setTimeout(() => {
+        if (!data || data.length === 0) {
+          this.endOfData = true;
+          this.loadingMore = false;
+          this.isLoading = false;
+          return;
+        }
 
-                this.loadingMore = false;
-                this.isLoading = false;
-            });
-    }
+        const currentIds = new Set(this.data().map((item: any) => item.id));
+        const newItems = data.filter((item: any) => !currentIds.has(item.id));
+
+        if (newItems.length === 0) {
+          this.endOfData = true;
+        } else {
+          const updated = [...this.data(), ...newItems];
+          this.data.set(updated);
+          this.originalData.set(updated);
+          this.lastVisibleDoc = last;
+        }
+
+        this.loadingMore = false;
+        this.isLoading = false;
+      }, 1000);
+    });
+}
+
+
 
     onScroll(event: any) {
         const element = event.target;

@@ -111,9 +111,87 @@
 }
 
 .list-container {
-  height: 500px;   /* or whatever fits your layout */
+  height: 500px;
   overflow-y: auto;
 }
+
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+  padding: 20px 0;
+  width: 100%;
+
+  mat-progress-bar {
+    width: 150px;
+    margin-bottom: 10px;
+  }
+
+  p {
+    color: #555;
+    font-size: 1rem;
+    margin: 0;
+    font-family: "Koh Santepheap", serif;
+  }
+}
+
+
+.skeleton {
+  display: flex;
+  padding: 1rem;
+  background: #f4f4f4;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  gap: 1rem;
+  animation: pulse 1.5s infinite ease-in-out;
+
+  .profile-image {
+    .avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+    }
+  }
+
+  .listing_info {
+    flex: 1;
+
+    .skeleton-line {
+      height: 12px;
+      background: #ddd;
+      border-radius: 4px;
+      margin-bottom: 0.5rem;
+
+      &.short {
+        width: 40%;
+      }
+
+      &:not(.short) {
+        width: 70%;
+      }
+    }
+  }
+}
+
+.skeleton-box {
+  background: #ddd;
+  border-radius: 4px;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
 
 .mat-tab-link {
   &:hover {

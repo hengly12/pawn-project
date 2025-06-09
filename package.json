@@ -37,6 +37,7 @@
     "ngx-mask": "^19.0.6",
     "ngx-print": "^2.0.0",
     "ngx-signaturepad": "^0.0.10",
+    "react-loading-skeleton": "^3.5.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
