@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Input, OnInit, OnDestroy, signal, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit, OnDestroy, signal, inject, ViewChild } from '@angular/core';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatGridListModule } from '@angular/material/grid-list';
@@ -26,6 +26,7 @@ import { ReportDetailDialogComponent } from '../components/report-detail-dialog/
 import { AlertComponent } from '../shared/pages/alert/alert.component';
 import { RouterModule } from '@angular/router';
 import { NgxPrintModule } from 'ngx-print';
+import { MatPaginator, PageEvent, MatPaginatorModule } from '@angular/material/paginator';
 
 
 export const MY_FORMATS = {
@@ -78,17 +79,18 @@ interface Customer {
     MatButtonModule,
     RouterModule,
     NgxPrintModule,
+    MatPaginatorModule,
   ],
   templateUrl: './expired-customer.component.html',
   styleUrl: './expired-customer.component.scss',
   providers: [
-      DatePipe,
-      provideMomentDateAdapter(MY_FORMATS)
-    ],
-  })
+    DatePipe,
+    provideMomentDateAdapter(MY_FORMATS)
+  ],
+})
 
-export class ExpiredCustomerComponent implements OnInit, OnDestroy{
-routeUnSubscribe = signal<any>(Subscription);
+export class ExpiredCustomerComponent implements OnInit, OnDestroy {
+  routeUnSubscribe = signal<any>(Subscription);
   param = signal<any>(null);
   displayUSD = '';
   displayKHR = '';
@@ -113,7 +115,8 @@ routeUnSubscribe = signal<any>(Subscription);
 
   dateRange: FormGroup<{ start: FormControl<Date | null>, end: FormControl<Date | null> }>;
   selectedDate = new FormControl<Date | null | null>(null);
-  filteredData: Customer[] = [];
+  filteredData: Customer[] = []; // This will hold all filtered data, before pagination
+  paginatedData: Customer[] = []; // This will hold the data for the current page
   nameFilter = new FormControl('');
   reportTitle = 'របាយការណ៍';
   reportDescription = 'Displays a summary of transactions for the selected date.';
@@ -134,6 +137,13 @@ routeUnSubscribe = signal<any>(Subscription);
   userPawnKeyCounts: { [user: string]: number } = {};
   private subscriptions = new Subscription();
 
+  // Pagination properties
+  pageSize = 10; // Default page size
+  pageSizeOptions: number[] = [5, 10, 20, 50, 100];
+  pageIndex = 0;
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+
   unreadNotificationCount: number = 0;
   expiredItems: Customer[] = [];
   constructor(
@@ -151,25 +161,24 @@ routeUnSubscribe = signal<any>(Subscription);
     });
   }
 
-  
 
   isDateMatch(dateToCheck: any, selectedDate: Date | null): boolean {
     if (!selectedDate || !dateToCheck) {
       return true;
     }
     let checkDate: Date;
-     if (dateToCheck instanceof Timestamp) {
+    if (dateToCheck instanceof Timestamp) {
       checkDate = dateToCheck.toDate();
     } else {
       checkDate = new Date(dateToCheck);
     }
 
 
-    const selectedDateOnly =  new Date(
-        selectedDate.getFullYear(),
-        selectedDate.getMonth(),
-        selectedDate.getDate()
-      );
+    const selectedDateOnly = new Date(
+      selectedDate.getFullYear(),
+      selectedDate.getMonth(),
+      selectedDate.getDate()
+    );
 
     return checkDate.getTime() === selectedDateOnly.getTime();
   }
@@ -180,7 +189,7 @@ routeUnSubscribe = signal<any>(Subscription);
         this.subscriptions.add(
           (await this.store.getCustomerDemo()).subscribe((doc) => {
             this.data = doc.map(item => ({ ...item, pawnCount: 0 }));
-            this.updateFilteredData();
+            this.updateFilteredData(); // Initial filter and pagination update
             // this.checkExpiredItems();
           })
         );
@@ -229,17 +238,17 @@ routeUnSubscribe = signal<any>(Subscription);
 
   ngOnChanges(): void { }
 
-  // Filter Expired Customer Data.
-
+  // Filter Expired Customer Data and apply pagination.
   updateFilteredData(): void {
     let filtered: Customer[] = [...this.data];
 
+    // Filter by selectedFilter (today, thisMonth, thisYear, dateRange)
     if (this.selectedFilter === 'today') {
       const today = new Date();
       const todayYear = today.getFullYear();
       const todayMonth = today.getMonth();
       const todayDay = today.getDate();
-       filtered = filtered.filter((item) => {
+      filtered = filtered.filter((item) => {
         const itemDate = item.date_expired ? (item.date_expired.toDate ? item.date_expired.toDate() : new Date(item.date_expired)) : null;
         return (
           itemDate &&
@@ -248,19 +257,6 @@ routeUnSubscribe = signal<any>(Subscription);
           itemDate.getDate() === todayDay
         );
       });
-    // } else if (this.selectedFilter === 'yesterday') {
-    //   const yesterday = new Date();
-    //   yesterday.setDate(yesterday.getDate() - 1);
-    //   yesterday.setHours(0, 0, 0, 0);
-    //   yesterday.setMinutes(0, 0, 0);
-    //    filtered = filtered.filter((item) => {
-    //     const itemDate = item.date_expired ? (item.date_expired.toDate ? item.date_expired.toDate() : new Date(item.date_expired)) : null;
-    //     const yesterdayStart = new Date(yesterday);
-    //     yesterdayStart.setHours(0, 0, 0, 0);
-    //     const yesterdayEnd = new Date(yesterday);
-    //     yesterdayEnd.setHours(23, 59, 59, 999);
-    //     return itemDate && itemDate >= yesterdayStart && itemDate <= yesterdayEnd;
-    //   });
     } else if (this.selectedFilter === 'thisMonth') {
       const startOfMonth = new Date();
       startOfMonth.setDate(1);
@@ -271,7 +267,7 @@ routeUnSubscribe = signal<any>(Subscription);
         0
       );
       endOfMonth.setHours(23, 59, 59, 999);
-       filtered = filtered.filter((item) => {
+      filtered = filtered.filter((item) => {
         const itemDate = item.date_expired ? (item.date_expired.toDate ? item.date_expired.toDate() : new Date(item.date_expired)) : null;
         return itemDate && itemDate >= startOfMonth && itemDate <= endOfMonth;
       });
@@ -280,8 +276,8 @@ routeUnSubscribe = signal<any>(Subscription);
       startOfYear.setHours(0, 0, 0, 0);
       const endOfYear = new Date(new Date().getFullYear(), 11, 31);
       endOfYear.setHours(23, 59, 59, 999);
-       filtered = filtered.filter((item) => {
-         const itemDate = item.date_expired ? (item.date_expired.toDate ? item.date_expired.toDate() : new Date(item.date_expired)) : null;
+      filtered = filtered.filter((item) => {
+        const itemDate = item.date_expired ? (item.date_expired.toDate ? item.date_expired.toDate() : new Date(item.date_expired)) : null;
         return itemDate && itemDate >= startOfYear && itemDate <= endOfYear;
       });
     } else if (this.selectedFilter === 'dateRange') {
@@ -292,46 +288,71 @@ routeUnSubscribe = signal<any>(Subscription);
           this.snackbar.open('Start date cannot be greater than end date', 'Close', { duration: 6000 });
           return;
         }
-         filtered = filtered.filter(item => {
-           const itemDate = item.date_expired ? (item.date_expired.toDate ? item.date_expired.toDate() : new Date(item.date_expired)) : null;
+        filtered = filtered.filter(item => {
+          const itemDate = item.date_expired ? (item.date_expired.toDate ? item.date_expired.toDate() : new Date(item.date_expired)) : null;
           return itemDate >= startDate && itemDate <= endDate;
         });
       } else if (startDate) {
-         filtered = filtered.filter(item => {
-           const itemDate = item.date_expired ? (item.date_expired.toDate ? item.date_expired.toDate() : new Date(item.date_expired)) : null;
+        filtered = filtered.filter(item => {
+          const itemDate = item.date_expired ? (item.date_expired.toDate ? item.date_expired.toDate() : new Date(item.date_expired)) : null;
           return itemDate >= startDate;
         });
       } else if (endDate) {
-         filtered = filtered.filter(item => {
-           const itemDate = item.date_expired ? (item.date_expired.toDate ? item.date_expired.toDate() : new Date(item.date_expired)) : null;
+        filtered = filtered.filter(item => {
+          const itemDate = item.date_expired ? (item.date_expired.toDate ? item.date_expired.toDate() : new Date(item.date_expired)) : null;
           return itemDate <= endDate;
         });
       }
     }
 
+    // Filter by selectedDate (if any)
     if (this.selectedDate.value) {
       filtered = filtered.filter((item) =>
         this.isDateMatch(item.date_expired, this.selectedDate.value)
       );
     }
 
+    // Filter by name
     const nameFilterValue = this.nameFilter.value?.toLowerCase() || '';
     filtered = filtered.filter(item => {
       const fullName = item.full_name?.toLowerCase() || '';
       return fullName.includes(nameFilterValue);
     });
 
-    this.filteredData = this.updateUserPawnCounts(filtered);
+    this.filteredData = this.updateUserPawnCounts(filtered); // Update filteredData with counts
     this.calculateTotals();
-    this.cdr.detectChanges();
 
-    this.filteredData = this.filteredData.slice(0, 25);
+    // Reset page index to 0 when filters change
+    this.pageIndex = 0;
+    if (this.paginator) {
+      this.paginator.firstPage(); // Go to the first page of the new filtered data
+    }
+    this.updatePaginatedData(); // Update paginated data based on new filters
+    this.cdr.detectChanges();
+  }
+
+  // Event handler for MatPaginator page changes
+  onPageChange(event: PageEvent): void {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.updatePaginatedData();
+  }
+
+  // Method to update the data displayed on the current page
+  updatePaginatedData(): void {
+    const startIndex = this.pageIndex * this.pageSize;
+    const endIndex = startIndex + this.pageSize;
+    // Slice the already filteredData, not the original data
+    this.paginatedData = this.filteredData.slice(startIndex, endIndex);
+    // Recalculate totals based on the paginated data if needed for display,
+    // otherwise, totals should reflect the full filteredData.
+    // For now, keeping calculateTotals() to reflect full filteredData.
   }
 
   onFilterChange(event: any, value: string): void {
     this.selectedFilter = value || 'all';
     this.updateTitle();
-    this.updateFilteredData();
+    this.updateFilteredData(); // This will now also handle pagination reset
   }
 
   // Get Filtered Data by Date.
@@ -345,7 +366,7 @@ routeUnSubscribe = signal<any>(Subscription);
 
     switch (this.selectedFilter) {
       case 'all':
-        this.reportTitle = 'របាយការណ៍ -  ទាំងអស់';
+        this.reportTitle = 'របាយការណ៍ -  ទាំងអស់';
         break;
       case 'today':
         this.reportTitle = `របាយការណ៍ - ថ្ងៃ (${todayDate})`;
@@ -354,10 +375,10 @@ routeUnSubscribe = signal<any>(Subscription);
       //   this.reportTitle = `របាយការណ៍ - ម្សិលមិញ (${yesterdayDate})`;
       //   break;
       case 'thisMonth':
-        this.reportTitle = `របាយការណ៍ -  ខែ (${firstDayOfMonth})`;
+        this.reportTitle = `របាយការណ៍ -  ខែ (${firstDayOfMonth})`;
         break;
       case 'thisYear':
-        this.reportTitle = `របាយការណ៍ -  ឆ្នាំ (${currentYear})`;
+        this.reportTitle = `របាយការណ៍ -  ឆ្នាំ (${currentYear})`;
         break;
       case 'dateRange':
         const startDate = this.dateRange.value.start ? this.datePipe.transform(this.dateRange.value.start, 'dd/MM/yyyy') : '';
@@ -367,7 +388,7 @@ routeUnSubscribe = signal<any>(Subscription);
           : 'Report - Date Range';
         break;
       default:
-        this.reportTitle = `របាយការណ៍ -  ថ្ងៃ (${todayDate})`;
+        this.reportTitle = `របាយការណ៍ -  ថ្ងៃ (${todayDate})`;
         break;
     }
   }
@@ -382,44 +403,22 @@ routeUnSubscribe = signal<any>(Subscription);
         return;
       }
       this.selectedFilter = 'dateRange';
-      this.filteredData = this.data.filter(item => {
-        const itemDate = item.date_expired ? (item.date_expired.toDate ? item.date_expired.toDate() : new Date(item.date_expired)) : null;
-        return itemDate >= startDate && itemDate <= endDate;
-      });
-    }
-    else if (startDate) {
+    } else if (startDate) {
       this.selectedFilter = 'dateRange';
-      this.filteredData = this.data.filter(item => {
-        const itemDate = item.date_expired ? (item.date_expired.toDate ? item.date_expired.toDate() : new Date(item.date_expired)) : null;
-        return itemDate >= startDate;
-      });
-    }
-    else if (endDate) {
+    } else if (endDate) {
       this.selectedFilter = 'dateRange';
-      this.filteredData = this.data.filter(item => {
-         const itemDate = item.date_expired ? (item.date_expired.toDate ? item.date_expired.toDate() : new Date(item.date_expired)) : null;
-        return itemDate <= endDate;
-      });
-    }
-    else {
+    } else {
       this.selectedFilter = 'today';
-      this.filteredData = this.data;
     }
     this.updateTitle();
-    this.calculateTotals();
-    this.filteredData = this.updateUserPawnCounts(this.filteredData);
-    this.cdr.detectChanges();
+    this.updateFilteredData(); // This will now also handle pagination reset
   }
 
   applyNameFilter(event: any) {
-    const filterValue = (event.target as HTMLInputElement).value.toLowerCase();
-    this.filteredData = this.data.filter(item => {
-      const fullName = item.full_name?.toLowerCase() || '';
-      return fullName.includes(filterValue);
-    });
-    this.calculateTotals();
-    this.filteredData = this.updateUserPawnCounts(this.filteredData);
-    this.cdr.detectChanges();
+    // This method is redundant if nameFilter.valueChanges is already subscribed in ngOnInit
+    // The updateFilteredData() method handles the name filter.
+    // If you want to keep this, ensure it also triggers updateFilteredData()
+    this.updateFilteredData();
   }
 
   resetFilters() {
@@ -427,7 +426,7 @@ routeUnSubscribe = signal<any>(Subscription);
     this.selectedFilter = 'today';
     this.filterControl.setValue('today');
     this.updateTitle();
-    this.updateFilteredData();
+    this.updateFilteredData(); // This will now also handle pagination reset
   }
 
   // Calculate Total Pawn and Interest Price.
@@ -469,9 +468,9 @@ routeUnSubscribe = signal<any>(Subscription);
     return this.userPawnKeyCounts[user] || 0;
   }
 
-// Print And Dialog.
+  // Print And Dialog.
 
-  
+
   printReportExpiredData() {
     window.print();
   }
@@ -519,4 +518,3 @@ routeUnSubscribe = signal<any>(Subscription);
   //  this.router.navigate(['home/report/expired-customer']);
   // }
 }
-

@@ -169,7 +169,7 @@
                   </thead>
                   <tbody>
                     <tr
-                      *ngFor="let item of filteredData"
+                      *ngFor="let item of paginatedData"
                       (click)="openModal(item)"
                     >
                       <td>
@@ -242,6 +242,14 @@
                   </tfoot>
                 </table>
               </div>
+              <mat-paginator
+                [length]="filteredData.length"
+                [pageSize]="pageSize"
+                [pageSizeOptions]="pageSizeOptions"
+                (page)="onPageChange($event)"
+                showFirstLastButtons
+              >
+              </mat-paginator>
             </div>
           </div>
         </mat-tab-nav-panel>

@@ -1,5 +1,5 @@
 import { arrayUnion, serverTimestamp } from '@angular/fire/firestore';
-import { CurrencyPipe, NgClass, NgIf } from '@angular/common';
+import { CurrencyPipe, NgClass, } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, signal, ViewChild, } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators, } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -38,7 +38,6 @@ interface GenderOption {
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    NgIf,
     FormsModule,
     MatFormFieldModule,
     MatInputModule,

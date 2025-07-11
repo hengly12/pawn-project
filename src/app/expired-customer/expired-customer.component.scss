@@ -360,6 +360,15 @@
     cursor: pointer;
   }
 
+  mat-paginator {
+    margin-top: 10px;
+    display: flex;
+    justify-content: flex-end;
+    background-color: #ffffff;
+    border-radius: 8px;
+    align-items: center;
+}
+
   @media print {
     body {
       margin: 0;
@@ -429,6 +438,9 @@
       font-weight: bold;
       visibility: visible !important;
     }
+    mat-paginator {
+    display: none !important;
+  }
   }
   
   //       /* report.component.scss */

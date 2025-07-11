@@ -56,14 +56,6 @@
                 >
                   Today
                 </button>
-                <!-- <button
-                  mat-button
-                  type="button"
-                  (click)="onFilterChange(null, 'yesterday')"
-                  [ngClass]="{ 'active-filter': selectedFilter === 'yesterday' }"
-                >
-                  Yesterday
-                </button> -->
                 <button
                   mat-button
                   type="button"
@@ -157,10 +149,10 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let item of filteredData" (click)="openModal(item)">
+                  <tr *ngFor="let item of paginatedData" (click)="openModal(item)">
                     <td>
                       <span class="click-name">
-                         {{ item.full_name }}</span
+                          {{ item.full_name }}</span
                       >
                     </td>
                     <td>
@@ -224,6 +216,14 @@
                 </tfoot>
               </table>
             </div>
+            <mat-paginator 
+              [length]="filteredData.length"
+              [pageSize]="pageSize"
+              [pageSizeOptions]="pageSizeOptions"
+              (page)="onPageChange($event)"
+              showFirstLastButtons
+            >
+            </mat-paginator>
           </div>
         </div>
         

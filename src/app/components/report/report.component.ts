@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Input, OnInit, OnDestroy, signal, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit, OnDestroy, signal, inject, ViewChild } from '@angular/core';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatGridListModule } from '@angular/material/grid-list';
@@ -26,6 +26,8 @@ import { ReportDetailDialogComponent } from '../report-detail-dialog/report-deta
 import { AlertComponent } from '../../shared/pages/alert/alert.component';
 import { RouterModule } from '@angular/router';
 import { NgxPrintModule } from 'ngx-print';
+import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+
 export const MY_FORMATS = {
   parse: {
     dateInput: 'DD/MM/YYYY',
@@ -78,6 +80,7 @@ interface Customer {
     MatButtonModule,
     RouterModule,
     NgxPrintModule,
+    MatPaginatorModule,
   ],
   templateUrl: './report.component.html',
   styleUrl: './report.component.scss',
@@ -113,6 +116,7 @@ export class ReportComponent implements OnInit, OnDestroy {
   dateRange: FormGroup<{ start: FormControl<Date | null>, end: FormControl<Date | null> }>;
   selectedDate = new FormControl<Date | null | null>(null);
   filteredData: Customer[] = [];
+  paginatedData: Customer[] = [];
   nameFilter = new FormControl('');
   reportTitle = 'របាយការណ៍​';
   reportDescription =
@@ -136,6 +140,13 @@ export class ReportComponent implements OnInit, OnDestroy {
   unreadNotificationCount: number = 0;
   expiredItems: Customer[] = [];
 
+  // Pagination properties
+  pageSize = 10; // Default page size
+  pageSizeOptions: number[] = [5, 10, 20, 50, 100];
+  pageIndex = 0;
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+
   constructor(
     private routes: Router,
     public dialog: MatDialog,
@@ -150,8 +161,6 @@ export class ReportComponent implements OnInit, OnDestroy {
       end: new FormControl<Date | null>(new Date(), Validators.required),
     });
   }
-
-  
 
   isDateMatch(createdAt: any): boolean {
     if (!this.selectedDate.value || !createdAt) {
@@ -181,7 +190,7 @@ export class ReportComponent implements OnInit, OnDestroy {
         this.subscriptions.add(
           (await this.store.getCustomerDemo()).subscribe((doc) => {
             this.data = doc.map(item => ({ ...item, pawnCount: 0 }));
-            this.updateFilteredData();
+            this.updateFilteredData(); // Initial filter and pagination update
             // this.checkExpiredItems();
           })
         );
@@ -230,8 +239,7 @@ export class ReportComponent implements OnInit, OnDestroy {
 
   ngOnChanges(): void { }
 
-  // Filter Customer Data By Date.
-
+  // Filter Customer Data By Date and apply pagination.
   updateFilteredData(): void {
     let filtered: Customer[] = [...this.data];
 
@@ -249,19 +257,6 @@ export class ReportComponent implements OnInit, OnDestroy {
           itemDate.getDate() === todayDay
         );
       });
-    // } else if (this.selectedFilter === 'yesterday') {
-    //   const yesterday = new Date();
-    //   yesterday.setDate(yesterday.getDate() - 1);
-    //   yesterday.setHours(0, 0, 0, 0);
-    //   yesterday.setMinutes(0, 0, 0);
-    //   filtered = filtered.filter((item) => {
-    //     const itemDate = item.created_at ? (item.created_at.toDate ? item.created_at.toDate() : new Date(item.created_at)) : null;
-    //     const yesterdayStart = new Date(yesterday);
-    //     yesterdayStart.setHours(0, 0, 0, 0);
-    //     const yesterdayEnd = new Date(yesterday);
-    //     yesterdayEnd.setHours(23, 59, 59, 999);
-    //     return itemDate && itemDate >= yesterdayStart && itemDate <= yesterdayEnd;
-    //   });
     } else if (this.selectedFilter === 'thisMonth') {
       const startOfMonth = new Date();
       startOfMonth.setDate(1);
@@ -322,20 +317,37 @@ export class ReportComponent implements OnInit, OnDestroy {
       return fullName.includes(nameFilterValue);
     });
 
-    this.filteredData = this.updateUserPawnCounts(filtered);
+    this.filteredData = this.updateUserPawnCounts(filtered); // Update filteredData with counts
     this.calculateTotals();
-    this.cdr.detectChanges();
 
-    this.filteredData = this.filteredData.slice(0, 25);
+    // Reset page index to 0 when filters change
+    this.pageIndex = 0;
+    if (this.paginator) {
+      this.paginator.firstPage();
+    }
+    this.updatePaginatedData(); // Update paginated data based on new filters
+    this.cdr.detectChanges();
+  }
+
+  // Method to update the data displayed on the current page
+  updatePaginatedData(): void {
+    const startIndex = this.pageIndex * this.pageSize;
+    const endIndex = startIndex + this.pageSize;
+    this.paginatedData = this.filteredData.slice(startIndex, endIndex);
+  }
+
+  // Event handler for MatPaginator page changes
+  onPageChange(event: PageEvent): void {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.updatePaginatedData();
   }
 
   onFilterChange(event: any, value: string): void {
     this.selectedFilter = value || 'all';
     this.updateTitle();
-    this.updateFilteredData();
+    this.updateFilteredData(); // This will now also handle pagination reset
   }
-
-// Get Filtered Data by Date.
 
   updateTitle(): void {
     const todayDate = this.datePipe.transform(new Date(), 'dd-MM-yyyy');
@@ -346,19 +358,16 @@ export class ReportComponent implements OnInit, OnDestroy {
 
     switch (this.selectedFilter) {
       case 'all':
-        this.reportTitle = 'របាយការណ៍ -  ទាំងអស់';
+        this.reportTitle = 'របាយការណ៍ -  ទាំងអស់';
         break;
       case 'today':
         this.reportTitle = `របាយការណ៍ - ថ្ងៃ (${todayDate})`;
         break;
-      // case 'yesterday':
-      //   this.reportTitle = `របាយការណ៍ - ម្សិលមិញ (${yesterdayDate})`;
-      //   break;
       case 'thisMonth':
-        this.reportTitle = `របាយការណ៍ -  ខែ (${firstDayOfMonth})`;
+        this.reportTitle = `របាយការណ៍ -  ខែ (${firstDayOfMonth})`;
         break;
       case 'thisYear':
-        this.reportTitle = `របាយការណ៍ -  ឆ្នាំ (${currentYear})`;
+        this.reportTitle = `របាយការណ៍ -  ឆ្នាំ (${currentYear})`;
         break;
       case 'dateRange':
         const startDate = this.dateRange.value.start ? this.datePipe.transform(this.dateRange.value.start, 'dd/MM/yyyy') : '';
@@ -368,20 +377,13 @@ export class ReportComponent implements OnInit, OnDestroy {
           : 'Report - Date Range';
         break;
       default:
-        this.reportTitle = `របាយការណ៍ -  ថ្ងៃ (${todayDate})`;
+        this.reportTitle = `របាយការណ៍ -  ថ្ងៃ (${todayDate})`;
         break;
     }
   }
 
   applyNameFilter(event: any) {
-    const filterValue = (event.target as HTMLInputElement).value.toLowerCase();
-    this.filteredData = this.data.filter(item => {
-      const fullName = item.full_name?.toLowerCase() || '';
-      return fullName.includes(filterValue);
-    });
-    this.calculateTotals();
-    this.filteredData = this.updateUserPawnCounts(this.filteredData);
-    this.cdr.detectChanges();
+    this.updateFilteredData();
   }
 
   applyDateFilter() {
@@ -394,33 +396,15 @@ export class ReportComponent implements OnInit, OnDestroy {
         return;
       }
       this.selectedFilter = 'dateRange';
-      this.filteredData = this.data.filter(item => {
-        const itemDate = item.created_at ? (item.created_at.toDate ? item.created_at.toDate() : new Date(item.created_at)) : null;
-        return itemDate >= startDate && itemDate <= endDate;
-      });
-    }
-    else if (startDate) {
+    } else if (startDate) {
       this.selectedFilter = 'dateRange';
-      this.filteredData = this.data.filter(item => {
-        const itemDate = item.created_at ? (item.created_at.toDate ? item.created_at.toDate() : new Date(item.created_at)) : null;
-        return itemDate >= startDate;
-      });
-    }
-    else if (endDate) {
+    } else if (endDate) {
       this.selectedFilter = 'dateRange';
-      this.filteredData = this.data.filter(item => {
-        const itemDate = item.created_at ? (item.created_at.toDate ? item.created_at.toDate() : new Date(item.created_at)) : null;
-        return itemDate <= endDate;
-      });
-    }
-    else {
+    } else {
       this.selectedFilter = 'today';
-      this.filteredData = this.data;
     }
     this.updateTitle();
-    this.calculateTotals();
-    this.filteredData = this.updateUserPawnCounts(this.filteredData);
-    this.cdr.detectChanges();
+    this.updateFilteredData(); // This will now also handle pagination reset
   }
 
   resetFilters() {
@@ -428,10 +412,8 @@ export class ReportComponent implements OnInit, OnDestroy {
     this.selectedFilter = 'today';
     this.filterControl.setValue('today');
     this.updateTitle();
-    this.updateFilteredData();
+    this.updateFilteredData(); // This will now also handle pagination reset
   }
-
-  // Calculate Total Pawn and Interest Price.
 
   calculateTotals(): void {
     this.totalPawnPrice = this.filteredData.reduce(
@@ -450,8 +432,6 @@ export class ReportComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Update User Pawn Counts.
-
   updateUserPawnCounts(data: Customer[]): Customer[] {
     const counts: { [key: string]: number } = {};
     data.forEach(item => {
@@ -469,8 +449,6 @@ export class ReportComponent implements OnInit, OnDestroy {
   getUserPawnKeyCount(user: string): number {
     return this.userPawnKeyCounts[user] || 0;
   }
-
-  // Print And Dialog.
 
   printReportData() {
     window.print();
@@ -493,30 +471,4 @@ export class ReportComponent implements OnInit, OnDestroy {
       data: { "modal_type": "A" }
     });
   }
-
-  // checkExpiredItems(): void {
-  //   const today = new Date();
-  //   this.expiredItems = this.data.filter(item => {
-  //     const expiredDate = item.date_expired ? (item.date_expired.toDate ? item.date_expired.toDate() : new Date(item.date_expired)) : null;
-  //     return expiredDate && expiredDate < today;
-  //   });
-
-  //   this.unreadNotificationCount = this.expiredItems.length;
-
-  //   if (this.unreadNotificationCount > 0) {
-  //     this.showSnackBar(
-  //       `${this.unreadNotificationCount} item(s) have expired!`,
-  //       'View'
-  //     );
-  //   }
-  // }
-
-  
-  // navigateToReport() {
-  //   this.router.navigate(['home/report']);
-  // }
-
-  // navigateToExpired() {
-  //   this.router.navigate(['home/report/expired-customer']);
-  // }
 }

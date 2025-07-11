@@ -368,6 +368,15 @@ margin-top: -10px;
   cursor: pointer;
 }
 
+mat-paginator {
+    margin-top: 10px;
+    display: flex;
+    justify-content: flex-end;
+    background-color: #ffffff;
+    border-radius: 8px;
+    align-items: center;
+}
+
 @media print {
   body {
     margin: 0;
@@ -436,6 +445,10 @@ margin-top: -10px;
     font-size: 1em;
     font-weight: bold;
     visibility: visible !important;
+  }
+
+ mat-paginator {
+    display: none !important;
   }
 }
 
