@@ -1,4 +1,11 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, OnDestroy, inject, signal } from '@angular/core';
+import {
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  OnInit,
+  OnDestroy,
+  inject,
+  signal,
+} from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
@@ -7,7 +14,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { AlertComponent } from '../../shared/pages/alert/alert.component';
 import { AuthStore } from '../../auth/auth.store';
 import { MatTabsModule } from '@angular/material/tabs';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import {
+  Router,
+  RouterLink,
+  RouterLinkActive,
+  RouterModule,
+} from '@angular/router';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { Subscription, interval, of, switchMap, from } from 'rxjs';
 import { PawnStore } from '../../shared/store/pawn.store';
@@ -39,7 +51,8 @@ interface Customer {
     MatTabsModule,
     // RouterLinkActive,
     MatProgressBarModule,
-    CommonModule
+    CommonModule,
+    RouterModule,
   ],
   templateUrl: './main-header.component.html',
   styleUrl: './main-header.component.scss',
@@ -52,10 +65,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
   expiredItems: Customer[] = [];
   auth = inject(AuthStore);
 
-  constructor(
-    private dialog: MatDialog,
-    private router: Router
-  ) { }
+  constructor(private dialog: MatDialog, private router: Router) {}
 
   ngOnInit(): void {
     this.subscriptions.add(
@@ -65,11 +75,11 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
     );
 
     this.subscriptions.add(
-      from(this.store.getCustomerDemo()).pipe(
-        switchMap(observable => observable || of([]))
-      ).subscribe(data => {
-        // this.checkExpiredItems(data);
-      })
+      from(this.store.getCustomerDemo())
+        .pipe(switchMap((observable) => observable || of([])))
+        .subscribe((data) => {
+          // this.checkExpiredItems(data);
+        })
     );
   }
 
@@ -87,14 +97,14 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
     const dialogRef = this.dialog.open(AlertComponent, {
       data: {
         title: 'ចាកចេញពីគណនី!',
-        description: 'តើអ្នកចង់ចាកចេញពីគណនីទេ?'
+        description: 'តើអ្នកចង់ចាកចេញពីគណនីទេ?',
       },
 
       role: 'dialog',
-      panelClass: 'custom-dialog'
+      panelClass: 'custom-dialog',
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.auth.signOut();
       }
@@ -105,8 +115,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
     this.subscriptions.unsubscribe();
   }
 
-  isActive(path: string): boolean {
-    return this.router.url.startsWith(path);
+  isActive(route: string): boolean {
+    return this.router.url.startsWith(route);
   }
 }
-

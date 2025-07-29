@@ -1,0 +1,40 @@
+<div class="main-wrapper">
+  <form>
+    <div class="dashboard-list-category">
+      <div class="list-category-header">
+        <div>
+          <h2 class="h2-style">បង្កើតទិន្នន័យវត្ថុបញ្ចាំថ្មី</h2>
+          <div class="form-category">
+            <div class="form-group">
+              <label for="categoryName"> ឈ្មោះប្រភេទ: </label>
+              <input
+                type="text"
+                id="categoryName"
+                [(ngModel)]="newCategoryName"
+                name="categoryName"
+                class="category-input"
+                placeholder="ឧទាហរណ៍: ទូរស័ព្ទ, រថយន្ត"
+                required
+              />
+            </div>
+
+            <button
+              (click)="addCategory()"
+              [disabled]="!newCategoryName.trim()"
+              class="add-category-button"
+            >
+              បន្ថែមប្រភេទ
+            </button>
+            <p
+              *ngIf="message"
+              class="message-text"
+              [ngClass]="{ success: isSuccess, error: !isSuccess }"
+            >
+              {{ message }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

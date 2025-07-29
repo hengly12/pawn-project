@@ -173,9 +173,7 @@
                       (click)="openModal(item)"
                     >
                       <td>
-                        <span class="click-name">
-                          {{ item.full_name }}</span
-                        >
+                        <span class="click-name"> {{ item.full_name }}</span>
                       </td>
                       <td>
                         <ng-container
@@ -183,7 +181,9 @@
                         >
                           {{ item.gender.text }}
                         </ng-container>
-                        <ng-template #stringGender>{{ item.gender }}</ng-template>
+                        <ng-template #stringGender>{{
+                          item.gender
+                        }}</ng-template>
                       </td>
                       <td>{{ item.phone_number }}</td>
                       <td>{{ item.address }}</td>
@@ -199,7 +199,8 @@
                       </td>
                       <td>
                         {{
-                          item.price_pawn | currency : "USD" : "symbol" : "1.2-2"
+                          item.price_pawn
+                            | currency : "USD" : "symbol" : "1.2-2"
                         }}
                       </td>
                       <td>

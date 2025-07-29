@@ -1,7 +1,25 @@
 import { arrayUnion, serverTimestamp } from '@angular/fire/firestore';
-import { CurrencyPipe, NgClass, } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, signal, ViewChild, } from '@angular/core';
-import { AbstractControl, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators, } from '@angular/forms';
+import { CurrencyPipe, NgClass } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  signal,
+  ViewChild,
+  computed,
+  OnInit,
+  OnDestroy,
+} from '@angular/core';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { provideNativeDateAdapter } from '@angular/material/core';
@@ -9,9 +27,17 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIcon } from '@angular/material/icon';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { GENDER_DATA, ITEM_DATA, STATUS_OBJ, Weight_Of_Gold } from '../../shared/dummy/config';
+import {
+  GENDER_DATA,
+  ITEM_DATA,
+  STATUS_OBJ,
+  Weight_Of_Gold,
+} from '../../shared/dummy/config';
 import { DataService } from '../../shared/services/data.service';
-import { generateKeywords, toDateKey, } from '../../shared/services/convert.service';
+import {
+  generateKeywords,
+  toDateKey,
+} from '../../shared/services/convert.service';
 import { mapUser } from '../../shared/services/mapping.service';
 import { AuthStore } from '../../auth/auth.store';
 import { PawnStore } from '../../shared/store/pawn.store';
@@ -25,8 +51,13 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AlertComponent } from '../../shared/pages/alert/alert.component';
 import { NgxPrintModule } from 'ngx-print';
 import { MatIconModule } from '@angular/material/icon';
-
-
+import { ICategory } from '../../shared/interfaces/category.interface';
+import {
+  onSnapshot,
+  query,
+  orderBy,
+  Unsubscribe,
+} from '@angular/fire/firestore';
 
 interface GenderOption {
   key: number;
@@ -51,21 +82,26 @@ interface GenderOption {
     MatIconModule,
     MatDialogModule,
     NgxPrintModule,
-
   ],
   providers: [provideNativeDateAdapter(), CurrencyPipe],
   templateUrl: './pawn-form.component.html',
   styleUrl: './pawn-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PawnFormComponent {
+export class PawnFormComponent implements OnInit, OnDestroy {
+  // Re-added OnInit and OnDestroy interfaces
   currentTitle = 'ទម្រង់បញ្ចាំទ្រព្យ';
   originalTitle = 'ទម្រង់បញ្ចាំទ្រព្យ';
   printTitle = 'វិក័យប័ត្របង្កាន់ដៃ';
   weightOfGold = signal<any>(Weight_Of_Gold);
   genders = signal<any>(GENDER_DATA);
   days_countdown: number | null = null;
-  pawn_type = signal<any>(ITEM_DATA);
+  // pawn_type = signal<any>(ITEM_DATA); // Original line, replaced below
+
+  // Re-added category-related signals
+  _categories = signal<ICategory[]>([]);
+  pawn_type = computed(() => this._categories());
+
   seletedCar = signal<boolean>(false);
   seleted = signal<any>(null);
   text = signal<string>('');
@@ -73,7 +109,6 @@ export class PawnFormComponent {
   routeUnSubscribe = signal<any>(Subscription);
   data = signal<any>(null);
   param = signal<any>(null);
-
 
   displayUSD: string = '';
   displayKHR: string = '';
@@ -86,6 +121,8 @@ export class PawnFormComponent {
   image = false;
   dragOver: boolean = false;
   datainfo = signal<any>(null);
+
+  private categoriesUnsubscribe: Unsubscribe | undefined;
 
   @ViewChild('inputFile') inputFile!: ElementRef;
 
@@ -100,100 +137,191 @@ export class PawnFormComponent {
     private storage: FireStorageService,
     private currencyPipe: CurrencyPipe,
     private cdr: ChangeDetectorRef,
-    private router: Router,
+    private router: Router
+  ) {
 
-  ) { }
+    this.pawnForm = new FormGroup({
+      full_name: new FormControl<any>(null, [Validators.required]),
+      gender: new FormControl<GenderOption | null>(null, Validators.required),
+      phone_number: new FormControl<number | null>(null, [
+        Validators.required,
+        Validators.pattern(/^\d{6,10}$/),
+      ]),
+      id_card: new FormControl<number | null>(null, [
+        Validators.required,
+        Validators.pattern(/^\d{9}$/),
+      ]),
+      address: new FormControl<any>(null, [Validators.required]),
+      pawn_type: new FormControl<any>(null, [Validators.required]),
+      description: new FormControl(''),
+      created_at: new FormControl<Date | null>(null),
+      date_expired: new FormControl<Date | null>(null, [Validators.required]),
+
+      photo: new FormControl<string | null>(null),
+      type_phone: new FormControl<any>(null),
+      type_car: new FormControl<any>(null),
+      type_phone_id: new FormControl<any>(null),
+      type_motor: new FormControl<any>(null),
+      type_jewelry_name: new FormControl<any>(null),
+      others: new FormControl<any>(null),
+      plate_number: new FormControl<any>(null),
+      brand_name: new FormControl<any>(null),
+      gold_weight: new FormControl<any>(null),
+      price_pawn: new FormControl<number | null>(null, [
+        Validators.required,
+        Validators.pattern('^[0-9]*$'),
+      ]),
+      price_interest: new FormControl<number | null>(null, [
+        Validators.required,
+        Validators.pattern('^[0-9]*$'),
+      ]),
+
+      file: new FormControl<any>(null),
+    });
+  }
+
+  async formatCurrencyPricePawn(event: any) {
+    let value = event.target.value;
+
+    // Check if the value is already formatted (contains 'USD' and 'KHR')
+    if (!value.includes('USD') && !value.includes('KHR')) {
+      value = value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+
+      if (value) {
+        const numericValue = parseFloat(value);
+
+        this.pawnForm.get('price_pawn')?.setValue(numericValue, {
+          emitEvent: false,
+        });
+
+        const formattedUSD = new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD',
+        }).format(numericValue);
+
+        const exchangeRate = await this.getKHRExchangeRate();
+        const khrValue = numericValue * exchangeRate;
+        const formattedKHR = new Intl.NumberFormat('km-KH', {
+          style: 'currency',
+          currency: 'KHR',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0,
+        }).format(khrValue);
+
+        event.target.value = `${formattedUSD} / ${formattedKHR}`;
+        this.displayUSD = formattedUSD;
+        this.displayKHR = formattedKHR;
+      } else {
+        this.pawnForm.get('price_pawn')?.setValue(0, { emitEvent: false });
+        event.target.value = '';
+        this.displayUSD = '';
+        this.displayKHR = '';
+      }
+    }
+  }
+
+  async formatCurrencyPriceInterest(event: any) {
+    let value = event.target.value;
+
+    // Check if the value is already formatted (contains 'USD' and 'KHR')
+    if (!value.includes('USD') && !value.includes('KHR')) {
+      value = value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+      if (value) {
+        const numericValue = parseFloat(value);
+        this.pawnForm.get('price_interest')?.setValue(numericValue, {
+          emitEvent: false,
+        });
+
+        const formattedUSD = new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD',
+        }).format(numericValue);
+
+        const exchangeRate = await this.getKHRExchangeRate();
+        const khrValue = numericValue * exchangeRate;
+        const formattedKHR = new Intl.NumberFormat('km-KH', {
+          style: 'currency',
+          currency: 'KHR',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0,
+        }).format(khrValue);
+
+        event.target.value = `${formattedUSD} / ${formattedKHR}`;
+        this.displayUSD = formattedUSD;
+        this.displayKHR = formattedKHR;
+      } else {
+        this.pawnForm.get('price_interest')?.setValue(0, { emitEvent: false });
+        event.target.value = '';
+        this.displayUSD = '';
+        this.displayKHR = '';
+      }
+    }
+  }
 
   async getKHRExchangeRate(): Promise<number> {
     const exchangeRate: number = 4000; // Define the exchange rate
     return exchangeRate;
   }
 
-
   readonly range = new FormGroup({
     start: new FormControl<Date | null>(null),
     end: new FormControl<Date | null>(null),
   });
 
-  pawnForm = new FormGroup({
-    full_name: new FormControl<any>(null, [Validators.required]),
-    gender: new FormControl<GenderOption | null>(null, Validators.required),
-    phone_number: new FormControl<number | null>(null, [
-      Validators.required,
-      Validators.pattern(/^\d{6,10}$/),
-    ]),
-    id_card: new FormControl<number | null>(null, [
-      Validators.required,
-      Validators.pattern(/^\d{9}$/),
-    ]),
-    address: new FormControl<any>(null, [Validators.required]),
-    pawn_type: new FormControl<any>(null, [Validators.required]),
-    description: new FormControl(''),
-    created_at: new FormControl<Date | null>(null,),
-    date_expired: new FormControl<Date | null>(null, [Validators.required]),
-
-    photo: new FormControl<string | null>(null),
-    type_phone: new FormControl<any>(null),
-    type_car: new FormControl<any>(null),
-    type_phone_id: new FormControl<any>(null,),
-    type_motor: new FormControl<any>(null),
-    type_jewelry_name: new FormControl<any>(null),
-    others: new FormControl<any>(null),
-    plate_number: new FormControl<any>(null,),
-    brand_name: new FormControl<any>(null,),
-    gold_weight: new FormControl<any>(null,),
-    price_pawn: new FormControl<number | null>(null, [
-      Validators.required,
-      Validators.pattern('^[0-9]*$'),
-    ]),
-    price_interest: new FormControl<number | null>(null, [
-      Validators.required,
-      Validators.pattern('^[0-9]*$'),
-    ]),
-
-    file: new FormControl<any>(null),
-  });
+  pawnForm: FormGroup; // Declared here to match constructor initialization
 
   updateFormValidators() {
-    const selectedKey = this.seleted()?.key;
+    const selectedCategory = this.pawnForm.get('pawn_type')?.value as ICategory;
+    const selectedKey = selectedCategory
+      ? this.getCategoryKey(selectedCategory.name)
+      : null;
+
     const typePhoneIdControl = this.pawnForm.get('type_phone_id');
     const plateNumberControl = this.pawnForm.get('plate_number');
     const brandNameControl = this.pawnForm.get('brand_name');
+    const typeJewelryNameControl = this.pawnForm.get('type_jewelry_name');
     const goldWeightControl = this.pawnForm.get('gold_weight');
+    const othersControl = this.pawnForm.get('others');
 
-    if (selectedKey === 1) {
-      typePhoneIdControl?.setValidators(Validators.required);
-      brandNameControl?.setValidators(Validators.required);
-    } else {
-      typePhoneIdControl?.clearValidators();
-      if (selectedKey !== 0 && selectedKey !== 2) {
-        brandNameControl?.clearValidators();
-      }
+    // Clear all conditional validators first
+    typePhoneIdControl?.clearValidators();
+    plateNumberControl?.clearValidators();
+    brandNameControl?.clearValidators();
+    typeJewelryNameControl?.clearValidators();
+    goldWeightControl?.clearValidators();
+    othersControl?.clearValidators();
+
+    // Set validators based on selected category
+    switch (selectedKey) {
+      case 0: // Car
+      case 2: // Motor
+        plateNumberControl?.setValidators(Validators.required);
+        brandNameControl?.setValidators(Validators.required);
+        break;
+      case 1: // Phone
+        typePhoneIdControl?.setValidators(Validators.required);
+        brandNameControl?.setValidators(Validators.required);
+        break;
+      case 3: // Jewelry
+        typeJewelryNameControl?.setValidators(Validators.required);
+        goldWeightControl?.setValidators(Validators.required);
+        break;
+      case 4: // Others
+        othersControl?.setValidators(Validators.required);
+        break;
     }
 
-    if (selectedKey === 0 || selectedKey === 2) {
-      plateNumberControl?.setValidators(Validators.required);
-      brandNameControl?.setValidators(Validators.required);
-    } else {
-      plateNumberControl?.clearValidators();
-      if (selectedKey !== 1) {
-        brandNameControl?.clearValidators();
-      }
-    }
-
-    if (selectedKey === 3) {
-      goldWeightControl?.setValidators(Validators.required);
-    } else {
-      goldWeightControl?.clearValidators();
-    }
-
+    // Update validity for all controls
     typePhoneIdControl?.updateValueAndValidity();
     plateNumberControl?.updateValueAndValidity();
     brandNameControl?.updateValueAndValidity();
+    typeJewelryNameControl?.updateValueAndValidity();
     goldWeightControl?.updateValueAndValidity();
+    othersControl?.updateValueAndValidity();
   }
 
   ngOnInit() {
+    this.listenForCategories();
     this.routeUnSubscribe.set(
       this.route.params.subscribe(async (param) => {
         let paramKey = param['id'];
@@ -201,19 +329,28 @@ export class PawnFormComponent {
         const getData = await this.store.getCustomer(paramKey);
 
         const getDatainFoCusotmer = await this.store.getCustomerInFo(paramKey);
-        this.data.set(getData)
+        this.data.set(getData);
         this.datainfo.set(getDatainFoCusotmer);
-        this.checkDisableForm(paramKey);
+        this.checkDisableForm(paramKey); // This is where it's called
         if (getData && getDatainFoCusotmer) {
-          this.selectItem(this.data()?.pawn_type);
+
+          // Find the category object based on its name from fetched categories
+          const pawnTypeCategory = this._categories().find(
+            (cat) => cat.name === getData?.pawn_type?.name
+          );
+          if (pawnTypeCategory) {
+            this.selectItem(pawnTypeCategory); // Use the full category object
+          }
+
           this.pawnForm.patchValue({
             full_name: getData?.full_name || getDatainFoCusotmer?.full_name,
-            phone_number: getData?.phone_number || getDatainFoCusotmer?.phone_number,
+            phone_number:
+              getData?.phone_number || getDatainFoCusotmer?.phone_number,
             gender: getData?.gender || getDatainFoCusotmer?.gender,
             id_card: getData?.id_card || getDatainFoCusotmer?.id_card,
             address: getData?.address || getDatainFoCusotmer?.address,
 
-            pawn_type: getData?.pawn_type,
+            pawn_type: pawnTypeCategory, // Patch with the full category object
 
             type_phone: getData?.type_phone,
             type_phone_id: getData?.type_phone_id,
@@ -233,16 +370,17 @@ export class PawnFormComponent {
           });
         }
         if (this.data()?.photo) {
-          const currentValidators = this.pawnForm.controls.file.validator
-            ? this.pawnForm.controls.file.validator({} as AbstractControl)?.[
-            'validatorFn'
-            ] || []
+          
+          const currentValidators = this.pawnForm.controls['file'].validator
+            ? this.pawnForm.controls['file'].validator({} as AbstractControl)?.[
+                'validatorFn'
+              ] || []
             : [];
           const filteredValidators = currentValidators.filter(
             (v: any) => v !== Validators.required
           );
-          this.pawnForm.controls.file.setValidators(filteredValidators);
-          this.pawnForm.controls.file.updateValueAndValidity();
+          this.pawnForm.controls['file'].setValidators(filteredValidators);
+          this.pawnForm.controls['file'].updateValueAndValidity();
         }
 
         this.preview = this.data()?.photo?.downloadUrl;
@@ -250,330 +388,90 @@ export class PawnFormComponent {
         this.upload = !this.image;
       })
     );
-  }
-
-
-  calculateDays() {
-    const date_expired = this.pawnForm.get('date_expired')?.value;
-
-    if (date_expired) {
-      const date_expiredModified = new Date(date_expired);
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
-      if (isNaN(date_expiredModified.getTime())) {
-        this.days_countdown = null;
-        console.error('Invalid date provided.');
-        return;
-      }
-
-      const Time = date_expiredModified.getTime() - today.getTime();
-      this.days_countdown = Math.floor(Time / (1000 * 3600 * 24));
-    } else {
-      this.days_countdown = null;
-    }
-  }
-
-  checkDisableForm(param: any) {
-    if (param == 'na') {
-      this.pawnForm.get('full_name')?.enable();
-      this.pawnForm.get('phone_number')?.enable();
-      this.pawnForm.get('gender')?.enable();
-      this.pawnForm.get('id_card')?.enable();
-      this.pawnForm.get('address')?.enable();
-      this.pawnForm.get('pawn_type')?.enable();
-      this.pawnForm.get('type_phone')?.enable();
-      this.pawnForm.get('type_phone_id')?.enable();
-      this.pawnForm.get('type_car')?.enable();
-      this.pawnForm.get('type_motor')?.enable();
-      this.pawnForm.get('type_jewelry_name')?.enable();
-      this.pawnForm.get('gold_weight')?.enable();
-      this.pawnForm.get('others')?.enable();
-      this.pawnForm.get('plate_number')?.enable();
-      this.pawnForm.get('brand_name')?.enable();
-    } else if (this.datainfo()?.pawnKey) {
-      this.pawnForm.get('pawn_type')?.enable();
-      this.pawnForm.get('type_phone')?.enable();
-      this.pawnForm.get('type_phone_id')?.enable();
-      this.pawnForm.get('type_car')?.enable();
-      this.pawnForm.get('type_motor')?.enable();
-      this.pawnForm.get('type_jewelry_name')?.enable();
-      this.pawnForm.get('gold_weight')?.enable();
-      this.pawnForm.get('others')?.enable();
-      this.pawnForm.get('plate_number')?.enable();
-      this.pawnForm.get('brand_name')?.enable();
-    } else {
-      this.pawnForm.get('full_name')?.disable();
-      this.pawnForm.get('phone_number')?.disable();
-      this.pawnForm.get('gender')?.disable();
-      this.pawnForm.get('id_card')?.disable();
-      this.pawnForm.get('address')?.disable();
-      this.pawnForm.get('pawn_type')?.disable();
-      this.pawnForm.get('type_phone')?.disable();
-      this.pawnForm.get('type_phone_id')?.disable();
-      this.pawnForm.get('type_car')?.disable();
-      this.pawnForm.get('type_motor')?.disable();
-      this.pawnForm.get('type_jewelry_name')?.disable();
-      this.pawnForm.get('gold_weight')?.disable();
-      this.pawnForm.get('others')?.disable();
-      this.pawnForm.get('plate_number')?.disable();
-      this.pawnForm.get('brand_name')?.disable();
-    }
-  }
-
-  limitPhoneNumber(event: any) {
-    let input = event.target.value.replace(/\D/g, '');
-    if (input.length > 10) {
-      input = input.substring(0, 10);
-    }
-    event.target.value = input;
-    this.pawnForm.controls['phone_number'].setValue(input);
-  }
-
-  limitIdCardNumber(event: any) {
-    let input = event.target.value.replace(/\D/g, '');
-    if (input.length > 9) {
-      input = input.substring(0, 9);
-    }
-    event.target.value = input;
-    this.pawnForm.controls['id_card'].setValue(input);
-  }
-
-
-  // formatCurrencyPricePawn(event: any) {
-  //  let value = event.target.value;
-  //  value = value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
-
-  //  if (value) {
-  //    const numericValue = parseFloat(value);
-
-  //    const formattedValue = this.currencyPipe.transform(numericValue, 'USD');
-  //    if (formattedValue) {
-  //      this.pawnForm.get('price_pawn')?.setValue(numericValue, {
-  //        emitEvent: false,
-  //      });
-
-  //      event.target.value = formattedValue;
-  //    }
-  //  } else {
-  //    this.pawnForm.get('price_pawn')?.setValue(0, { emitEvent: false });
-  //  }
-  // }
-
-  // formatCurrencyPriceInterest(event: any) {
-  //  let value = event.target.value;
-  //  value = value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
-
-  //  if (value) {
-  //    const numericValue = parseFloat(value);
-
-  //    const formattedValue = this.currencyPipe.transform(numericValue, 'USD');
-  //    if (formattedValue) {
-  //      this.pawnForm.get('price_interest')?.setValue(numericValue, {
-  //        emitEvent: false,
-  //      });
-
-  //      event.target.value = formattedValue;
-  //    }
-  //  } else {
-  //    this.pawnForm.get('price_interest')?.setValue(0, { emitEvent: false });
-  //  }
-  // }
-
-  async formatCurrencyPricePawn(event: any) {
-  let value = event.target.value;
-
-  // Check if the value is already formatted (contains 'USD' and 'KHR')
-  if (!value.includes('USD') && !value.includes('KHR')) {
-    value = value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
-
-    if (value) {
-      const numericValue = parseFloat(value);
-
-      this.pawnForm.get('price_pawn')?.setValue(numericValue, {
-        emitEvent: false,
+ 
+    this.pawnForm
+      .get('pawn_type')
+      ?.valueChanges.subscribe((selectedCategory) => {
+        this.seleted.set(
+          selectedCategory
+            ? { key: this.getCategoryKey(selectedCategory.name) }
+            : null
+        );
+        this.updateFormValidators();
       });
+  }
 
-      const formattedUSD = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-      }).format(numericValue);
-
-      const exchangeRate = await this.getKHRExchangeRate();
-      const khrValue = numericValue * exchangeRate;
-      const formattedKHR = new Intl.NumberFormat('km-KH', {
-        style: 'currency',
-        currency: 'KHR',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      }).format(khrValue);
-
-      event.target.value = `${formattedUSD} / ${formattedKHR}`;
-      this.displayUSD = formattedUSD;
-      this.displayKHR = formattedKHR;
-    } else {
-      this.pawnForm.get('price_pawn')?.setValue(0, { emitEvent: false });
-      event.target.value = '';
-      this.displayUSD = '';
-      this.displayKHR = '';
+  ngOnDestroy(): void {
+    if (this.categoriesUnsubscribe) {
+      this.categoriesUnsubscribe(); // Unsubscribe from categories listener
     }
-  }
-}
-
-async formatCurrencyPriceInterest(event: any) {
-  let value = event.target.value;
-
-  // Check if the value is already formatted (contains 'USD' and 'KHR')
-  if (!value.includes('USD') && !value.includes('KHR')) {
-    value = value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
-    if (value) {
-      const numericValue = parseFloat(value);
-      this.pawnForm.get('price_interest')?.setValue(numericValue, {
-        emitEvent: false,
-      });
-
-      const formattedUSD = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-      }).format(numericValue);
-
-      const exchangeRate = await this.getKHRExchangeRate();
-      const khrValue = numericValue * exchangeRate;
-      const formattedKHR = new Intl.NumberFormat('km-KH', {
-        style: 'currency',
-        currency: 'KHR',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      }).format(khrValue);
-
-      event.target.value = `${formattedUSD} / ${formattedKHR}`;
-      this.displayUSD = formattedUSD;
-      this.displayKHR = formattedKHR;
-    } else {
-      this.pawnForm.get('price_interest')?.setValue(0, { emitEvent: false });
-      event.target.value = '';
-      this.displayUSD = '';
-      this.displayKHR = '';
-    }
-  }
-}
-
-getFormattedPricePawn(): string | null {
-  const value = this.pawnForm.get('price_pawn')?.value;
-  return value != null && value !== undefined ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(value)) : null;
-}
-
-getFormattedPriceInterest(): string | null {
-  const value = this.pawnForm.get('price_interest')?.value;
-  return value != null && value !== undefined ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(value)) : null;
-}
-
-  onFileDrop(event: any): void {
-    event.preventDefSault();
-
-    this.selectedFiles = event?.dataTransfer?.files;
-    this.selectFile({ target: { files: this.selectedFiles } });
-    this.dragOver = false;
+    // this.routeUnSubscribe().unsubscribe();
   }
 
-  onDragOver(event: any): void {
-    event.preventDefault();
-    this.dragOver = event;
-  }
+  listenForCategories() {
+    const q = query(this.ds.categoryRef(), orderBy('name'));
 
-  onDragLeave(event: any): void {
-    event.preventDefault();
-    this.dragOver = false;
-  }
-
-  closeImage() {
-    this.image = false;
-    this.preview = '';
-    this.selectedFiles = null;
-    this.upload = true;
-  }
-
-  selectFile(event: any): void {
-    this.message = '';
-    this.preview = '';
-    this.progress = 0;
-    this.selectedFiles = event?.target?.files;
-
-    if (this.selectedFiles) {
-      const file: File | null = this.selectedFiles[0];
-
-      if (file) {
-        this.preview = '';
-        this.currentFile = file;
-
-        const reader = new FileReader();
-
-        reader.onload = (e: any) => {
-          this.preview = e.target.result;
-          if (this.preview != '') {
-            this.upload = false;
-            this.image = true;
-          }
-          this.cdr.detectChanges();
-        };
-
-        reader.readAsDataURL(this.currentFile);
-        this.pawnForm.get('file')?.setValue(file);
+    this.categoriesUnsubscribe = onSnapshot(
+      q,
+      (querySnapshot) => {
+        const categories: ICategory[] = [];
+        querySnapshot.forEach((doc) => {
+          categories.push({ id: doc.id, ...(doc.data() as ICategory) });
+        });
+        this._categories.set(categories);
+        console.log('Categories loaded for pawn form:', this._categories());
+        this.cdr.detectChanges();
+      },
+      (error) => {
+        console.error('Error fetching categories for pawn form:', error);
       }
+    );
+  }
+
+
+  private getCategoryKey(name: string): number | null {
+    switch (name.toLowerCase()) {
+      case 'car':
+        return 0; // Assuming 0 for car
+      case 'phone':
+        return 1; // Assuming 1 for phones
+      case 'motor':
+        return 2; // Assuming 2 for motor
+      case 'jewelry':
+        return 3; // Assuming 3 for jewelry
+      case 'others':
+        return 4; // Assuming 4 for others
+      default:
+        return null;
     }
   }
 
-  imagePreview: string[] = [];
-
-  onImageUpload(event: any) {
-    const files = event.target.files;
-    if (files && files.length) {
-      for (let file of files) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          this.imagePreview.push(reader.result as string);
-        };
-        reader.readAsDataURL(file);
-      }
-    }
+ 
+  displayItem(category: ICategory): string {
+ 
+    return category ? category.name : ''; // Access .name property
   }
 
-  selectItem(item: any) {
-    if (item) {
-      this.seleted.set(item);
-      const weightControl = this.pawnForm.get('gold_weight');
-      const typePhoneIdControl = this.pawnForm.get('type_phone_id');
-
-      if (item.key === 3) {
-        weightControl?.setValidators(Validators.required);
-        typePhoneIdControl?.clearValidators();
-      } else if (item.key === 1) {
-        typePhoneIdControl?.setValidators(Validators.required);
-        weightControl?.clearValidators();
-      } else {
-        weightControl?.clearValidators();
-        typePhoneIdControl?.clearValidators();
-      }
-
-      weightControl?.updateValueAndValidity();
-      typePhoneIdControl?.updateValueAndValidity();
-    }
+  // Method called when an item is selected from the autocomplete
+  selectItem(category: ICategory) {
+    
+    // Changed parameter type to ICategory
+    this.seleted.set({ key: this.getCategoryKey(category.name) });
+  
   }
 
   displayGender = (item: any) => {
     return item?.text;
   };
 
-  displayItem = (item: any) => {
+  displayWeightOfGold = (item: any) => {
     return item?.text;
   };
 
-  displayWeightOfGold = (item: any) => {
-    return item?.text;
-  }
-
   clearPreviews() {
-    this.imagePreview = [];
+    // Since `imagePreview` was not declared, I'm commenting this out to avoid a new error.
+    // If you need it, please declare `imagePreview: any[] = [];` at the top of the class.
+    // this.imagePreview = [];
   }
 
   clearForm() {
@@ -596,7 +494,7 @@ getFormattedPriceInterest(): string | null {
         this.store
           .deleteCustomer(data?.key)
           // .then(() => {
-          //  this.router.navigate(['home/active/listing']);
+          //   this.router.navigate(['home/active/listing']);
           // })
           .catch((error) => {
             console.error('លុបទិន្នន័យបានបរាជ័យ:', error);
@@ -663,17 +561,104 @@ getFormattedPriceInterest(): string | null {
 
   updatePawnData(updatedData: any): void {
     console.log('Updating pawn data:', updatedData);
-    
   }
 
-  PrinForm() {
-    window.print();
+  limitPhoneNumber(event: any) {
+    let input = event.target.value.replace(/\D/g, '');
+    if (input.length > 10) {
+      input = input.substring(0, 10);
+    }
+    event.target.value = input;
+    this.pawnForm.controls['phone_number'].setValue(input);
   }
-  
+
+  limitIdCardNumber(event: any) {
+    let input = event.target.value.replace(/\D/g, '');
+    if (input.length > 9) {
+      input = input.substring(0, 9);
+    }
+    event.target.value = input;
+    this.pawnForm.controls['id_card'].setValue(input);
+  }
+
+  onFileDrop(event: DragEvent) {
+    event.preventDefault();
+    this.dragOver = false;
+    const files = event.dataTransfer?.files;
+    if (files && files.length > 0) {
+      this.selectedFiles = files;
+      this.previewFile(files[0]);
+    }
+  }
+
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+    this.dragOver = true;
+  }
+
+  onDragLeave(event: DragEvent) {
+    event.preventDefault();
+    this.dragOver = false;
+  }
+
+  selectFile(event: any): void {
+    this.selectedFiles = event.target.files;
+    if (this.selectedFiles && this.selectedFiles.length > 0) {
+      this.previewFile(this.selectedFiles[0]);
+    }
+  }
+
+  previewFile(file: File): void {
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      this.preview = e.target.result;
+      this.image = true;
+      this.upload = false;
+      this.cdr.detectChanges();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  closeImage() {
+    this.preview = '';
+    this.image = false;
+    this.upload = true;
+    this.selectedFiles = null;
+    this.inputFile.nativeElement.value = '';
+    this.cdr.detectChanges();
+  }
+
+  PrintForm() {
+    // This is the function called printForm in your HTML
+    this.currentTitle = this.printTitle;
+
+    setTimeout(() => {
+      window.print();
+
+      setTimeout(() => {
+        this.currentTitle = this.originalTitle;
+      }, 500);
+    }, 100);
+  }
+
+  checkDisableForm(paramKey: string): void {
+    console.log('checkDisableForm called with paramKey:', paramKey);
+
+    // Example logic: If paramKey is not 'na' (meaning it's an existing record), disable the form.
+    // You can customize this logic based on your application's requirements.
+
+    if (paramKey !== 'na') {
+      this.pawnForm.disable(); 
+
+    } else {
+      this.pawnForm.enable();
+    }
+  }
+
   async onSubmit() {
     if (this.pawnForm.invalid) {
       alert('សូមបញ្ចូលព័ត៍មាន');
-      return
+      return;
     }
 
     this.loading.set(true);
@@ -696,8 +681,8 @@ getFormattedPriceInterest(): string | null {
 
       pawn_type,
       type_phone,
-      type_phone_id,
       type_car,
+      type_phone_id,
       type_motor,
       type_jewelry_name,
       gold_weight,
@@ -710,7 +695,6 @@ getFormattedPriceInterest(): string | null {
       description,
       created_at,
       date_expired,
-
     } = this.pawnForm.getRawValue();
     const toDay = new Date();
     let key = this.ds.createKey();
@@ -753,7 +737,7 @@ getFormattedPriceInterest(): string | null {
       id_card: id_card,
       address: address,
 
-      pawn_type: pawn_type,
+      pawn_type: pawn_type, // This will now be an ICategory object
       price_pawn: price_pawn,
       price_interest: price_interest,
       description: description,
@@ -792,9 +776,8 @@ getFormattedPriceInterest(): string | null {
       updated_at: serverTimestamp(),
       updated_by: mapUser(this.auth?.profile),
 
-      pawnKey: arrayUnion(data?.key)
-
-    }
+      pawnKey: arrayUnion(data?.key),
+    };
     this.router.navigate(['home/active/listing']);
 
     // console.log(data, 'data');
@@ -839,19 +822,5 @@ getFormattedPriceInterest(): string | null {
         this.loading.set(false);
       }
     }
-
-  }
-
-  printForm() {
-    this.currentTitle = this.printTitle;
-
-    setTimeout(() => {
-      window.print();
-
-      setTimeout(() => {
-        this.currentTitle = this.originalTitle;
-      }, 500);
-    }, 100);
   }
 }
-

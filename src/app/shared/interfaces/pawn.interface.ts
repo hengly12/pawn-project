@@ -40,6 +40,11 @@ export interface IPAWNSHOP {
     price_interest?: any;
     price_pawn?: any;
     
-    
 
 }
+// export interface ICategory {
+//   id?: string;
+//   name: string;
+//   description?: string;
+//   color?: string;
+// }

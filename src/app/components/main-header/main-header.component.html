@@ -1,7 +1,11 @@
 <header class="header">
   <div class="header-title">
     <div>
-      <img class="logo-header" src="assets/images/fast-cash-image.jpg" alt="Profile Image" />
+      <img
+        class="logo-header"
+        src="assets/images/fast-cash-image.jpg"
+        alt="Profile Image"
+      />
     </div>
     <h3>ហាងបញ្ចាំ Fast-Cash</h3>
   </div>
@@ -10,7 +14,10 @@
       <a
         routerLink="/home"
         [ngClass]="{
-          active: isActive('/home') && !isActive('/home/report')
+          active:
+            isActive('/home') &&
+            !isActive('/home/report') &&
+            !isActive('/home/category')
         }"
       >
         <mat-icon>import_contacts</mat-icon>
@@ -18,7 +25,7 @@
         <div class="line"></div>
       </a>
     </li>
-  
+
     <li>
       <a
         routerLink="/home/report/data-customer"
@@ -29,21 +36,41 @@
         <div class="line"></div>
       </a>
     </li>
+
+    <li>
+      <a
+        routerLink="/home/category/list-category"
+        [ngClass]="{ active: isActive('/home/category') }"
+      >
+        <mat-icon>queue_play_next</mat-icon>
+        បង្កើតទិន្នន័យវត្ថុបញ្ចាំ
+        <div class="line"></div>
+      </a>
+    </li>
   </div>
-  
-  
+
   <div>
     <div class="notification-badge">
       <!-- <mat-icon matBadge="{{ unreadNotificationCount() }}">notifications_active</mat-icon> -->
-      <div class="profile-img" [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
-        <img [src]="auth.profile?.photoFile || 'assets/images/Admin-Pic.jpg'" alt="Profile Icon" />
+      <div
+        class="profile-img"
+        [matMenuTriggerFor]="menu"
+        aria-label="Example icon-button with a menu"
+      >
+        <img
+          [src]="auth.profile?.photoFile || 'assets/images/Admin-Pic.jpg'"
+          alt="Profile Icon"
+        />
       </div>
     </div>
     <mat-menu #menu="matMenu">
       <div class="profile-container">
         <div class="profile-content">
           <div class="profile-image">
-            <img [src]="auth.profile?.photoFile || 'assets/images/Admin-Pic.jpg'" alt="Profile Icon" />
+            <img
+              [src]="auth.profile?.photoFile || 'assets/images/Admin-Pic.jpg'"
+              alt="Profile Icon"
+            />
           </div>
           <div class="profile-details">
             <div class="profile-name">{{ auth.profile?.displayName }}</div>

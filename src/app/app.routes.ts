@@ -8,7 +8,7 @@ import { LayoutWrapperComponent } from './layout/layout-wrapper/layout-wrapper.c
 import { ListingComponent } from './layout/listing/listing.component';
 import { PawnFormComponent } from './components/pawn-form/pawn-form.component';
 import { ReportRouterComponent } from './components/report-router/report-router.component';
-import { ExpiredCustomerComponent } from './expired-customer/expired-customer.component';
+import { ExpiredCustomerComponent } from './components/expired-customer/expired-customer.component';
 import { ReportComponent } from './components/report/report.component';
 
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(['auth']);
