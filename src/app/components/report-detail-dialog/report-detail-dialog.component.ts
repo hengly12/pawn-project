@@ -74,11 +74,20 @@ export class ReportDetailDialogComponent {
 
 
   getPawnTypeText(pawnType: any): string {
-    if (pawnType && pawnType.text) {
-      return pawnType.text;
-    }
+  if (!pawnType) {
     return '';
   }
+
+  if (pawnType.name) {
+    return pawnType.name;
+  }
+
+  if (pawnType.text) {
+    return pawnType.text;
+  }
+
+  return '';
+}
 
   onFileDrop(event: any): void {
     event.preventDefault();

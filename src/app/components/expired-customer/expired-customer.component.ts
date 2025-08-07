@@ -7,6 +7,7 @@ import {
   signal,
   inject,
   ViewChild,
+  computed,
 } from '@angular/core';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
@@ -45,6 +46,7 @@ import {
   PageEvent,
   MatPaginatorModule,
 } from '@angular/material/paginator';
+import { ICategory } from '../../shared/interfaces/category.interface';
 
 export const MY_FORMATS = {
   parse: {
@@ -109,8 +111,9 @@ export class ExpiredCustomerComponent implements OnInit, OnDestroy {
   displayKHR = '';
   genders = signal<any>(GENDER_DATA);
   days_countdown: number | null = null;
-  pawn_type = signal<any>(ITEM_DATA);
   router = inject(Router);
+  _categories = signal<ICategory[]>([]);
+  pawn_type = computed(() => this._categories());
 
   @Input() data: Customer[] = [];
   @Input() displayedColumns: string[] = [
@@ -417,7 +420,7 @@ export class ExpiredCustomerComponent implements OnInit, OnDestroy {
 
     switch (this.selectedFilter) {
       case 'all':
-        this.reportTitle = 'របាយការណ៍ -  ទាំងអស់';
+        this.reportTitle = 'របាយការណ៍ - ទាំងអស់';
         break;
       case 'today':
         this.reportTitle = `របាយការណ៍ - ថ្ងៃ (${todayDate})`;
@@ -426,10 +429,10 @@ export class ExpiredCustomerComponent implements OnInit, OnDestroy {
       //   this.reportTitle = `របាយការណ៍ - ម្សិលមិញ (${yesterdayDate})`;
       //   break;
       case 'thisMonth':
-        this.reportTitle = `របាយការណ៍ -  ខែ (${firstDayOfMonth})`;
+        this.reportTitle = `របាយការណ៍ - ខែ (${firstDayOfMonth})`;
         break;
       case 'thisYear':
-        this.reportTitle = `របាយការណ៍ -  ឆ្នាំ (${currentYear})`;
+        this.reportTitle = `របាយការណ៍ - ឆ្នាំ (${currentYear})`;
         break;
       case 'dateRange':
         const startDate = this.dateRange.value.start
@@ -444,7 +447,7 @@ export class ExpiredCustomerComponent implements OnInit, OnDestroy {
             : 'Report - Date Range';
         break;
       default:
-        this.reportTitle = `របាយការណ៍ -  ថ្ងៃ (${todayDate})`;
+        this.reportTitle = `របាយការណ៍ - ថ្ងៃ (${todayDate})`;
         break;
     }
   }

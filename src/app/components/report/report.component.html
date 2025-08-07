@@ -169,7 +169,8 @@
                       <ng-container
                         *ngIf="item.pawn_type && typeof item.pawn_type === 'object' && item.pawn_type !== null; else stringPawnType"
                       >
-                        {{ item.pawn_type.text }}
+                        {{ item.pawn_type.name}}
+                        {{ item.pawn_type.text}}
                       </ng-container>
                       <ng-template #stringPawnType>{{
                         item.pawn_type

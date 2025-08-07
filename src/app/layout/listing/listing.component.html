@@ -29,8 +29,7 @@
         <button
           class="btn-add-more"
           mat-flat-button
-          (click)="clearFormInputs()"
-          [routerLink]="['/home/' + param() + '/listing/create-form/na']"
+          (click)="onCreateNew()"
         >
           បង្កើតថ្មី <mat-icon color="primary">add_box</mat-icon>
         </button>
@@ -40,10 +39,8 @@
         @for (tab of tabs(); track tab?.key) {
         <a
           mat-tab-link
-          [routerLink]="['/home/' + tab?.key + '/listing']"
-          [active]="rla.isActive"
-          #rla="routerLinkActive"
-          routerLinkActive="active"
+          (click)="onTabSelect(tab?.key)"
+          [class.active]="param() === tab?.key"
           class="mat-tab-link"
         >
           {{ tab?.label }}
@@ -70,11 +67,10 @@
           </div>
           } } @if (!isLoading) { @for(item of data(); track item?.key) {
           <div
-  class="customer_info"
-  (click)="onCustomerSelect(item?.key)"
-  [class.active]="selectedKey === item?.key"
->
-
+            class="customer_info"
+            (click)="onCustomerSelect(item?.key)"
+            [class.active]="selectedKey === item?.key"
+          >
             <div class="profile-image">
               <img
                 [src]="auth.profile?.photoFile || 'assets/images/Admin-Pic.jpg'"
@@ -95,7 +91,7 @@
 
               <div class="pawn_type">
                 <mat-icon>devices_other</mat-icon>
-                <h5>វត្ថុបញ្ចាំ: {{ item?.pawn_type?.text }}</h5>
+                <h5>វត្ថុបញ្ចាំ: {{ item?.pawn_type?.name }} {{ item?.pawn_type?.text }}</h5>
               </div>
 
               <div class="created_at">
@@ -137,11 +133,10 @@
   </form>
 
   <div class="content">
-  @if (formLoading) {
+    @if (formLoading) {
     <app-skeleton-form-loader></app-skeleton-form-loader>
-  } @else {
+    } @else {
     <router-outlet></router-outlet>
-  }
-</div>
-
+    }
+  </div>
 </div>

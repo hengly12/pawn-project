@@ -8,7 +8,6 @@ import { DataService } from '../../shared/services/data.service';
 import { ICategory } from '../../shared/interfaces/category.interface';
 import { onSnapshot, query, orderBy } from '@angular/fire/firestore';
 import { Unsubscribe } from 'firebase/firestore';
-import { MatTabNavPanel } from '@angular/material/tabs';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @Component({
@@ -20,7 +19,6 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     MatSelectModule,
     CommonModule,
     FormsModule,
-    MatTabNavPanel,
     MatProgressBarModule,
   ],
   templateUrl: './list-category.component.html',
@@ -33,9 +31,13 @@ export class ListCategoryComponent implements OnInit, OnDestroy {
   categories: ICategory[] = [];
   isLoading: boolean = true;
   endOfData: boolean = false;
-
   private unsubscribe: Unsubscribe | undefined;
   private minimumLoadTimeMs: number = 2000;
+
+  // State for new category creation
+  newCategoryName: string = '';
+  message: string = '';
+  isSuccess: boolean = true;
 
   // State for edit modal
   showEditModal: boolean = false;
@@ -50,20 +52,16 @@ export class ListCategoryComponent implements OnInit, OnDestroy {
   deleteMessage: string = '';
   isDeleteSuccess: boolean = true;
 
-  constructor() {
-    console.log('ListCategoryComponent: Constructor called.');
-  }
-
   ngOnInit(): void {
     console.log(
-      'ListCategoryComponent: ngOnInit called. Starting data listener.'
+      'ListCategoryComponent: ngOnInit - Initializing categories listener.'
     );
     this.listenForCategories();
   }
 
   ngOnDestroy(): void {
     console.log(
-      'ListCategoryComponent: ngOnDestroy called. Unsubscribing from data.'
+      'ListCategoryComponent: ngOnDestroy - Unsubscribing from data.'
     );
     if (this.unsubscribe) {
       this.unsubscribe();
@@ -72,7 +70,8 @@ export class ListCategoryComponent implements OnInit, OnDestroy {
 
   listenForCategories() {
     console.log(
-      'ListCategoryComponent: listenForCategories called. Setting isLoading to true.'
+      'listenForCategories: Setting isLoading=true, clearing categories. Current isLoading:',
+      this.isLoading
     );
     this.isLoading = true;
     this.categories = [];
@@ -84,7 +83,7 @@ export class ListCategoryComponent implements OnInit, OnDestroy {
       this.unsubscribe = onSnapshot(
         q,
         (querySnapshot) => {
-          console.log('ListCategoryComponent: onSnapshot callback triggered.');
+          console.log('onSnapshot: Data received from Firestore.');
           const fetchedCategories: ICategory[] = [];
           querySnapshot.forEach((doc) => {
             fetchedCategories.push({
@@ -96,7 +95,7 @@ export class ListCategoryComponent implements OnInit, OnDestroy {
         },
         (error) => {
           console.error(
-            'ListCategoryComponent: Error fetching real-time categories:',
+            'onSnapshot: Error fetching real-time categories:',
             error
           );
           reject(error);
@@ -113,24 +112,14 @@ export class ListCategoryComponent implements OnInit, OnDestroy {
         this.categories = fetchedCategories;
         this.isLoading = false;
         this.endOfData = true;
-
         console.log(
-          'ListCategoryComponent: Data loaded and min time elapsed. isLoading:',
-          this.isLoading,
-          'categories.length:',
+          'listenForCategories: Data loaded and minimum time elapsed. isLoading set to false. Categories count:',
           this.categories.length
         );
-        console.log('Real-time categories updated:', this.categories);
-
-        if (this.categories.length === 0) {
-          console.log(
-            'ListCategoryComponent: No categories found in Firestore.'
-          );
-        }
       })
       .catch((error) => {
         console.error(
-          'ListCategoryComponent: Error during data loading or minimum time delay:',
+          'listenForCategories: Error during data loading or minimum time delay:',
           error
         );
         this.isLoading = false;
@@ -138,10 +127,85 @@ export class ListCategoryComponent implements OnInit, OnDestroy {
       });
   }
 
-  // Edit Category Methods
+  // --- New Category Creation Methods ---
+  async addCategory() {
+    const trimmedCategoryName = this.newCategoryName.trim();
+    console.log(
+      'addCategory: Attempting to add category:',
+      trimmedCategoryName
+    );
+
+    if (!trimmedCategoryName) {
+      this.message = 'Category name cannot be empty.';
+      this.isSuccess = false;
+      return;
+    }
+
+    try {
+      const exists = await this.dataService.checkCategoryExists(
+        trimmedCategoryName
+      );
+      if (exists) {
+        this.message = `Category "${trimmedCategoryName}" already exists.`;
+        this.isSuccess = false;
+        return;
+      }
+
+      const categoryData: Omit<ICategory, 'id'> = {
+        name: trimmedCategoryName,
+        description: `User-created category: ${trimmedCategoryName}`,
+        color: this.getRandomColor(),
+        
+      };
+
+      await this.dataService.addCategory(categoryData);
+      this.message = `Category "${trimmedCategoryName}" added successfully!`;
+      this.isSuccess = true;
+      this.newCategoryName = ''; // Clear the input field
+
+      console.log(
+        'addCategory: Category added successfully. Triggering refresh.'
+      );
+      this.listenForCategories();
+      setTimeout(() => {
+        this.message = '';
+      }, 1000);
+    } catch (error: any) {
+      console.error('addCategory: Error adding category:', error);
+      this.message = 'Failed to add category. Please try again.';
+      this.isSuccess = false;
+      setTimeout(() => {
+        this.message = '';
+      }, 1000);
+    }
+  }
+
+  // Helper function to generate a random pastel-like color
+  private getRandomColor(): string {
+    const colors = [
+      '#F4CCCC',
+      '#B4C6D9',
+      '#F7D9C4',
+      '#D5E8D4',
+      '#EAD1DC',
+      '#FFD700',
+      '#ADD8E6',
+      '#90EE90',
+      '#FFB6C1',
+      '#DDA0DD',
+      '#AEC6CF',
+      '#FDFD96',
+      '#836953',
+      '#77DD77',
+      '#CFCFC4',
+    ];
+    return colors[Math.floor(Math.random() * colors.length)];
+  }
+
+  // --- Edit Category Methods ---
   openEditModal(category: ICategory, event: MouseEvent) {
     event.stopPropagation();
-    console.log('openEditModal called for category:', category.name);
+    console.log('openEditModal: Opening modal for category:', category.name);
     this.editingCategory = { ...category };
     this.editedCategoryName = category.name;
     this.editMessage = '';
@@ -149,7 +213,7 @@ export class ListCategoryComponent implements OnInit, OnDestroy {
   }
 
   closeEditModal() {
-    console.log('closeEditModal called.');
+    console.log('closeEditModal: Closing edit modal.');
     this.showEditModal = false;
     this.editingCategory = null;
     this.editedCategoryName = '';
@@ -157,43 +221,89 @@ export class ListCategoryComponent implements OnInit, OnDestroy {
   }
 
   async saveEditedCategory() {
-    if (!this.editingCategory || !this.editedCategoryName.trim()) {
+    const trimmedEditedName = this.editedCategoryName.trim();
+    console.log(
+      'saveEditedCategory: Attempting to save edited category:',
+      trimmedEditedName
+    );
+
+    if (!this.editingCategory || !trimmedEditedName) {
       this.editMessage = 'Category name cannot be empty.';
       this.isEditSuccess = false;
       return;
     }
 
+    if (this.editingCategory.name === trimmedEditedName) {
+      this.editMessage = 'No changes made.';
+      this.isEditSuccess = true;
+      setTimeout(() => this.closeEditModal(), 1000);
+      return;
+    }
+
+    const categoryIdToUpdate = this.editingCategory.id!;
+
     try {
-      await this.dataService.updateCategory(this.editingCategory.id!, {
-        name: this.editedCategoryName.trim(),
+      const exists = await this.dataService.checkCategoryExists(
+        trimmedEditedName,
+        categoryIdToUpdate
+      );
+      if (exists) {
+        this.editMessage = `Category "${trimmedEditedName}" already exists. Please choose a different name.`;
+        this.isEditSuccess = false;
+        console.warn(
+          'saveEditedCategory: Duplicate category found. Keeping modal open.'
+        );
+        return;
+      }
+
+      this.closeEditModal();
+      console.log(
+        'saveEditedCategory: Closing modal, setting isLoading=true, clearing categories. Current isLoading:',
+        this.isLoading
+      );
+      this.isLoading = true;
+      this.categories = [];
+      this.endOfData = false;
+
+      await this.dataService.updateCategory(categoryIdToUpdate, {
+        name: trimmedEditedName,
       });
       this.editMessage = 'Category updated successfully!';
       this.isEditSuccess = true;
-      setTimeout(() => this.closeEditModal(), 2000);
+      console.log(
+        'saveEditedCategory: Category updated successfully. Triggering refresh.'
+      );
+      this.listenForCategories();
+      setTimeout(() => {
+        this.editMessage = '';
+      }, 1000);
     } catch (error) {
-      console.error('Error saving edited category:', error);
+      console.error('saveEditedCategory: Error saving edited category:', error);
       this.editMessage = 'Failed to update category. Please try again.';
       this.isEditSuccess = false;
+      this.isLoading = false;
+      this.endOfData = true;
+      this.listenForCategories();
+      setTimeout(() => {
+        this.editMessage = '';
+      }, 1000);
     }
   }
 
   // Delete Category Methods
   openDeleteConfirmModal(category: ICategory, event: MouseEvent) {
+    event.stopPropagation();
     console.log(
-      '1. openDeleteConfirmModal called for category:',
+      'openDeleteConfirmModal: Opening delete confirmation for category:',
       category.name
     );
-    event.stopPropagation();
     this.categoryToDelete = category;
     this.deleteMessage = '';
     this.showDeleteConfirmModal = true;
-    console.log(
-      '2. showDeleteConfirmModal set to true. Modal should now be visible.'
-    );
   }
 
   closeDeleteConfirmModal() {
-    console.log('closeDeleteConfirmModal called. Hiding modal.');
+    console.log('closeDeleteConfirmModal: Closing delete confirmation modal.');
     this.showDeleteConfirmModal = false;
     this.categoryToDelete = null;
     this.deleteMessage = '';
@@ -201,32 +311,50 @@ export class ListCategoryComponent implements OnInit, OnDestroy {
 
   async confirmDeleteCategory() {
     console.log(
-      '3. confirmDeleteCategory called. Checking categoryToDelete:',
+      'confirmDeleteCategory: Attempting to delete category:',
       this.categoryToDelete?.name
     );
     if (!this.categoryToDelete || !this.categoryToDelete.id) {
       this.deleteMessage = 'Error: No category selected for deletion.';
       this.isDeleteSuccess = false;
-      console.error('Error: categoryToDelete is null or has no ID.');
+      console.error(
+        'confirmDeleteCategory: No category to delete or missing ID.'
+      );
       return;
     }
+    const categoryIdToDelete = this.categoryToDelete.id;
+
+    // Trigger skeleton reload immediately
+    this.closeDeleteConfirmModal();
+    console.log(
+      'confirmDeleteCategory: Closing modal, setting isLoading=true, clearing categories. Current isLoading:',
+      this.isLoading
+    );
+    this.isLoading = true;
+    this.categories = [];
+    this.endOfData = false;
 
     try {
-      console.log(
-        '4. Attempting to delete category with ID:',
-        this.categoryToDelete.id
-      );
-      await this.dataService.deleteCategory(this.categoryToDelete.id);
-      console.log('5. Category deleted successfully!');
-
+      await this.dataService.deleteCategory(categoryIdToDelete);
       this.deleteMessage = `Category "${this.categoryToDelete.name}" deleted successfully!`;
       this.isDeleteSuccess = true;
-
-      setTimeout(() => this.closeDeleteConfirmModal(), 2000);
+      console.log(
+        'confirmDeleteCategory: Category deleted successfully. Triggering refresh.'
+      );
+      this.listenForCategories();
+      setTimeout(() => {
+        this.deleteMessage = '';
+      }, 1000);
     } catch (error) {
-      console.error('Error deleting category:', error);
+      console.error('confirmDeleteCategory: Error deleting category:', error);
       this.deleteMessage = 'Failed to delete category. Please try again.';
       this.isDeleteSuccess = false;
+      this.isLoading = false;
+      this.endOfData = true;
+      this.listenForCategories();
+      setTimeout(() => {
+        this.deleteMessage = '';
+      }, 1000);
     }
   }
 }

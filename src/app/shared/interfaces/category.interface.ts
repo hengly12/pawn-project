@@ -3,4 +3,5 @@ export interface ICategory {
   name: string;
   description?: string;
   color?: string;
+  text?: string
 }

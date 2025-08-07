@@ -35,6 +35,7 @@
           class="btn-edit"
           type="submit"
           (click)="onSubmit()"
+          
         >
           រក្សាទុក <mat-icon>edit</mat-icon>
         </button>
@@ -229,7 +230,7 @@
                     <!-- Changed track item to track item.id -->
                     <mat-option (click)="selectItem(item)" [value]="item">
                       {{ item.name }}
-                      <!-- Changed item.text to item.name -->
+                      {{ item.text }}
                     </mat-option>
                     }
                   </mat-autocomplete>
@@ -620,7 +621,6 @@
 </div>
 
 <script>
-
   // This function will be overwritten by the next one immediately.
   window.print = function () {
     document.getElementById("changeable-text").innerHTML = "វិក័យប័ត្រ";

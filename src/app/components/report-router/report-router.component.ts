@@ -1,5 +1,5 @@
-import { CommonModule, } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, inject, OnInit } from '@angular/core';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -16,12 +16,22 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { Router, RouterModule, RouterOutlet } from '@angular/router';
-import {NgxPrintModule} from 'ngx-print';
+import {
+  NavigationCancel,
+  NavigationEnd,
+  NavigationError,
+  NavigationStart,
+  Router,
+  RouterModule,
+  RouterOutlet,
+} from '@angular/router';
+import { NgxPrintModule } from 'ngx-print';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @Component({
   selector: 'app-report-router',
-  imports: [RouterOutlet,
+  imports: [
+    RouterOutlet,
     MatGridListModule,
     MatTableModule,
     MatIconModule,
@@ -42,20 +52,45 @@ import {NgxPrintModule} from 'ngx-print';
     MatButtonModule,
     RouterModule,
     NgxPrintModule,
+    MatProgressBarModule,
   ],
+  standalone: true,
   templateUrl: './report-router.component.html',
-  styleUrl: './report-router.component.scss'
+  styleUrl: './report-router.component.scss',
 })
-export class ReportRouterComponent {
+export class ReportRouterComponent implements OnInit {
+  router = inject(Router);
+  isLoading = true;
 
- router = inject(Router);
-  
-//  navigateToReport() {
-//   this.router.navigate(['home/report/data-customer']);
-// }
+  //  navigateToReport() {
+  //   this.router.navigate(['home/report/data-customer']);
+  // }
 
-// navigateToExpired() {
-//   this.router.navigate(['home/report/data-expired-customer']);
-// }
+  // navigateToExpired() {
+  //   this.router.navigate(['home/report/data-expired-customer']);
+  // }
 
+  ngOnInit(): void {
+    setTimeout(() => {
+      this.isLoading = false;
+    }, 2000);
+  }
+
+  constructor() {
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationStart) {
+        this.isLoading = true;
+      }
+
+      if (
+        event instanceof NavigationEnd ||
+        event instanceof NavigationCancel ||
+        event instanceof NavigationError
+      ) {
+        setTimeout(() => {
+          this.isLoading = false;
+        }, 2000);
+      }
+    });
+  }
 }

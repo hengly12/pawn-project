@@ -60,15 +60,24 @@ export class DataService {
   }
 
   /**
-   * Checks if a category with the given name already exists.
-   * @param categoryName The name of the category to check.
-   * @returns A Promise that resolves to true if a category with the name exists, false otherwise.
+   * Checks if a category with the given name already exists, optionally excluding a specific ID.
+   * @param categoryName
+   * @param excludeId
+   * @returns
    */
-  async checkCategoryExists(categoryName: string): Promise<boolean> {
+  async checkCategoryExists(categoryName: string, excludeId?: string): Promise<boolean> {
     try {
-      const q = query(this.categoryRef(), where('name', '==', categoryName));
-      const querySnapshot = await getDocs(q);
-      return !querySnapshot.empty; // If snapshot is not empty, category exists
+      let q = query(this.categoryRef(), where('name', '==', categoryName));
+
+      // If an excludeId is provided, add a condition to exclude that document
+      if (excludeId) {
+
+        const querySnapshot = await getDocs(q);
+        return querySnapshot.docs.some(doc => doc.id !== excludeId);
+      } else {
+        const querySnapshot = await getDocs(q);
+        return !querySnapshot.empty;
+      }
     } catch (e) {
       console.error('Error checking for duplicate category:', e);
       throw e;
@@ -77,8 +86,8 @@ export class DataService {
 
   /**
    * Adds a new category document to the 'category' collection.
-   * @param categoryData The data for the new category (without 'id').
-   * @returns A Promise that resolves with the DocumentReference of the new document.
+   * @param categoryData
+   * @returns
    */
   async addCategory(categoryData: Omit<ICategory, 'id'>) {
     try {
@@ -93,8 +102,8 @@ export class DataService {
 
   /**
    * Updates an existing category document in the 'category' collection.
-   * @param id The ID of the category document to update.
-   * @param data The partial data to update the document with.
+   * @param id
+   * @param data
    */
   async updateCategory(id: string, data: Partial<ICategory>) {
     try {
@@ -109,7 +118,7 @@ export class DataService {
 
   /**
    * Deletes a category document from the 'category' collection.
-   * @param id The ID of the category document to delete.
+   * @param id
    */
   async deleteCategory(id: string) {
     try {

@@ -1,156 +1,173 @@
 <div class="main-wrapper">
   <form>
     <div class="dashboard-list-category">
-      <mat-tab-nav-panel>
-        <div class="list-category-header">
-          <div>
+      <div class="list-category-header">
+        <div>
+          <div class="header-create-category">
             <h2 class="h2-style">ទិន្នន័យវត្ថុបញ្ចាំដែលបង្កើតរួច</h2>
-            <div class="category-grid">
-              <!-- Loading Skeleton for initial load -->
-              <ng-container *ngIf="isLoading && categories.length === 0">
-                <div
-                  *ngFor="let i of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
-                  class="skeleton-item"
+            <div class="create-category-section">
+              <div class="input-group">
+                <input
+                  type="text"
+                  id="newCategoryName"
+                  [(ngModel)]="newCategoryName"
+                  name="newCategoryName"
+                  placeholder="បញ្ចូលឈ្មោះប្រភេទថ្មី"
+                  class="new-category-input"
+                />
+                <button
+                  (click)="addCategory()"
+                  [disabled]="!newCategoryName.trim()"
+                  class="add-category-button"
                 >
-                  <div class="skeleton-text"></div>
-                  <div class="skeleton-actions">
-                    <div class="skeleton-icon"></div>
-                    <div class="skeleton-icon"></div>
-                  </div>
-                </div>
-                <div
-                  class="infinite-scroll-trigger"
-                  *ngIf="!endOfData && isLoading"
-                >
-                  <div class="loading-container">
-                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-                    <p>Loading...</p>
-                  </div>
-                </div>
-              </ng-container>
-
-              <ng-container *ngIf="!isLoading || categories.length > 0">
-                <div
-                  *ngFor="let category of categories"
-                  class="category-item"
-                  [style.background-color]="category.color || '#E0E0E0'"
-                >
-                  <span class="category-name">{{ category.name }}</span>
-                  <div class="category-actions">
-                    <button
-                      (click)="
-                        openEditModal(category, $event);
-                        $event.stopPropagation()
-                      "
-                      class="edit-button"
-                    >
-                      <mat-icon>edit</mat-icon>
-                    </button>
-                    <button
-                      (click)="
-                        openDeleteConfirmModal(category, $event);
-                        $event.stopPropagation()
-                      "
-                      class="delete-button"
-                    >
-                      <mat-icon>delete</mat-icon>
-                    </button>
-                  </div>
-                </div>
-              </ng-container>
-
-              <div
-                *ngIf="!isLoading && categories.length === 0"
-                class="no-categories-message"
-              >
-                មិនទាន់មានប្រភេទណាមួយទេ។ សូមបង្កើតមួយ!
+                  <mat-icon>save_alt</mat-icon>បង្កើត
+                </button>
               </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Infinite Scroll Trigger / Loading for more data -->
-        <div
-          class="infinite-scroll-trigger"
-          *ngIf="!endOfData && isLoading && categories.length > 0"
-        >
-          <div class="loading-container">
-            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-            <p>Loading more categories...</p>
-          </div>
-        </div>
-
-        <!-- Edit Category Modal -->
-        <div *ngIf="showEditModal" class="modal-overlay">
-          <div class="modal-content">
-            <h3 class="modal-title">កែប្រែប្រភេទ</h3>
-            <div class="modal-body">
-              <label for="editedCategoryName">ឈ្មោះប្រភេទ:</label>
-              <input
-                type="text"
-                id="editedCategoryName"
-                [(ngModel)]="editedCategoryName"
-                name="editedCategoryName"
-                class="modal-input"
-              />
               <p
-                *ngIf="editMessage"
-                class="modal-message"
-                [ngClass]="{ success: isEditSuccess, error: !isEditSuccess }"
+                *ngIf="message"
+                class="message-text"
+                [ngClass]="{ success: isSuccess, error: !isSuccess }"
               >
-                {{ editMessage }}
+                {{ message }}
               </p>
             </div>
-            <div class="modal-footer">
-              <button (click)="closeEditModal()" class="modal-cancel-button">
-                បោះបង់
-              </button>
-              <button (click)="saveEditedCategory()" class="modal-save-button">
-                រក្សាទុក
-              </button>
-            </div>
           </div>
-        </div>
+          <div class="category-grid">
+            <!-- Loading Skeleton: Show whenever isLoading is true -->
+            <ng-container *ngIf="isLoading">
+              <div
+                *ngFor="let i of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
+                class="skeleton-item"
+              >
+                <div class="skeleton-text"></div>
+                <div class="skeleton-actions">
+                  <div class="skeleton-icon"></div>
+                  <div class="skeleton-icon"></div>
+                </div>
+              </div>
+              <!-- The infinite-scroll-trigger loading bar should also respect isLoading -->
+              <div
+                class="infinite-scroll-trigger"
+                *ngIf="!endOfData && isLoading"
+              >
+                <div class="loading-container">
+                  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                  <p>Loading more categories...</p>
+                </div>
+              </div>
+            </ng-container>
 
-        <!-- Delete Confirmation Modal -->
-        <div *ngIf="showDeleteConfirmModal" class="modal-overlay">
-          <div class="modal-content">
-            <h3 class="modal-title">បញ្ជាក់ការលុប</h3>
-            <div class="modal-body">
-              <p>
-                តើអ្នកពិតជាចង់លុបប្រភេទ "<strong>{{
-                  categoryToDelete?.name
-                }}</strong
-                >" មែនទេ?
-              </p>
-              <p
-                *ngIf="deleteMessage"
-                class="modal-message"
-                [ngClass]="{
-                  success: isDeleteSuccess,
-                  error: !isDeleteSuccess
-                }"
+            <!-- Actual Category List: Show only when NOT loading AND categories exist -->
+            <ng-container *ngIf="!isLoading && categories.length > 0">
+              <div
+                *ngFor="let category of categories"
+                class="category-item"
+                [style.background-color]="category.color || '#E0E0E0'"
               >
-                {{ deleteMessage }}
-              </p>
-            </div>
-            <div class="modal-footer">
-              <button
-                (click)="closeDeleteConfirmModal()"
-                class="modal-cancel-button"
-              >
-                បោះបង់
-              </button>
-              <button
-                (click)="confirmDeleteCategory()"
-                class="modal-delete-button"
-              >
-                លុប
-              </button>
+                <span class="category-name">{{ category.name }}</span>
+                <div class="category-actions">
+                  <button
+                    (click)="
+                      openEditModal(category, $event); $event.stopPropagation()
+                    "
+                    class="edit-button"
+                  >
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button
+                    (click)="
+                      openDeleteConfirmModal(category, $event);
+                      $event.stopPropagation()
+                    "
+                    class="delete-button"
+                  >
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </ng-container>
+
+            <!-- Message for no categories found: Show only when NOT loading AND no categories -->
+            <div
+              *ngIf="!isLoading && categories.length === 0"
+              class="no-categories-message"
+            >
+              មិនទាន់មានប្រភេទណាមួយទេ។ សូមបង្កើតមួយ!
             </div>
           </div>
         </div>
-      </mat-tab-nav-panel>
+      </div>
+
+      <!-- Edit Category Modal -->
+      <div *ngIf="showEditModal" class="modal-overlay">
+        <div class="modal-content">
+          <h3 class="modal-title">កែប្រែប្រភេទ</h3>
+          <div class="modal-body">
+            <label for="editedCategoryName">ឈ្មោះប្រភេទ:</label>
+            <input
+              type="text"
+              id="editedCategoryName"
+              [(ngModel)]="editedCategoryName"
+              name="editedCategoryName"
+              class="modal-input"
+            />
+            <p
+              *ngIf="editMessage"
+              class="modal-message"
+              [ngClass]="{ success: isEditSuccess, error: !isEditSuccess }"
+            >
+              {{ editMessage }}
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button (click)="closeEditModal()" class="modal-cancel-button">
+              បោះបង់
+            </button>
+            <button (click)="saveEditedCategory()" class="modal-save-button">
+              រក្សាទុក
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Delete Confirmation Modal -->
+      <div *ngIf="showDeleteConfirmModal" class="modal-overlay">
+        <div class="modal-content">
+          <h3 class="modal-title">បញ្ជាក់ការលុប</h3>
+          <div class="modal-body">
+            <p>
+              តើអ្នកពិតជាចង់លុបប្រភេទ "<strong>{{
+                categoryToDelete?.name
+              }}</strong
+              >" មែនទេ?
+            </p>
+            <p
+              *ngIf="deleteMessage"
+              class="modal-message"
+              [ngClass]="{
+                success: isDeleteSuccess,
+                error: !isDeleteSuccess
+              }"
+            >
+              {{ deleteMessage }}
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button
+              (click)="closeDeleteConfirmModal()"
+              class="modal-cancel-button"
+            >
+              បោះបង់
+            </button>
+            <button
+              (click)="confirmDeleteCategory()"
+              class="modal-delete-button"
+            >
+              លុប
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   </form>
 </div>

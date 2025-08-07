@@ -24,8 +24,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { SkeletonFormLoaderComponent } from "../../shared/skeleton-form-loader/skeleton-form-loader.component";
 
-
-
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http);
 }
@@ -40,8 +38,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatSidenavModule,
     RouterOutlet,
     MatTabsModule,
-    RouterLink,
-    RouterLinkActive,
+    // RouterLink,
+    // RouterLinkActive,
     MatCardModule,
     GetTimeAgoPipe,
     DatePipe,
@@ -54,7 +52,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatProgressSpinnerModule,
     MatProgressBarModule,
     SkeletonFormLoaderComponent
-],
+  ],
   templateUrl: './listing.component.html',
   styleUrl: './listing.component.scss',
 })
@@ -63,8 +61,6 @@ export class ListingComponent implements OnInit, OnDestroy {
   private routeSub!: Subscription;
   endOfData = false;
   isLoading = false;
-
-  
 
   showFiller = false;
   tabs = signal<any>([
@@ -112,6 +108,9 @@ export class ListingComponent implements OnInit, OnDestroy {
       .pipe(
         takeUntil(this.destroy$),
         switchMap((param) => {
+          this.isLoading = true; // Show list skeleton on route change
+          this.formLoading = true; // Show content skeleton on route change
+
           const currentParam = param['statusKey'];
 
           this.clearSearchInput();
@@ -126,6 +125,8 @@ export class ListingComponent implements OnInit, OnDestroy {
         this.originalData.set(data);
         this.data.set(data);
         this.lastVisibleDoc = last;
+        this.isLoading = false; // Hide list skeleton after data is received
+        this.formLoading = false; // Hide content skeleton after data is received
       });
 
     this.form
@@ -164,48 +165,47 @@ export class ListingComponent implements OnInit, OnDestroy {
   }
 
   loadMore() {
-  if (this.loadingMore || this.endOfData) return;
+    if (this.loadingMore || this.endOfData) return;
 
-  this.loadingMore = true;
-  this.isLoading = true;
+    this.loadingMore = true;
+    this.isLoading = true;
 
-  setTimeout(() => {
-    const statusKey = this.param() === 'active' ? 1 : -2;
+    setTimeout(() => {
+      const statusKey = this.param() === 'active' ? 1 : -2;
 
-    this.store.fetchListingPaginated(statusKey, this.pageLimit, this.lastVisibleDoc)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(({ data, last }) => {
-        if (!data || data.length === 0) {
-          this.endOfData = true;
-        } else {
-          const currentKeys = new Set(this.data().map((item: any) => item.key));
-          const newItems = data.filter((item: any) => !currentKeys.has(item.key));
+      this.store.fetchListingPaginated(statusKey, this.pageLimit, this.lastVisibleDoc)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(({ data, last }) => {
+          if (!data || data.length === 0) {
+            this.endOfData = true;
+          } else {
+            const currentKeys = new Set(this.data().map((item: any) => item.key));
+            const newItems = data.filter((item: any) => !currentKeys.has(item.key));
 
-          const updated = [...this.data(), ...newItems];
-          this.data.set(updated);
-          this.originalData.set(updated);
-          this.lastVisibleDoc = last;
-        }
+            const updated = [...this.data(), ...newItems];
+            this.data.set(updated);
+            this.originalData.set(updated);
+            this.lastVisibleDoc = last;
+          }
 
-        this.loadingMore = false;
-        this.isLoading = false;
-      });
-  }, 1000);
-}
-
+          this.loadingMore = false;
+          this.isLoading = false;
+        });
+    }, 1000);
+  }
 
   onScroll(event: any) {
-  const element = event.target;
+    const element = event.target;
 
-  const threshold = 150;
+    const threshold = 150;
 
-  const position = element.scrollTop + element.clientHeight;
-  const height = element.scrollHeight;
+    const position = element.scrollTop + element.clientHeight;
+    const height = element.scrollHeight;
 
-  if (position > height - threshold) {
-    this.loadMore();
+    if (position > height - threshold) {
+      this.loadMore();
+    }
   }
-}
 
   ngOnDestroy() {
     this.destroy$.next();
@@ -251,20 +251,30 @@ export class ListingComponent implements OnInit, OnDestroy {
     this.form.reset();
   }
 
+  onCreateNew() {
+    this.formLoading = true;
+    this.clearFormInputs();
+    this.router.navigate(['/home/' + this.param() + '/listing/create-form/na']);
+    setTimeout(() => {
+      this.formLoading = false;
+    }, 1000);
+  }
+
+  onTabSelect(key: string) {
+    this.router.navigate(['/home/' + key + '/listing']);
+    this.selectedKey = null;
+  }
+
   formLoading = false;
-selectedKey: string | null = null;
+  selectedKey: string | null = null;
+  onCustomerSelect(key: string) {
+    this.formLoading = true;
+    this.selectedKey = key;
 
-onCustomerSelect(key: string) {
-  this.formLoading = true;
-  this.selectedKey = key;
+    this.router.navigate([`/home/${this.param()}/listing/create-form/${key}`]);
 
-  this.router.navigate([`/home/${this.param()}/listing/create-form/${key}`]);
-
-  setTimeout(() => {
-    this.formLoading = false;
-  }, 1000);
+    setTimeout(() => {
+      this.formLoading = false;
+    }, 1000);
+  }
 }
-
-}
-
-
