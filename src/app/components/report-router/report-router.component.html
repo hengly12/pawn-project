@@ -28,13 +28,17 @@
     </div>
   </mat-tab-nav-panel>
 
-  <div class="content">
-    <div class="loading-container" *ngIf="isLoading">
-      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-      <p>Loading...</p>
-    </div>
-    <div *ngIf="!isLoading" class="router-outlet-container">
-      <router-outlet></router-outlet>
-    </div>
+ <div class="content">
+  @if (isLoading) {
+  <div class="loading-container">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <p>Loading...</p>
   </div>
+  } @else {
+  <div class="router-outlet-container">
+    <router-outlet></router-outlet>
+  </div>
+  }
+</div>
+
 </div>

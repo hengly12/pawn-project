@@ -26,11 +26,7 @@
         <button class="btn-check-customer" mat-button (click)="ShowDialog()">
           ព័ត៌មានអតិថិជន <mat-icon> contacts</mat-icon>
         </button>
-        <button
-          class="btn-add-more"
-          mat-flat-button
-          (click)="onCreateNew()"
-        >
+        <button class="btn-add-more" mat-flat-button (click)="onCreateNew()">
           បង្កើតថ្មី <mat-icon color="primary">add_box</mat-icon>
         </button>
       </div>
@@ -91,7 +87,13 @@
 
               <div class="pawn_type">
                 <mat-icon>devices_other</mat-icon>
-                <h5>វត្ថុបញ្ចាំ: {{ item?.pawn_type?.name }} {{ item?.pawn_type?.text }}</h5>
+                <h5>
+                  វត្ថុបញ្ចាំ: @if (item?.pawn_type?.name) {
+                  {{ item.pawn_type.name }}
+                  } @else if (item?.pawn_type?.text) {
+                  {{ item.pawn_type.text }}
+                  }
+                </h5>
               </div>
 
               <div class="created_at">
@@ -119,14 +121,14 @@
               </div>
             </div>
           </div>
-          } }
-
-          <div class="infinite-scroll-trigger" *ngIf="!endOfData && isLoading">
+          } } @if (!endOfData && isLoading) {
+          <div class="infinite-scroll-trigger">
             <div class="loading-container">
               <mat-progress-bar mode="indeterminate"></mat-progress-bar>
               <p>Loading...</p>
             </div>
           </div>
+          }
         </div>
       </mat-tab-nav-panel>
     </div>

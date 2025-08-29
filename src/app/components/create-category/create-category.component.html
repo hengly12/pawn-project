@@ -25,13 +25,14 @@
             >
               បន្ថែមប្រភេទ
             </button>
+            @if (message) {
             <p
-              *ngIf="message"
               class="message-text"
               [ngClass]="{ success: isSuccess, error: !isSuccess }"
             >
               {{ message }}
             </p>
+            }
           </div>
         </div>
       </div>

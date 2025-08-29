@@ -23,83 +23,81 @@
                   <mat-icon>save_alt</mat-icon>បង្កើត
                 </button>
               </div>
+              @if (message) {
               <p
-                *ngIf="message"
                 class="message-text"
                 [ngClass]="{ success: isSuccess, error: !isSuccess }"
               >
                 {{ message }}
               </p>
+              }
             </div>
           </div>
           <div class="category-grid">
             <!-- Loading Skeleton: Show whenever isLoading is true -->
-            <ng-container *ngIf="isLoading">
-              <div
-                *ngFor="let i of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
-                class="skeleton-item"
-              >
-                <div class="skeleton-text"></div>
-                <div class="skeleton-actions">
-                  <div class="skeleton-icon"></div>
-                  <div class="skeleton-icon"></div>
-                </div>
+            @if (isLoading) { @for (i of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]; track
+            i) {
+            <div class="skeleton-item">
+              <div class="skeleton-text"></div>
+              <div class="skeleton-actions">
+                <div class="skeleton-icon"></div>
+                <div class="skeleton-icon"></div>
               </div>
-              <!-- The infinite-scroll-trigger loading bar should also respect isLoading -->
-              <div
-                class="infinite-scroll-trigger"
-                *ngIf="!endOfData && isLoading"
-              >
-                <div class="loading-container">
-                  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-                  <p>Loading more categories...</p>
-                </div>
+            </div>
+            }
+            <!-- The infinite-scroll-trigger loading bar should also respect isLoading -->
+            @if (!endOfData && isLoading) {
+            <div class="infinite-scroll-trigger">
+              <div class="loading-container">
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                <p>Loading more categories...</p>
               </div>
-            </ng-container>
+            </div>
+            } }
 
             <!-- Actual Category List: Show only when NOT loading AND categories exist -->
-            <ng-container *ngIf="!isLoading && categories.length > 0">
-              <div
-                *ngFor="let category of categories"
-                class="category-item"
-                [style.background-color]="category.color || '#E0E0E0'"
-              >
-                <span class="category-name">{{ category.name }}</span>
-                <div class="category-actions">
-                  <button
-                    (click)="
-                      openEditModal(category, $event); $event.stopPropagation()
-                    "
-                    class="edit-button"
-                  >
-                    <mat-icon>edit</mat-icon>
-                  </button>
-                  <button
-                    (click)="
-                      openDeleteConfirmModal(category, $event);
-                      $event.stopPropagation()
-                    "
-                    class="delete-button"
-                  >
-                    <mat-icon>delete</mat-icon>
-                  </button>
-                </div>
+            @if (!isLoading && categories.length > 0) { @for (category of
+            categories; track category.name) {
+            <div
+              class="category-item"
+              [style.background-color]="category.color || '#E0E0E0'"
+            >
+              <span class="category-name">{{ category.name }}</span>
+              <div class="category-actions">
+                <button
+                  (click)="
+                    openEditModal(category, $event); $event.stopPropagation()
+                  "
+                  class="edit-button"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button
+                  (click)="
+                    openDeleteConfirmModal(category, $event);
+                    $event.stopPropagation()
+                  "
+                  class="delete-button"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
               </div>
-            </ng-container>
+            </div>
+            } }
 
             <!-- Message for no categories found: Show only when NOT loading AND no categories -->
-            <div
-              *ngIf="!isLoading && categories.length === 0"
-              class="no-categories-message"
-            >
+            @if (!isLoading && categories.length === 0) {
+            <div class="no-categories-message">
               មិនទាន់មានប្រភេទណាមួយទេ។ សូមបង្កើតមួយ!
             </div>
+            }
           </div>
         </div>
       </div>
 
       <!-- Edit Category Modal -->
-      <div *ngIf="showEditModal" class="modal-overlay">
+      @if (showEditModal) {
+      <div class="modal-overlay">
         <div class="modal-content">
           <h3 class="modal-title">កែប្រែប្រភេទ</h3>
           <div class="modal-body">
@@ -111,13 +109,14 @@
               name="editedCategoryName"
               class="modal-input"
             />
+            @if (editMessage) {
             <p
-              *ngIf="editMessage"
               class="modal-message"
               [ngClass]="{ success: isEditSuccess, error: !isEditSuccess }"
             >
               {{ editMessage }}
             </p>
+            }
           </div>
           <div class="modal-footer">
             <button (click)="closeEditModal()" class="modal-cancel-button">
@@ -129,9 +128,11 @@
           </div>
         </div>
       </div>
+      }
 
       <!-- Delete Confirmation Modal -->
-      <div *ngIf="showDeleteConfirmModal" class="modal-overlay">
+      @if (showDeleteConfirmModal) {
+      <div class="modal-overlay">
         <div class="modal-content">
           <h3 class="modal-title">បញ្ជាក់ការលុប</h3>
           <div class="modal-body">
@@ -141,8 +142,8 @@
               }}</strong
               >" មែនទេ?
             </p>
+            @if (deleteMessage) {
             <p
-              *ngIf="deleteMessage"
               class="modal-message"
               [ngClass]="{
                 success: isDeleteSuccess,
@@ -151,6 +152,7 @@
             >
               {{ deleteMessage }}
             </p>
+            }
           </div>
           <div class="modal-footer">
             <button
@@ -168,6 +170,7 @@
           </div>
         </div>
       </div>
+      }
     </div>
   </form>
 </div>

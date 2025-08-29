@@ -23,7 +23,6 @@ import { NgxPrintModule } from 'ngx-print';
     CurrencyPipe, 
     CommonModule,
     ReactiveFormsModule,
-    NgIf,
     FormsModule,
     MatFormFieldModule,
     MatInputModule,

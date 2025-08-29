@@ -1,15 +1,14 @@
-
 .btn-create-form {
   display: flex;
-      background-color: #ffffff;
-      box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.1);
-      border-radius: 8px;
-      padding-inline: 20px;
-      width: 100%;
-      max-width: 800px;
-      justify-content: space-between;
-      align-items: center;
-      
+  background-color: #ffffff;
+  box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding-inline: 20px;
+  width: 100%;
+  max-width: 800px;
+  justify-content: space-between;
+  align-items: center;
+
   button {
     width: 100%;
   }
@@ -34,14 +33,12 @@
   }
 }
 
-
-
 ::ng-deep.mat-mdc-menu-content .mat-mdc-menu-item .mat-mdc-menu-item-text {
   font-family: "Koh Santepheap", serif !important;
   font-size: 15px;
 }
 
-.pawn-content-flex{
+.pawn-content-flex {
   width: 100%;
   margin: 0 auto;
   display: flex;
@@ -74,73 +71,97 @@
 
 ::ng-deep.mat-mdc-menu-item {
   background-color: white;
-  
 }
 
-.btn-restore{
+.btn-restore {
   transition: 0.5s;
   background-size: 200% auto;
-  color: #000000; 
+  color: #000000;
 }
 
-.btn-restore:hover{
-  background-image: linear-gradient(to right, #ffffff 0%, #9fccff 51%, #ffffff 100%);
+.btn-restore:hover {
+  background-image: linear-gradient(
+    to right,
+    #ffffff 0%,
+    #9fccff 51%,
+    #ffffff 100%
+  );
   background-position: right center;
   color: #000000;
   text-decoration: none;
 }
 
 .btn-end-pawn {
-   transition: 0.5s;
-   background-size: 200% auto;
-   color: #000000;            
- }
+  transition: 0.5s;
+  background-size: 200% auto;
+  color: #000000;
+}
 
- .btn-end-pawn:hover {
-  background-image: linear-gradient(to right, #ffffff 0%, #9fccff 51%, #ffffff 100%);
-   background-position: right center;
-   color: #000000;
-   text-decoration: none;
- }
+.btn-end-pawn:hover {
+  background-image: linear-gradient(
+    to right,
+    #ffffff 0%,
+    #9fccff 51%,
+    #ffffff 100%
+  );
+  background-position: right center;
+  color: #000000;
+  text-decoration: none;
+}
 
- .btn-edit {
-   transition: 0.5s;
-   background-size: 200% auto;
-   color: #000000;            
- }
+.btn-edit {
+  transition: 0.5s;
+  background-size: 200% auto;
+  color: #000000;
+}
 
- .btn-edit:hover {
-  background-image: linear-gradient(to right, #ffffff 0%, #9fccff 51%, #ffffff 100%);
-   background-position: right center;
-   color: #000000;
-   text-decoration: none;
- }
+.btn-edit:hover {
+  background-image: linear-gradient(
+    to right,
+    #ffffff 0%,
+    #9fccff 51%,
+    #ffffff 100%
+  );
+  background-position: right center;
+  color: #000000;
+  text-decoration: none;
+}
 
- .btn-delete {
-   transition: 0.5s;
-   background-size: 200% auto;
-   color: #000000;            
- }
+.btn-delete {
+  transition: 0.5s;
+  background-size: 200% auto;
+  color: #000000;
+}
 
- .btn-delete:hover {
-  background-image: linear-gradient(to right, #ffffff 0%, #9fccff 51%, #ffffff 100%);
-   background-position: right center;
-   color: #000000;
-   text-decoration: none;
- }
+.btn-delete:hover {
+  background-image: linear-gradient(
+    to right,
+    #ffffff 0%,
+    #9fccff 51%,
+    #ffffff 100%
+  );
+  background-position: right center;
+  color: #000000;
+  text-decoration: none;
+}
 
- .btn-print-form {
-   transition: 0.5s;
-   background-size: 200% auto;
-   color: #000000;            
- }
+.btn-print-form {
+  transition: 0.5s;
+  background-size: 200% auto;
+  color: #000000;
+}
 
- .btn-print-form:hover {
-  background-image: linear-gradient(to right, #ffffff 0%, #9fccff 51%, #ffffff 100%);
-   background-position: right center;
-   color: #000000;
-   text-decoration: none;
- }
+.btn-print-form:hover {
+  background-image: linear-gradient(
+    to right,
+    #ffffff 0%,
+    #9fccff 51%,
+    #ffffff 100%
+  );
+  background-position: right center;
+  color: #000000;
+  text-decoration: none;
+}
 
 h1 {
   text-align: center;
@@ -207,8 +228,20 @@ button:hover {
 
 ::ng-deep.mat-mdc-option.mdc-list-item {
   align-items: center;
-  background: rgba(0, 0, 0, 0);
   font-family: "Koh Santepheap", serif;
+}
+
+.mat-mdc-option.mdc-list-item:hover {
+  background-image: linear-gradient(
+    to right,
+    #ffffff 0%,
+    #9fccff 51%,
+    #ffffff 100%
+  );
+  background-position: right center;
+  text-decoration: none;
+  transition: 0.5s;
+  background-size: 200% auto;
 }
 
 ::ng-deep .cdk-overlay-backdrop-showing {
@@ -223,17 +256,15 @@ button:hover {
   margin-top: 10px;
 }
 
-.cdk-overlay-pane {
+::ng-deep.cdk-overlay-pane {
   position: absolute;
-    pointer-events: auto;
-    box-sizing: border-box;
-    display: flex;
-    max-width: 100%;
-    max-height: 100%;
-    width: 200px !important;
-    margin-inline: -40px;
-    justify-content: space-evenly;
-    
+  pointer-events: auto;
+  box-sizing: border-box;
+  max-width: 100%;
+  max-height: 100%;
+  width: 28% !important;
+  bottom: 275px !important;
+  left: 56% !important;
 }
 
 ::ng-deep .mat-mdc-form-field-infix {
@@ -360,18 +391,18 @@ button:hover {
 
 .description-form {
   width: 100%;
-    border-bottom: 1px dotted #000;
-    border-radius: 0 !important;
-    font-size: 16px;
-    border-top: none;
-    border-right: none;
-    border-left: none;
-    padding-inline: 10px;
-    padding-bottom: 22px;
-    max-height: 65px;
+  border-bottom: 1px dotted #000;
+  border-radius: 0 !important;
+  font-size: 16px;
+  border-top: none;
+  border-right: none;
+  border-left: none;
+  padding-inline: 10px;
+  padding-bottom: 22px;
+  max-height: 65px;
 }
 
-.textarea-from{
+.textarea-from {
   display: flex;
   justify-content: space-between;
 }
@@ -382,16 +413,16 @@ button:hover {
   align-items: baseline;
 }
 
-.icon-date{
+.icon-date {
   display: flex;
 }
 
-.input-form-info{
+.input-form-info {
   display: flex;
   justify-content: space-between;
 }
 
-.input-form{  
+.input-form {
   display: flex;
   flex-direction: column;
   width: 60%;
@@ -482,7 +513,7 @@ button:hover {
   margin-top: 10px;
 }
 
-.printable{
+.printable {
   max-width: 800px;
   width: 100%;
 }
@@ -498,14 +529,13 @@ button:hover {
     }
   }
   .layout-form {
-       width: 100%;
+    width: 100%;
     height: calc(100vh - 158px);
     overflow: auto;
     padding: 8px;
     &::-webkit-scrollbar {
       display: none;
     }
-  
   }
 
   button {

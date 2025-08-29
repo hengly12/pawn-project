@@ -155,7 +155,6 @@ export class ListCategoryComponent implements OnInit, OnDestroy {
         name: trimmedCategoryName,
         description: `User-created category: ${trimmedCategoryName}`,
         color: this.getRandomColor(),
-        
       };
 
       await this.dataService.addCategory(categoryData);
@@ -180,26 +179,30 @@ export class ListCategoryComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Helper function to generate a random pastel-like color
+  // Get a random pastel-like color to Category.
+  // private getRandomColor(): string {
+  //   const colors = [
+  //     '#F4CCCC',
+  //     '#B4C6D9',
+  //     '#F7D9C4',
+  //     '#D5E8D4',
+  //     '#EAD1DC',
+  //     '#FFD700',
+  //     '#ADD8E6',
+  //     '#90EE90',
+  //     '#FFB6C1',
+  //     '#DDA0DD',
+  //     '#AEC6CF',
+  //     '#FDFD96',
+  //     '#836953',
+  //     '#77DD77',
+  //     '#CFCFC4',
+  //   ];
+  //   return colors[Math.floor(Math.random() * colors.length)];
+  // }
+
   private getRandomColor(): string {
-    const colors = [
-      '#F4CCCC',
-      '#B4C6D9',
-      '#F7D9C4',
-      '#D5E8D4',
-      '#EAD1DC',
-      '#FFD700',
-      '#ADD8E6',
-      '#90EE90',
-      '#FFB6C1',
-      '#DDA0DD',
-      '#AEC6CF',
-      '#FDFD96',
-      '#836953',
-      '#77DD77',
-      '#CFCFC4',
-    ];
-    return colors[Math.floor(Math.random() * colors.length)];
+    return '#5a5a5aff';
   }
 
   // --- Edit Category Methods ---

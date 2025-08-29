@@ -1,69 +1,79 @@
-
 <mat-dialog-actions class="btn-close-dialog-report">
-    <button mat-button mat-dialog-close>បិទ<mat-icon>close</mat-icon></button>
+  <button mat-button mat-dialog-close>បិទ<mat-icon>close</mat-icon></button>
 </mat-dialog-actions>
 <div id="print-section">
-    <div class="background-form">
-<mat-dialog-content>
+  <div class="background-form">
+  <mat-dialog-content>
+  <h2 class="report-title-dialog" mat-dialog-title>ព័ត៌មានលម្អិត</h2>
+  <div class="click-name-dialog">
+    <strong>ឈ្មោះអតិថិជន:</strong>
+    <strong class="report-input">{{ data.full_name }}</strong>
+    <strong>ភេទ:</strong>
+    <strong class="report-input">{{ getGenderText(data.gender) }}</strong>
+    <strong>លេខទូរសព្ទ:</strong>
+    <strong class="report-input">{{ data.phone_number }}</strong>
+    <strong>លេខអត្តសញ្ញាណប័ណ្ណ:</strong>
+    <strong class="report-input">{{ data.id_card }}</strong>
+    <strong>អាស័យដ្ថាន:</strong>
+    <strong class="report-input">{{ data.address }}</strong>
 
-  <h2 class="report-title-dialog" mat-dialog-title>ព័ត៌មានលំអិត</h2>
-    <div class="click-name-dialog">
-        <strong >ឈ្មោះអតិថិជន:</strong>
-        <strong class="report-input">{{ data.full_name }}</strong>
-        <strong>ភេទ:</strong>
-        <strong class="report-input">{{ getGenderText(data.gender) }}</strong>
-        <strong>លេខទូរសព្ទ:</strong>
-        <strong class="report-input">{{ data.phone_number }}</strong>
-        <strong>លេខអត្តសញ្ញាណប័ណ្ណ:</strong>
-        <strong class="report-input">{{ data.id_card }}</strong>
-        <strong>អាស័យដ្ថាន:</strong>
-        <strong class="report-input">{{ data.address }}</strong>
-        <strong>វត្ថុបញ្ចាំ:</strong>
-        <strong class="report-input">{{ getPawnTypeText(data.pawn_type) }}</strong>
-
-        <ng-container *ngIf="data.plate_number">
-            <strong>ស្លាកលេខ:</strong>
-            <strong class="report-input">{{ data.plate_number }}</strong>
-        </ng-container>
-        <ng-container *ngIf="data.brand_name">
-            <strong>ឈ្មោះក្រុមហ៊ុនវត្ថុបញ្ចាំ:</strong>
-            <strong class="report-input">{{ data.brand_name }}</strong>
-        </ng-container>
-        <ng-container *ngIf="data.type_phone_id">
-            <strong>លេខកូដទូរសព្ទ:</strong>
-            <strong class="report-input">{{ data.type_phone_id }}</strong>
-        </ng-container>
-        <ng-container *ngIf="data.type_jewelry_name">
-            <strong>អលង្ការ(ខ្សែក, ក្រវិល, ចិញ្ចៀន...):</strong>
-            <strong class="report-input">{{ data.type_jewelry_name }}</strong>
-        </ng-container>
-        <ng-container *ngIf="data.gold_weight">
-            <strong>ទម្ងន់អលង្ការ :</strong>
-            <strong class="report-input">{{data.gold_weight}}</strong>
-        </ng-container>
-        <ng-container *ngIf="data.others">
-            <strong>ប្រភេទវត្ថុបញ្ចាំ:</strong>
-            <strong class="report-input">{{data.others}}</strong>
-        </ng-container>
-        <strong>តម្លៃវត្ថុបញ្ចាំ:</strong>
-        <strong class="report-input">{{ data.price_pawn | currency }}</strong>
-        <strong>តម្លៃការប្រាក់ប្រចាំខែ:</strong>
-        <strong class="report-input">{{ data.price_interest | currency }}</strong>
-        <strong>ព័ត៌មានបន្ថែមអំពីវត្ថុបញ្ចាំ:</strong>
-        <strong class="report-input">{{ data.description }}</strong>
-        <strong>ថ្ងៃផុតកំណត់:</strong>
-        <strong class="report-input">{{ data.date_expired?.toDate() | date }}</strong>
-    </div>
-    <div class="image-preview-container">
-        <img [src]="data?.photo?.downloadUrl" alt="Pawned Item">
-    </div>
+    <strong>វត្ថុបញ្ចាំ:</strong>
+    <strong class="report-input">{{
+      getPawnTypeText(data.pawn_type)
+    }}</strong>
+    @if (data.plate_number) {
+    <strong>ស្លាកលេខ:</strong>
+    <strong class="report-input">{{ data.plate_number }}</strong>
+    }
+    @if (data.brand_name) {
+    <strong>ឈ្មោះក្រុមហ៊ុនវត្ថុបញ្ចាំ:</strong>
+    <strong class="report-input">{{ data.brand_name }}</strong>
+    }
+    @if (data.type_phone_id) {
+    <strong>លេខកូដទូរសព្ទ:</strong>
+    <strong class="report-input">{{ data.type_phone_id }}</strong>
+    }
+    @if (data.type_jewelry_name) {
+    <strong>អលង្ការ(ខ្សែក, ក្រវិល, ចិញ្ចៀន...):</strong>
+    <strong class="report-input">{{ data.type_jewelry_name }}</strong>
+    }
+    @if (data.gold_weight) {
+    <strong>ទម្ងន់អលង្ការ :</strong>
+    <strong class="report-input">{{ data.gold_weight }}</strong>
+    }
+    @if (data.others) {
+    <strong>ប្រភេទវត្ថុបញ្ចាំ:</strong>
+    <strong class="report-input">{{ data.others }}</strong>
+    }
+    <strong>តម្លៃវត្ថុបញ្ចាំ:</strong>
+    <strong class="report-input">{{ data.price_pawn | currency }}</strong>
+    <strong>តម្លៃការប្រាក់ប្រចាំខែ:</strong>
+    <strong class="report-input">{{
+      data.price_interest | currency
+    }}</strong>
+    <strong>ព័ត៌មានបន្ថែមអំពីវត្ថុបញ្ចាំ:</strong>
+    <strong class="report-input">{{ data.description }}</strong>
+    <strong>ថ្ងៃផុតកំណត់:</strong>
+    <strong class="report-input">{{
+      data.date_expired?.toDate() | date
+    }}</strong>
+  </div>
+  <div class="image-preview-container">
+    <img [src]="data?.photo?.downloadUrl" alt="Pawned Item" />
+  </div>
 </mat-dialog-content>
-</div>
 
+  </div>
 </div>
 
 <mat-dialog-actions align="end">
-    <button [useExistingCss]="true"  mat-button color="primary" printSectionId="print-section" ngxPrint >
-        <mat-icon > print</mat-icon > ព្រីនឯកសារ
-    </button>
+  <button
+    [useExistingCss]="true"
+    mat-button
+    color="primary"
+    printSectionId="print-section"
+    ngxPrint
+  >
+    <mat-icon> print</mat-icon> ព្រីនឯកសារ
+  </button>
 </mat-dialog-actions>

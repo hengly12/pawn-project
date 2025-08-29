@@ -38,7 +38,7 @@
                   <mat-datepicker #endDatePicker></mat-datepicker>
                 </mat-form-field>
               </div>
-              
+
               <div class="filter-all-time">
                 <button
                   mat-button
@@ -60,7 +60,9 @@
                   mat-button
                   type="button"
                   (click)="onFilterChange(null, 'thisMonth')"
-                  [ngClass]="{ 'active-filter': selectedFilter === 'thisMonth' }"
+                  [ngClass]="{
+                    'active-filter': selectedFilter === 'thisMonth'
+                  }"
                 >
                   This Month
                 </button>
@@ -73,12 +75,9 @@
                   This Year
                 </button>
               </div>
-              
-              
-              
             </div>
           </div>
-          
+
           <div class="filter-container">
             <div class="filter-buttons">
               <div class="date-filter-btn">
@@ -96,141 +95,154 @@
                 <button mat-button type="button" (click)="resetFilters()">
                   Reset Filter
                 </button>
-                 <button mat-button type="button" [useExistingCss]="true" mat-button color="primary" printSectionId="print-report" ngxPrint> <mat-icon> local_printshop</mat-icon> Print</button>
-                
+                <button
+                  mat-button
+                  type="button"
+                  [useExistingCss]="true"
+                  mat-button
+                  color="primary"
+                  printSectionId="print-report"
+                  ngxPrint
+                >
+                  <mat-icon> local_printshop</mat-icon> Print
+                </button>
               </div>
-              
             </div>
           </div>
         </div>
       </mat-tab-nav-panel>
     </div>
   </form>
-  
+
   <div id="print-report">
-  <form>
-    <div class=".dashboard-table">
-      <mat-tab-nav-panel>
-        <div class="listing-table">
-          <div class="report-table">
-            <div class="report-monthly"></div>
-            <h2 class="report-title">{{ reportTitle }}</h2>
-            <div class="pawn-table-container">
-              <table class="pawn-table">
-                <thead>
-                  <tr class="table-hight">
-                    <th>
-                      <h3>គោត្តនាម និងនាម</h3>
-                    </th>
-                    <th>
-                      <h3>ភេទ</h3>
-                    </th>
-                    <th>
-                      <h3>លេខទូរសព្ទ</h3>
-                    </th>
-                    <th>
-                      <h3>អាស័យដ្ថាន</h3>
-                    </th>
-                    <th>
-                      <h3>វត្ថុបញ្ចាំ</h3>
-                    </th>
-                    <th>
-                      <h3>តម្លៃវត្ថុបញ្ចាំ</h3>
-                    </th>
-                    <th>
-                      <h3>តម្លៃការប្រាក់</h3>
-                    </th>
-                    <th>
-                      <h3>ថ្ងៃបង្កើត</h3>
-                    </th>
-                    <th>
-                      <h3>ចំនួនដង បញ្ចាំ</h3>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let item of paginatedData" (click)="openModal(item)">
-                    <td>
-                      <span class="click-name">
-                          {{ item.full_name }}</span
-                      >
-                    </td>
-                    <td>
-                      <ng-container
-                        *ngIf="item.gender && typeof item.gender === 'object' && item.gender !== null; else stringGender"
-                      >
-                        {{ item.gender.text }}
-                      </ng-container>
-                      <ng-template #stringGender>{{ item.gender }}</ng-template>
-                    </td>
-                    <td>{{ item.phone_number }}</td>
-                    <td>{{ item.address }}</td>
-                    <td>
-                      <ng-container
-                        *ngIf="item.pawn_type && typeof item.pawn_type === 'object' && item.pawn_type !== null; else stringPawnType"
-                      >
-                        {{ item.pawn_type.name}}
-                        {{ item.pawn_type.text}}
-                      </ng-container>
-                      <ng-template #stringPawnType>{{
-                        item.pawn_type
-                      }}</ng-template>
-                    </td>
-                    <td>
-                      {{
-                        item.price_pawn | currency : "USD" : "symbol" : "1.2-2"
-                      }}
-                    </td>
-                    <td>
-                      {{
-                        item.price_interest
-                          | currency : "USD" : "symbol" : "1.2-2"
-                      }}
-                    </td>
-                    <td>
-                      {{ formatDate(item.created_at) | date : "dd/MM/yy" }}
-                    </td>
-                    <td>
-                      {{ item.pawnCount }}
-                    </td>
-                  </tr>
-                </tbody>
-                <tfoot>
-                  <tr>
-                    <td colspan="5">
-                      <h3>តម្លៃសរុប</h3>
-                    </td>
-                    <td>
-                      {{
-                        totalPawnPrice | currency : "USD" : "symbol" : "1.2-2"
-                      }}
-                    </td>
-                    <td>
-                      {{
-                        totalInterestPrice
-                          | currency : "USD" : "symbol" : "1.2-2"
-                      }}
-                    </td>
-                    <td></td>
-                    <td></td>
-                  </tr>
-                </tfoot>
-              </table>
+    <form>
+      <div class=".dashboard-table">
+        <mat-tab-nav-panel>
+          <div class="listing-table">
+            <div class="report-table">
+              <div class="report-monthly"></div>
+              <h2 class="report-title">{{ reportTitle }}</h2>
+              <div class="pawn-table-container">
+                <table class="pawn-table">
+                  <thead>
+                    <tr class="table-hight">
+                      <th>
+                        <h3>គោត្តនាម និងនាម</h3>
+                      </th>
+                      <th>
+                        <h3>ភេទ</h3>
+                      </th>
+                      <th>
+                        <h3>លេខទូរសព្ទ</h3>
+                      </th>
+                      <th>
+                        <h3>អាស័យដ្ថាន</h3>
+                      </th>
+                      <th>
+                        <h3>វត្ថុបញ្ចាំ</h3>
+                      </th>
+                      <th>
+                        <h3>តម្លៃវត្ថុបញ្ចាំ</h3>
+                      </th>
+                      <th>
+                        <h3>តម្លៃការប្រាក់</h3>
+                      </th>
+                      <th>
+                        <h3>ថ្ងៃបង្កើត</h3>
+                      </th>
+                      <th>
+                        <h3>ចំនួនដង បញ្ចាំ</h3>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      *ngFor="let item of paginatedData"
+                      (click)="openModal(item)"
+                    >
+                      <td>
+                        <span class="click-name"> {{ item.full_name }}</span>
+                      </td>
+                      <td>
+                        <ng-container
+                          *ngIf="item.gender && typeof item.gender === 'object' && item.gender !== null; else stringGender"
+                        >
+                          {{ item.gender.text }}
+                        </ng-container>
+                        <ng-template #stringGender>{{
+                          item.gender
+                        }}</ng-template>
+                      </td>
+                      <td>{{ item.phone_number }}</td>
+                      <td>{{ item.address }}</td>
+                      <td>
+                        <ng-container
+                          *ngIf="item.pawn_type && typeof item.pawn_type === 'object'; else stringPawnType"
+                        >
+                          @if (item.pawn_type.name) {
+                          {{ item.pawn_type.name }}
+                          } @else if (item.pawn_type.text) {
+                          {{ item.pawn_type.text }}
+                          }
+                        </ng-container>
+                        <ng-template #stringPawnType>{{
+                          item.pawn_type
+                        }}</ng-template>
+                      </td>
+                      <td>
+                        {{
+                          item.price_pawn
+                            | currency : "USD" : "symbol" : "1.2-2"
+                        }}
+                      </td>
+                      <td>
+                        {{
+                          item.price_interest
+                            | currency : "USD" : "symbol" : "1.2-2"
+                        }}
+                      </td>
+                      <td>
+                        {{ formatDate(item.created_at) | date : "dd/MM/yy" }}
+                      </td>
+                      <td>
+                        {{ item.pawnCount }}
+                      </td>
+                    </tr>
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <td colspan="5">
+                        <h3>តម្លៃសរុប</h3>
+                      </td>
+                      <td>
+                        {{
+                          totalPawnPrice | currency : "USD" : "symbol" : "1.2-2"
+                        }}
+                      </td>
+                      <td>
+                        {{
+                          totalInterestPrice
+                            | currency : "USD" : "symbol" : "1.2-2"
+                        }}
+                      </td>
+                      <td></td>
+                      <td></td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+              <mat-paginator
+                [length]="filteredData.length"
+                [pageSize]="pageSize"
+                [pageSizeOptions]="pageSizeOptions"
+                (page)="onPageChange($event)"
+                showFirstLastButtons
+              >
+              </mat-paginator>
             </div>
-            <mat-paginator 
-              [length]="filteredData.length"
-              [pageSize]="pageSize"
-              [pageSizeOptions]="pageSizeOptions"
-              (page)="onPageChange($event)"
-              showFirstLastButtons
-            >
-            </mat-paginator>
           </div>
-        </div>
-        
-      </mat-tab-nav-panel>
-      
-    </div>
-  </form>
+        </mat-tab-nav-panel>
+      </div>
+    </form>
   </div>
 </div>

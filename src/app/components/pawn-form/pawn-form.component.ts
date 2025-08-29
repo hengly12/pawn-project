@@ -10,6 +10,8 @@ import {
   computed,
   OnInit,
   OnDestroy,
+  WritableSignal,
+  inject,
 } from '@angular/core';
 import {
   AbstractControl,
@@ -128,10 +130,13 @@ export class PawnFormComponent implements OnInit, OnDestroy {
   @ViewChild('inputFile') inputFile!: ElementRef;
   isProcessing: any;
 
+  // Your existing form group
+  pawnForm: FormGroup;
+  private fb = inject(FormBuilder);
+
   constructor(
     public dialog: MatDialog,
     private ds: DataService,
-    private fb: FormBuilder,
     private auth: AuthStore,
     private store: PawnStore,
     private snackBar: MatSnackBar,
@@ -266,8 +271,6 @@ export class PawnFormComponent implements OnInit, OnDestroy {
     start: new FormControl<Date | null>(null),
     end: new FormControl<Date | null>(null),
   });
-
-  pawnForm: FormGroup;
 
   updateFormValidators() {
     const selectedCategory = this.pawnForm.get('pawn_type')?.value as ICategory;
@@ -442,8 +445,7 @@ export class PawnFormComponent implements OnInit, OnDestroy {
     if (!category) {
       return '';
     }
-
-    if (category.name && category.text) {
+    if (category.name && category.text && category.name !== category.text) {
       return `${category.name} - ${category.text}`;
     } else if (category.name) {
       return category.name;
@@ -648,6 +650,38 @@ export class PawnFormComponent implements OnInit, OnDestroy {
     }, 100);
   }
 
+  // checkDisableForm(paramKey: string): void {
+  //   // Add this guard to ensure the form exists before trying to access it
+  //   if (!this.pawnForm) {
+  //     return;
+  //   }
+
+  //   console.log('checkDisableForm called with paramKey:', paramKey);
+
+  //   // List of controls that should be disabled for existing records
+  //   const personalInfoControls = [
+  //     'full_name',
+  //     'gender',
+  //     'phone_number',
+  //     'id_card',
+  //     'address',
+  //   ];
+
+  //   if (paramKey === 'na') {
+  //     // For a new form ('na'), ensure all controls are enabled
+  //     this.pawnForm.enable();
+  //   } else {
+  //     // For an existing form, disable specific controls
+  //     personalInfoControls.forEach(controlName => {
+  //       this.pawnForm.get(controlName)?.disable();
+  //     });
+
+  //     // All other controls that are not in personalInfoControls will remain enabled
+  //     // This is the default behavior after a call to this.pawnForm.enable()
+  //     // or if the controls were already enabled.
+  //   }
+  // }
+
   checkDisableForm(paramKey: string): void {
     console.log('checkDisableForm called with paramKey:', paramKey);
 
@@ -658,163 +692,237 @@ export class PawnFormComponent implements OnInit, OnDestroy {
     }
   }
 
-  async onSubmit() {
-  if (this.pawnForm.invalid) {
-    this.snackBar.open('សូមបញ្ចូលព័ត៍មាន', 'យល់ព្រម', {
-      duration: 3000,
-    });
-    return;
-  }
-
-  this.loading.set(true); // Start loading
-
-  let photo = null;
-  if (this.selectedFiles && this.selectedFiles.length > 0) {
-    photo = await this.storage.uploadSelectedFile(
-      this.selectedFiles[0],
-      'image-thumnail'
-    );
-  } else if (this.data()?.photo) {
-    photo = this.data()?.photo;
-  }
-
-  const {
-    full_name,
-    phone_number,
-    gender,
-    id_card,
-    address,
-
-    pawn_type,
-    type_phone,
-    type_car,
-    type_phone_id,
-    type_motor,
-    type_jewelry_name,
-    gold_weight,
-    others,
-
-    plate_number,
-    brand_name,
-    price_pawn,
-    price_interest,
-    description,
-    created_at,
-    date_expired,
-  } = this.pawnForm.getRawValue();
-  const toDay = new Date();
-  let key = this.ds.createKey();
-
-  const info_customer: any = {
-    key: this.ds.createKey(),
-    created_at: serverTimestamp(),
-    created_by: mapUser(this.auth?.profile),
-    updated_at: serverTimestamp(),
-    updated_by: mapUser(this.auth?.profile),
-    date_key: toDateKey(toDay),
-    status: STATUS_OBJ.ACTIVE,
-    keywords: generateKeywords([full_name]),
-    isDeleted: false,
-
-    full_name: full_name,
-    phone_number: phone_number,
-    gender: gender,
-    id_card: id_card,
-    address: address,
-
-    pawnKey: arrayUnion(key),
-  };
-
-  const data: any = {
-    key: this.data()?.key || key,
-
-    created_at: serverTimestamp(),
-    created_by: mapUser(this.auth?.profile),
-    updated_at: serverTimestamp(),
-    updated_by: mapUser(this.auth?.profile),
-    date_key: toDateKey(toDay),
-    status: STATUS_OBJ.ACTIVE,
-    keywords: generateKeywords([full_name]),
-    isDeleted: false,
-
-    full_name: full_name,
-    phone_number: phone_number,
-    gender: gender,
-    id_card: id_card,
-    address: address,
-
-    pawn_type: pawn_type,
-    price_pawn: price_pawn,
-    price_interest: price_interest,
-    description: description,
-
-    date_expired: date_expired,
-    photo: photo,
-    pawn_item_key: info_customer?.key,
-
-    ...(this.seleted()?.key == 0 && {
-      plate_number: plate_number,
-      brand_name: brand_name,
-    }),
-
-    ...(this.seleted()?.key == 1 && {
-      type_phone_id: type_phone_id,
-      brand_name: brand_name,
-    }),
-
-    ...(this.seleted()?.key == 2 && {
-      plate_number: plate_number,
-      brand_name: brand_name,
-    }),
-
-    ...(this.seleted()?.key == 3 && {
-      type_jewelry_name: type_jewelry_name,
-      gold_weight: gold_weight,
-    }),
-
-    ...(this.seleted()?.key == 4 && {
-      others: others,
-    }),
-  };
-
-  const info_update: any = {
-    key: this.datainfo()?.key,
-    updated_at: serverTimestamp(),
-    updated_by: mapUser(this.auth?.profile),
-
-    pawnKey: arrayUnion(data?.key),
-  };
-
-  try {
-    if (this.param() == 'na') {
-      await this.store.createCustomer(data, info_customer);
-      this.snackBar.open(`ការរក្សាទុកទិន្នន័យបានជោគជ័យ`, 'ជោគជ័យ', {
-        duration: 3000,
-      });
-    } else if (this.datainfo()?.pawnKey) {
-      await this.store.createCustomerinfoNews(data, info_update);
-      this.snackBar.open(`ការរក្សាទុកទិន្នន័យបានជោគជ័យ`, 'ជោគជ័យ', {
-        duration: 3000,
-      });
-    } else {
-      await this.store.createCustomerEdit(data);
-      this.snackBar.open(`ការរក្សាទុកទិន្នន័យបានជោគជ័យ`, 'ជោគជ័យ', {
-        duration: 3000,
-      });
+  private async createOrGetCategory(
+    categoryName: string | null | undefined
+  ): Promise<ICategory | null> {
+    if (typeof categoryName !== 'string') {
+      console.error('Category name is not a string:', categoryName);
+      return null;
     }
-    
-    // Navigate to the route and then refresh the page
-    this.router.navigate(['home/active/listing']).then(() => {
-      window.location.reload();
-    });
 
-  } catch (e) {
-    console.error(e);
-    this.snackBar.open(`ការរក្សាទុកទិន្នន័យបានបរាជ័យ`, 'បរាជ័យ', {
-      duration: 3000,
-    });
-  } finally {
-    this.loading.set(false); // End loading
+    const trimmedCategoryName = categoryName.trim();
+    if (!trimmedCategoryName) {
+      return null;
+    }
+
+    const existingCategory = this._categories().find(
+      (cat) => cat.name?.toLowerCase() === trimmedCategoryName.toLowerCase()
+    );
+
+    if (existingCategory) {
+      console.log('Category already exists:', existingCategory.name);
+      return existingCategory;
+    }
+
+    console.log('Category does not exist, attempting to create a new one...');
+
+    try {
+      const categoryData = {
+        name: trimmedCategoryName,
+        text: trimmedCategoryName,
+        description: `User-created category: ${trimmedCategoryName}`,
+        color: this.getRandomColor(),
+      };
+
+      const docRef = await this.ds.addCategory(categoryData);
+
+      const newCategory: ICategory = { id: docRef.id, ...categoryData };
+      return newCategory;
+    } catch (error) {
+      console.error('Error creating new category:', error);
+      this.snackBar.open('Failed to create new category.', 'OK', {
+        duration: 3000,
+      });
+      return null;
+    }
   }
-}
+
+  private getRandomColor(): string {
+    return '#5a5a5aff';
+  }
+
+  async onSubmit() {
+    console.log('onSubmit triggered');
+
+    if (this.pawnForm.invalid) {
+      this.snackBar.open('សូមបញ្ចូលព័ត៍មាន', 'យល់ព្រម', {
+        duration: 3000,
+      });
+      return;
+    }
+
+    this.loading.set(true);
+
+    const pawn_type_value = this.pawnForm.get('pawn_type')?.value;
+
+    let selectedPawnType: ICategory | null;
+
+    if (
+      typeof pawn_type_value === 'object' &&
+      pawn_type_value !== null &&
+      'name' in pawn_type_value
+    ) {
+      selectedPawnType = await this.createOrGetCategory(pawn_type_value.name);
+    } else {
+      selectedPawnType = await this.createOrGetCategory(pawn_type_value);
+    }
+
+    if (!selectedPawnType) {
+      this.snackBar.open('Failed to process pawn type.', 'OK', {
+        duration: 3000,
+      });
+      this.loading.set(false);
+      return;
+    }
+
+    // Update the form value with the full category object before saving
+    this.pawnForm.patchValue({ pawn_type: selectedPawnType as any });
+
+    let photo = null;
+    if (this.selectedFiles && this.selectedFiles.length > 0) {
+      photo = await this.storage.uploadSelectedFile(
+        this.selectedFiles[0],
+        'image-thumnail'
+      );
+    } else if (this.data()?.photo) {
+      photo = this.data()?.photo;
+    }
+
+    const {
+      full_name,
+      phone_number,
+      gender,
+      id_card,
+      address,
+
+      pawn_type,
+      type_phone,
+      type_car,
+      type_phone_id,
+      type_motor,
+      type_jewelry_name,
+      gold_weight,
+      others,
+
+      plate_number,
+      brand_name,
+      price_pawn,
+      price_interest,
+      description,
+      created_at,
+      date_expired,
+    } = this.pawnForm.getRawValue();
+    const toDay = new Date();
+    let key = this.ds.createKey();
+
+    const info_customer: any = {
+      key: this.ds.createKey(),
+      created_at: serverTimestamp(),
+      created_by: mapUser(this.auth?.profile),
+      updated_at: serverTimestamp(),
+      updated_by: mapUser(this.auth?.profile),
+      date_key: toDateKey(toDay),
+      status: STATUS_OBJ.ACTIVE,
+      keywords: generateKeywords([full_name]),
+      isDeleted: false,
+
+      full_name: full_name,
+      phone_number: phone_number,
+      gender: gender,
+      id_card: id_card,
+      address: address,
+
+      pawnKey: arrayUnion(key),
+    };
+
+    const data: any = {
+      key: this.data()?.key || key,
+
+      created_at: serverTimestamp(),
+      created_by: mapUser(this.auth?.profile),
+      updated_at: serverTimestamp(),
+      updated_by: mapUser(this.auth?.profile),
+      date_key: toDateKey(toDay),
+      status: STATUS_OBJ.ACTIVE,
+      keywords: generateKeywords([full_name]),
+      isDeleted: false,
+
+      full_name: full_name,
+      phone_number: phone_number,
+      gender: gender,
+      id_card: id_card,
+      address: address,
+
+      pawn_type: pawn_type,
+      price_pawn: price_pawn,
+      price_interest: price_interest,
+      description: description,
+
+      date_expired: date_expired,
+      photo: photo,
+      pawn_item_key: info_customer?.key,
+
+      ...(this.seleted()?.key == 0 && {
+        plate_number: plate_number,
+        brand_name: brand_name,
+      }),
+
+      ...(this.seleted()?.key == 1 && {
+        type_phone_id: type_phone_id,
+        brand_name: brand_name,
+      }),
+
+      ...(this.seleted()?.key == 2 && {
+        plate_number: plate_number,
+        brand_name: brand_name,
+      }),
+
+      ...(this.seleted()?.key == 3 && {
+        type_jewelry_name: type_jewelry_name,
+        gold_weight: gold_weight,
+      }),
+
+      ...(this.seleted()?.key == 4 && {
+        others: others,
+      }),
+    };
+
+    const info_update: any = {
+      key: this.datainfo()?.key,
+      updated_at: serverTimestamp(),
+      updated_by: mapUser(this.auth?.profile),
+
+      pawnKey: arrayUnion(data?.key),
+    };
+
+    try {
+      if (this.param() == 'na') {
+        await this.store.createCustomer(data, info_customer);
+        this.snackBar.open(`ការរក្សាទុកទិន្នន័យបានជោគជ័យ`, 'ជោគជ័យ', {
+          duration: 3000,
+        });
+      } else if (this.datainfo()?.pawnKey) {
+        await this.store.createCustomerinfoNews(data, info_update);
+        this.snackBar.open(`ការរក្សាទុកទិន្នន័យបានជោគជ័យ`, 'ជោគជ័យ', {
+          duration: 3000,
+        });
+      } else {
+        await this.store.createCustomerEdit(data);
+        this.snackBar.open(`ការរក្សាទុកទិន្នន័យបានជោគជ័យ`, 'ជោគជ័យ', {
+          duration: 3000,
+        });
+      }
+
+      this.router.navigate(['home/active/listing']).then(() => {
+        window.location.reload();
+      });
+    } catch (e) {
+      console.error(e);
+      this.snackBar.open(`ការរក្សាទុកទិន្នន័យបានបរាជ័យ`, 'បរាជ័យ', {
+        duration: 3000,
+      });
+    } finally {
+      this.loading.set(false);
+    }
+  }
 }

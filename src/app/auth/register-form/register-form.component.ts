@@ -18,8 +18,7 @@ import { NgIf } from '@angular/common';
     MatCardModule,
     MatButtonModule,
     MatIconModule,
-    NgIf,
-    RouterLink,
+    // RouterLink,
   ],
   templateUrl: './register-form.component.html',
   styleUrl: './register-form.component.scss'

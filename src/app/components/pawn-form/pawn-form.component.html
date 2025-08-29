@@ -35,7 +35,6 @@
           class="btn-edit"
           type="submit"
           (click)="onSubmit()"
-          
         >
           រក្សាទុក <mat-icon>edit</mat-icon>
         </button>
@@ -227,10 +226,12 @@
                     [displayWith]="displayItem"
                   >
                     @for(item of pawn_type(); track item.id){
-                    <!-- Changed track item to track item.id -->
                     <mat-option (click)="selectItem(item)" [value]="item">
+                      @if (item.name) {
                       {{ item.name }}
+                      } @else if (item.text) {
                       {{ item.text }}
+                      }
                     </mat-option>
                     }
                   </mat-autocomplete>

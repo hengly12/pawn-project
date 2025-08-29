@@ -71,17 +71,21 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
             search: new FormControl(''),
         });
 
-         this.isLoading = true;
+        this.isLoading = true;
 
-  this.routeUnSubscribe.set(
-    this.store.fetchInfoListing().subscribe((res) => {
-      setTimeout(() => {
-        this.data.set(res);
-        this.originalData.set(res);
-        this.isLoading = false;
-      }, 1000);
-    })
-  );
+        // Note: The store.fetchInfoListing() method should be updated to a new method that
+        // specifically fetches only the required fields using Firestore's select() method.
+        // For example:
+        // this.store.fetchSpecificInfoListing(['full_name', 'gender', 'phone_number', 'id_card', 'address'])
+        this.routeUnSubscribe.set(
+            this.store.fetchInfoListing().subscribe((res) => {
+                setTimeout(() => {
+                    this.data.set(res);
+                    this.originalData.set(res);
+                    this.isLoading = false;
+                }, 1000);
+            })
+        );
 
         this.searchSubscription = this.form.get('search')?.valueChanges.subscribe((value: string) => {
             if (value && value.trim() !== '') {
@@ -93,45 +97,45 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
         });
     }
 
-   loadMore() {
-  if (this.loadingMore || this.endOfData) return;
+    loadMore() {
+        if (this.loadingMore || this.endOfData) return;
 
-  this.loadingMore = true;
-  this.isLoading = true;
+        this.loadingMore = true;
+        this.isLoading = true;
 
-  const statusKey = this.info_customer?.param === 'active' ? 1 : -2;
+        const statusKey = this.info_customer?.param === 'active' ? 1 : -2;
 
-  this.store.fetchListingPaginated(statusKey, this.pageLimit, this.lastVisibleDoc)
-    .pipe(takeUntil(this.destroy$))
-    .subscribe(({ data, last }) => {
+        // Note: The store.fetchListingPaginated() method should be updated as well
+        // to fetch only the required fields.
+        this.store.fetchListingPaginated(statusKey, this.pageLimit, this.lastVisibleDoc)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(({ data, last }) => {
 
-      setTimeout(() => {
-        if (!data || data.length === 0) {
-          this.endOfData = true;
-          this.loadingMore = false;
-          this.isLoading = false;
-          return;
-        }
+                setTimeout(() => {
+                    if (!data || data.length === 0) {
+                        this.endOfData = true;
+                        this.loadingMore = false;
+                        this.isLoading = false;
+                        return;
+                    }
 
-        const currentIds = new Set(this.data().map((item: any) => item.id));
-        const newItems = data.filter((item: any) => !currentIds.has(item.id));
+                    const currentIds = new Set(this.data().map((item: any) => item.id));
+                    const newItems = data.filter((item: any) => !currentIds.has(item.id));
 
-        if (newItems.length === 0) {
-          this.endOfData = true;
-        } else {
-          const updated = [...this.data(), ...newItems];
-          this.data.set(updated);
-          this.originalData.set(updated);
-          this.lastVisibleDoc = last;
-        }
+                    if (newItems.length === 0) {
+                        this.endOfData = true;
+                    } else {
+                        const updated = [...this.data(), ...newItems];
+                        this.data.set(updated);
+                        this.originalData.set(updated);
+                        this.lastVisibleDoc = last;
+                    }
 
-        this.loadingMore = false;
-        this.isLoading = false;
-      }, 1000);
-    });
-}
-
-
+                    this.loadingMore = false;
+                    this.isLoading = false;
+                }, 1000);
+            });
+    }
 
     onScroll(event: any) {
         const element = event.target;
