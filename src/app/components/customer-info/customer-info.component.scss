@@ -247,8 +247,8 @@
  }
 }
 .profile-image {
-  width: 75px;
-  height: 75px;
+  width: 65px;
+  height: 65px;
   border-radius: 50%;
   overflow: hidden;
   margin-bottom: 10px;
@@ -262,12 +262,12 @@
   object-fit: cover;
 }
 
-// ::ng-deep.mat-mdc-dialog-surface {
-//   border-radius: 8px !important;
-//   margin-top: 35px;
-//   height: 90%;
-//   width: 100%
-// }
+::ng-deep.mat-mdc-dialog-surface {
+  border-radius: 25px !important;
+  margin-top: 35px;
+  height: 88% !important;
+  width: 75% !important;
+}
 
 .full_name {
   display: flex;

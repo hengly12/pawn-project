@@ -10,7 +10,7 @@ import {
   computed,
   OnInit,
   OnDestroy,
-  WritableSignal,
+  // WritableSignal,
   inject,
 } from '@angular/core';
 import {
@@ -31,7 +31,7 @@ import { MatIcon, MatIconModule } from '@angular/material/icon';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import {
   GENDER_DATA,
-  ITEM_DATA,
+  // ITEM_DATA,
   STATUS_OBJ,
   Weight_Of_Gold,
 } from '../../shared/dummy/config';

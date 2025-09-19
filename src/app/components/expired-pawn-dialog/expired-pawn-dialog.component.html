@@ -1,0 +1,57 @@
+<h2 mat-dialog-title>
+  <span style="margin-left: 8px">⚠ វត្ថុបញ្ចាំផុតកំណត់</span>
+</h2>
+
+<mat-dialog-content class="expired-dialog-listing">
+  <ng-container *ngIf="(data?.length || 0) > 0; else noExpiredPawn">
+    <div class="customer_info" *ngFor="let item of data; let i = index">
+      <div class="profile-image">
+        <img src="assets/images/Admin-Pic.jpg" alt="Profile Icon" />
+      </div>
+
+      <div class="listing_info">
+        <div class="full_name">
+          <mat-icon>perm_identity</mat-icon>
+          <h4>ឈ្មោះ: {{ item?.full_name }}</h4>
+        </div>
+
+        <div class="phone_number">
+          <mat-icon>ring_volume</mat-icon>
+          <h5>លេខទូរសព្ទ: {{ item?.phone_number }}</h5>
+        </div>
+
+        <div class="pawn_type">
+          <mat-icon>devices_other</mat-icon>
+          <h5>
+            វត្ថុបញ្ចាំ: @if (item.pawn_type && typeof item.pawn_type ===
+            'object') { @if (item.pawn_type.name) {
+            {{ item.pawn_type.name }}
+            } @else if (item.pawn_type.text) {
+            {{ item.pawn_type.text }}
+            } } @else {
+            {{ item.pawn_type }}
+            }
+          </h5>
+        </div>
+
+        <div class="date_expired">
+          <mat-icon>date_range</mat-icon>
+          <h5>ថ្ងៃផុតកំណត់: {{ item?.date_expired | date : "dd/MM/yyyy" }}</h5>
+          <div>
+            <span style="color: red" *ngIf="item?.isExpired">(ផុតកំណត់)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-template #noExpiredPawn>
+    <p style="text-align: center; color: #888">
+      មិនមានវត្ថុបញ្ចាំដែលផុតកំណត់ទេ។
+    </p>
+  </ng-template>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>បិទ</button>
+</mat-dialog-actions>

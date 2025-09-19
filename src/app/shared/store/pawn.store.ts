@@ -1,28 +1,67 @@
 import { Injectable, signal } from '@angular/core';
 import { DataService } from '../services/data.service';
 import { AuthStore } from '../../auth/auth.store';
-import { doc, getDoc, getDocs, limit, orderBy, query, startAfter, updateDoc, where } from 'firebase/firestore';
+import {
+  doc,
+  getDoc,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  startAfter,
+  updateDoc,
+  where,
+} from 'firebase/firestore';
 import { collectionData, QueryDocumentSnapshot } from '@angular/fire/firestore';
-import { Observable, } from 'rxjs';
-import { pushToArray, pushToObject, toUpperCaseTrim } from '../services/mapping.service';
+import { Observable, firstValueFrom } from 'rxjs';
+import {
+  pushToArray,
+  pushToObject,
+  toUpperCaseTrim,
+} from '../services/mapping.service';
 import { STATUS_OBJ } from '../dummy/config';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PawnStore {
-  constructor(private ds: DataService, private auth: AuthStore) {}
+  // Signal to hold the count of expired pawns. This is a public signal
+  // that the MainHeaderComponent will subscribe to.
+  expiredPawnCount = signal<number>(0);
+
+  constructor(private ds: DataService, private auth: AuthStore) {
+    // This will fetch the initial count when the service is created.
+    this.checkExpiredItems();
+  }
+
+  // Method to fetch the expired items and update the signal.
+  // This can be called from any component that needs to refresh the count.
+  async checkExpiredItems() {
+    try {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      // This query uses your existing `getExpiredPawnItems` logic
+      const expiredItems = await this.getExpiredPawnItems(today);
+      this.expiredPawnCount.set(expiredItems.length);
+    } catch (error) {
+      console.error('Error fetching expired pawn items:', error);
+      // You can set the count to 0 or handle the error as needed
+      this.expiredPawnCount.set(0);
+    }
+  }
 
   process = signal<boolean>(false);
-
-  
 
   async createCustomerinfo(data: any, info_customer: any) {
     try {
       this.process.set(true);
       const batch = this.ds.batchRef();
       const ref = doc(this.ds.customerRef(), data?.key);
-      const ref_info_customer = doc(this.ds.infoCustomerRef(), info_customer?.key);
+      const ref_info_customer = doc(
+        this.ds.infoCustomerRef(),
+        info_customer?.key
+      );
       batch.set(ref, data, { merge: true });
       batch.set(ref_info_customer, info_customer, { merge: true });
       await batch.commit();
@@ -32,12 +71,26 @@ export class PawnStore {
     }
   }
 
+  async getExpiredPawnItems(date = new Date()): Promise<any[]> {
+    const queryRef = [
+      where('date_expired', '<', date), // Changed from '>=' to '<'
+      where('status.key', '==', STATUS_OBJ.ACTIVE.key),
+      orderBy('created_at', 'desc'),
+    ];
+    return firstValueFrom(
+      collectionData(query(this.ds.customerRef(), ...queryRef))
+    );
+  }
+
   async createCustomer(data: any, info_customer: any) {
     try {
       this.process.set(true);
       const batch = this.ds.batchRef();
       const ref = doc(this.ds.customerRef(), data?.key);
-      const ref_info_customer = doc(this.ds.infoCustomerRef(), info_customer?.key);
+      const ref_info_customer = doc(
+        this.ds.infoCustomerRef(),
+        info_customer?.key
+      );
       batch.set(ref, data, { merge: true });
       batch.set(ref_info_customer, info_customer, { merge: true });
       await batch.commit();
@@ -52,7 +105,10 @@ export class PawnStore {
       this.process.set(true);
       const batch = this.ds.batchRef();
       const ref = doc(this.ds.customerRef(), data?.key);
-      const ref_info_customer = doc(this.ds.infoCustomerRef(), info_update?.key);
+      const ref_info_customer = doc(
+        this.ds.infoCustomerRef(),
+        info_update?.key
+      );
       batch.set(ref, data, { merge: true });
       batch.set(ref_info_customer, info_update, { merge: true });
       await batch.commit();
@@ -81,10 +137,16 @@ export class PawnStore {
       orderBy('created_at', 'desc'),
       limit(20),
     ];
-    return collectionData(query(this.ds.customerRef(), ...queryRef)) as Observable<any[]>;
+    return collectionData(
+      query(this.ds.customerRef(), ...queryRef)
+    ) as Observable<any[]>;
   }
 
-  fetchListingPaginated(statusKey: number, pageLimit: number, startAfterDoc: QueryDocumentSnapshot<any> | null) {
+  fetchListingPaginated(
+    statusKey: number,
+    pageLimit: number,
+    startAfterDoc: QueryDocumentSnapshot<any> | null
+  ) {
     const constraints: any[] = [
       where('status.key', '==', statusKey),
       orderBy('created_at', 'desc'),
@@ -94,15 +156,26 @@ export class PawnStore {
       constraints.splice(2, 0, startAfter(startAfterDoc));
     }
     const q = query(this.ds.customerRef(), ...constraints);
-    return new Observable<{ data: any[], last: QueryDocumentSnapshot<any> | null }>((observer) => {
-      getDocs(q).then((snapshot) => {
-        const docs = snapshot.docs.map((doc) => ({ key: doc.id, ...doc.data() }));
-        const last = snapshot.docs.length > 0 ? snapshot.docs[snapshot.docs.length - 1] : null;
-        observer.next({ data: docs, last });
-        observer.complete();
-      }).catch((error) => {
-        observer.error(error);
-      });
+    return new Observable<{
+      data: any[];
+      last: QueryDocumentSnapshot<any> | null;
+    }>((observer) => {
+      getDocs(q)
+        .then((snapshot) => {
+          const docs = snapshot.docs.map((doc) => ({
+            key: doc.id,
+            ...doc.data(),
+          }));
+          const last =
+            snapshot.docs.length > 0
+              ? snapshot.docs[snapshot.docs.length - 1]
+              : null;
+          observer.next({ data: docs, last });
+          observer.complete();
+        })
+        .catch((error) => {
+          observer.error(error);
+        });
     });
   }
 
@@ -112,12 +185,16 @@ export class PawnStore {
       orderBy('created_at', 'desc'),
       limit(30),
     ];
-    return collectionData(query(this.ds.customerRef(), ...queryRef)) as Observable<any[]>;
+    return collectionData(
+      query(this.ds.customerRef(), ...queryRef)
+    ) as Observable<any[]>;
   }
 
   fetchInfoListing() {
     const queryRef = [orderBy('created_at', 'desc'), limit(50)];
-    return collectionData(query(this.ds.infoCustomerRef(), ...queryRef)) as Observable<any[]>;
+    return collectionData(
+      query(this.ds.infoCustomerRef(), ...queryRef)
+    ) as Observable<any[]>;
   }
 
   getCustomerDemo(): Observable<any[]> {

@@ -156,38 +156,30 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr
-                      *ngFor="let item of paginatedData"
-                      (click)="openModal(item)"
-                    >
+                    @for (item of paginatedData; track item.full_name) {
+                    <tr (click)="openModal(item)">
                       <td>
                         <span class="click-name"> {{ item.full_name }}</span>
                       </td>
                       <td>
-                        <ng-container
-                          *ngIf="item.gender && typeof item.gender === 'object' && item.gender !== null; else stringGender"
-                        >
-                          {{ item.gender.text }}
-                        </ng-container>
-                        <ng-template #stringGender>{{
-                          item.gender
-                        }}</ng-template>
+                        @if (item.gender && typeof item.gender === 'object' &&
+                        item.gender !== null) {
+                        {{ item.gender.text }}
+                        } @else {
+                        {{ item.gender }}
+                        }
                       </td>
                       <td>{{ item.phone_number }}</td>
                       <td>{{ item.address }}</td>
                       <td>
-                        <ng-container
-                          *ngIf="item.pawn_type && typeof item.pawn_type === 'object'; else stringPawnType"
-                        >
-                          @if (item.pawn_type.name) {
-                          {{ item.pawn_type.name }}
-                          } @else if (item.pawn_type.text) {
-                          {{ item.pawn_type.text }}
-                          }
-                        </ng-container>
-                        <ng-template #stringPawnType>{{
-                          item.pawn_type
-                        }}</ng-template>
+                        @if (item.pawn_type && typeof item.pawn_type ===
+                        'object') { @if (item.pawn_type.name) {
+                        {{ item.pawn_type.name }}
+                        } @else if (item.pawn_type.text) {
+                        {{ item.pawn_type.text }}
+                        } } @else {
+                        {{ item.pawn_type }}
+                        }
                       </td>
                       <td>
                         {{
@@ -208,6 +200,7 @@
                         {{ item.pawnCount }}
                       </td>
                     </tr>
+                    }
                   </tbody>
                   <tfoot>
                     <tr>

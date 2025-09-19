@@ -1,0 +1,71 @@
+@use "@angular/material" as mat;
+
+.expired-dialog-listing {
+  font-family: "Koh Santepheap", serif;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 5px;
+
+  .customer_info {
+    display: flex;
+    gap: 10px;
+    border: solid 1px rgba(185, 185, 185, 0.6);
+    padding: 20px;
+    padding-bottom: 25px;
+    transition: 0.5s;
+    background-size: 200% auto;
+    color: rgb(0, 0, 0);
+    box-shadow: 0 0 20px #eee;
+    border-radius: 8px;
+    
+    &:hover {
+      background-position: right center;
+      color: #000000;
+      text-decoration: none;
+      background-image: linear-gradient(
+        to right,
+        #ced7ce 0%,
+        #f2fcfe 51%,
+        #ced7ce 100%
+      );
+    }
+  }
+
+  .profile-image {
+    width: 70px;
+    height: 60px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-bottom: 10px;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .listing_info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    width: 100%;
+  }
+
+  .full_name,
+  .phone_number,
+  .pawn_type,
+  .created_at,
+  .date_expired {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+}
+
+/* Override default Material Dialog padding for full-bleed content */
+::ng-deep .mat-mdc-dialog-container .mat-mdc-dialog-surface {
+  padding: 0;
+}

@@ -5,6 +5,8 @@ import {
   OnDestroy,
   inject,
   signal,
+  Inject,
+  PLATFORM_ID,
 } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -23,7 +25,8 @@ import {
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { Subscription, interval, of, switchMap, from } from 'rxjs';
 import { PawnStore } from '../../shared/store/pawn.store';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { ExpiredPawnDialogComponent } from '../expired-pawn-dialog/expired-pawn-dialog.component';
 
 interface Customer {
   full_name: string;
@@ -49,7 +52,6 @@ interface Customer {
     MatIconModule,
     MatBadgeModule,
     MatTabsModule,
-    // RouterLinkActive,
     MatProgressBarModule,
     CommonModule,
     RouterModule,
@@ -60,38 +62,41 @@ interface Customer {
 })
 export class MainHeaderComponent implements OnInit, OnDestroy {
   private subscriptions = new Subscription();
-  private store = inject(PawnStore);
-  unreadNotificationCount = signal<number>(0);
-  expiredItems: Customer[] = [];
   auth = inject(AuthStore);
-
+  public store = inject(PawnStore);
+  
   constructor(private dialog: MatDialog, private router: Router) {}
-
+  
   ngOnInit(): void {
+    // Check for expired items on initial load
+    this.store.checkExpiredItems();
+
+    // Hourly check for expired items
     this.subscriptions.add(
       interval(60 * 60 * 1000).subscribe(() => {
-        // this.checkExpiredItems();
+        this.store.checkExpiredItems();
       })
-    );
-
-    this.subscriptions.add(
-      from(this.store.getCustomerDemo())
-        .pipe(switchMap((observable) => observable || of([])))
-        .subscribe((data) => {
-          // this.checkExpiredItems(data);
-        })
     );
   }
 
-  // checkExpiredItems(data?: Customer[]): void {
-  //   const today = new Date();
-  //   const expired = (data || []).filter(item => {
-  //     const expiredDate = item.date_expired ? (item.date_expired.toDate ? item.date_expired.toDate() : new Date(item.date_expired)) : null;
-  //     return expiredDate && expiredDate < today;
-  //   });
-  //   this.expiredItems = expired;
-  //   this.unreadNotificationCount.set(expired.length);
-  // }
+  showExpiredItems(): void {
+    this.store.getExpiredPawnItems().then(items => {
+      // Format the data before passing it to the dialog
+      const formattedItems = items.map(item => ({
+        ...item,
+        // Check if pawn_type is an object and get its name, otherwise use the value directly
+        pawn_type: item.pawn_type?.name || item.pawn_type,
+        // Convert Firestore Timestamp to a JavaScript Date object
+        date_expired: item.date_expired?.toDate ? item.date_expired.toDate() : item.date_expired
+      }));
+
+      this.dialog.open(ExpiredPawnDialogComponent, {
+        width: '400px',
+        position: { right: '85px', top: '80px' },
+        data: formattedItems,
+      });
+    });
+  }
 
   signOut() {
     const dialogRef = this.dialog.open(AlertComponent, {
@@ -99,7 +104,6 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
         title: 'ចាកចេញពីគណនី!',
         description: 'តើអ្នកចង់ចាកចេញពីគណនីទេ?',
       },
-
       role: 'dialog',
       panelClass: 'custom-dialog',
     });

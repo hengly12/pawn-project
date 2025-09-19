@@ -25,7 +25,6 @@
         <div class="line"></div>
       </a>
     </li>
-
     <li>
       <a
         routerLink="/home/report/data-customer"
@@ -36,7 +35,6 @@
         <div class="line"></div>
       </a>
     </li>
-
     <li>
       <a
         routerLink="/home/category/list-category"
@@ -48,10 +46,17 @@
       </a>
     </li>
   </div>
-
   <div>
     <div class="notification-badge">
-      <!-- <mat-icon matBadge="{{ unreadNotificationCount() }}">notifications_active</mat-icon> -->
+      <button mat-icon-button (click)="showExpiredItems()">
+        <mat-icon
+          matBadge="{{ store.expiredPawnCount() }}"
+          matBadgeColor="warn"
+          [matBadgeShowZero]="true"
+          >notifications_active</mat-icon
+        >
+      </button>
+
       <div
         class="profile-img"
         [matMenuTriggerFor]="menu"
