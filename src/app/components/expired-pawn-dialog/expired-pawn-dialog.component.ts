@@ -1,10 +1,12 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, signal } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { CommonModule, DatePipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
-interface Customer {
+export interface Customer {
   full_name: string;
   phone_number: string;
   address: string;
@@ -18,7 +20,9 @@ interface Customer {
   date_expired?: any;
   isExpired?: boolean;
   displayPawnType?: string;
+  key: string;
 }
+
 
 @Component({
   selector: 'app-expired-pawn-dialog',
@@ -29,10 +33,15 @@ interface Customer {
 })
 export class ExpiredPawnDialogComponent implements OnInit {
   today = new Date();
+  formLoading: boolean = false;
+  selectedKey: string | undefined;
+  param = signal<any>(null);
+  routeUnSubscribe = signal<any>(Subscription);
   
   constructor(
     public dialogRef: MatDialogRef<ExpiredPawnDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: Customer[]
+    @Inject(MAT_DIALOG_DATA) public data: Customer[],
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -49,6 +58,21 @@ export class ExpiredPawnDialogComponent implements OnInit {
       });
     }
   }
+
+onCustomerSelect(key: string) {
+  this.formLoading = true;
+  this.selectedKey = key;
+  this.router.navigate([`/home/${this.param()}/listing/create-form/${key}`])
+    .then(() => {
+      this.dialogRef.close(key);
+    })
+    .catch(error => {
+      console.error('Navigation failed:', error);
+    })
+    .finally(() => {
+      this.formLoading = false;
+    });
+}
 
   onNoClick(): void {
     this.dialogRef.close();

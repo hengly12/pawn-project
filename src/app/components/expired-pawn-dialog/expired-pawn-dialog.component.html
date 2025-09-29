@@ -9,7 +9,9 @@
         <img src="assets/images/Admin-Pic.jpg" alt="Profile Icon" />
       </div>
 
-      <div class="listing_info">
+      <div class="listing_info"
+      (click)="onCustomerSelect(item?.key!)"
+            [class.active]="selectedKey === item?.key">
         <div class="full_name">
           <mat-icon>perm_identity</mat-icon>
           <h4>ឈ្មោះ: {{ item?.full_name }}</h4>

@@ -435,7 +435,7 @@ export class PawnFormComponent implements OnInit, OnDestroy {
       case 'jewelry':
         return 3;
       // case 'others':
-      //   return 4;
+      // 	 return 4;
       default:
         return null;
     }
@@ -494,7 +494,9 @@ export class PawnFormComponent implements OnInit, OnDestroy {
           this.snackBar.open(`លុបទិន្នន័យបានជោគជ័យ`, 'ជោគជ័យ', {
             duration: 3000,
           });
-          this.router.navigate(['home/active/listing']);
+          this.router.navigate(['home/active/listing']).then(() => {
+             window.location.reload(); // Force refresh after successful navigation
+          });
         } catch (error) {
           console.error('លុបទិន្នន័យបានបរាជ័យ:', error);
           this.snackBar.open(`លុបទិន្នន័យបានបរាជ័យ`, 'បរាជ័យ', {
@@ -507,6 +509,10 @@ export class PawnFormComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Ends a pawn transaction and navigates to the inactive listing page,
+   * then forces a full page reload to ensure the UI is fully refreshed.
+   */
   endPawn(data: any): void {
     const dialogRef = this.dialog.open(AlertComponent, {
       data: {
@@ -525,14 +531,17 @@ export class PawnFormComponent implements OnInit, OnDestroy {
           this.snackBar.open(`បញ្ចប់ការបញ្ចាំបានជោគជ័យ`, 'ជោគជ័យ', {
             duration: 6000,
           });
-          this.router.navigate(['home/inactive/listing']);
+          this.router.navigate(['home/inactive/listing']).then(() => {
+            window.location.reload();
+          });
+
         } catch (error) {
           console.error('Error ending pawn:', error);
           this.snackBar.open(`បញ្ចប់ការបញ្ចាំបានបរាជ័យ.`, 'បរាជ័យ', {
             duration: 6000,
           });
         } finally {
-          this.loading.set(false); // End loading
+          this.loading.set(false);
         }
       }
     });
@@ -556,7 +565,9 @@ export class PawnFormComponent implements OnInit, OnDestroy {
           this.snackBar.open(`ទាញយកឯកសារបញ្ចាំវិញបានជោគជ័យ`, 'ជោគជ័យ', {
             duration: 6000,
           });
-          this.router.navigate(['home/active/listing']);
+          
+          window.location.reload();
+
         } catch (error) {
           console.error('Error ending pawn:', error);
           this.snackBar.open(`ទាញយកឯកសារបញ្ចាំវិញបរាជ័យ`, 'បរាជ័យ', {
@@ -649,38 +660,6 @@ export class PawnFormComponent implements OnInit, OnDestroy {
       }, 500);
     }, 100);
   }
-
-  // checkDisableForm(paramKey: string): void {
-  //   // Add this guard to ensure the form exists before trying to access it
-  //   if (!this.pawnForm) {
-  //     return;
-  //   }
-
-  //   console.log('checkDisableForm called with paramKey:', paramKey);
-
-  //   // List of controls that should be disabled for existing records
-  //   const personalInfoControls = [
-  //     'full_name',
-  //     'gender',
-  //     'phone_number',
-  //     'id_card',
-  //     'address',
-  //   ];
-
-  //   if (paramKey === 'na') {
-  //     // For a new form ('na'), ensure all controls are enabled
-  //     this.pawnForm.enable();
-  //   } else {
-  //     // For an existing form, disable specific controls
-  //     personalInfoControls.forEach(controlName => {
-  //       this.pawnForm.get(controlName)?.disable();
-  //     });
-
-  //     // All other controls that are not in personalInfoControls will remain enabled
-  //     // This is the default behavior after a call to this.pawnForm.enable()
-  //     // or if the controls were already enabled.
-  //   }
-  // }
 
   checkDisableForm(paramKey: string): void {
     console.log('checkDisableForm called with paramKey:', paramKey);
@@ -913,9 +892,9 @@ export class PawnFormComponent implements OnInit, OnDestroy {
         });
       }
 
-      this.router.navigate(['home/active/listing']).then(() => {
-        window.location.reload();
-      });
+      // Force a full page refresh after successful save/update
+      window.location.reload();
+      
     } catch (e) {
       console.error(e);
       this.snackBar.open(`ការរក្សាទុកទិន្នន័យបានបរាជ័យ`, 'បរាជ័យ', {
