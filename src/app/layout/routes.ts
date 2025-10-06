@@ -57,4 +57,13 @@ export const routes: Routes = [
       },
     ],
   },
+  
 ];
+
+export async function getPrerenderParams_home_listing(): Promise<Record<string, string>[]> {
+  // Return the known, static parameter values for :statusKey
+  return [
+    { statusKey: 'active' },
+    { statusKey: 'inactive' }
+  ];
+}
